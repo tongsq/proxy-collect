@@ -9,11 +9,9 @@ import (
 )
 
 type CheckIp struct {
-	proxyService service.ProxyService
 }
 
 func (s CheckIp) Run() {
-	s.proxyService = service.ProxyService{}
 	var proxys []model.Proxy
 	model.DB.Where("status<>?", 1).Find(&proxys)
 	fmt.Printf("count:%d, cap: %d\n", len(proxys), cap(proxys))
@@ -26,7 +24,7 @@ func (s CheckIp) Run() {
 
 func (s CheckIp) CheckProxyStatus(proxyModel model.Proxy, db *gorm.DB) {
 	fmt.Printf("start check :host:%s, port:%s\n", proxyModel.Host, proxyModel.Port)
-	result := s.proxyService.CheckIpStatus(proxyModel.Host, proxyModel.Port)
+	result := service.ProxyService.CheckIpStatus(proxyModel.Host, proxyModel.Port)
 	fmt.Printf("%s, %s, the result is %v\n", proxyModel.Host, proxyModel.Port, result)
 	if result {
 		proxyModel.Status = 1

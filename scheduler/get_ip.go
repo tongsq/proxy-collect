@@ -11,9 +11,12 @@ type GetIp struct {
 
 func (s GetIp) Run() {
 	pool := component.NewTaskPool(20)
-	proxyService := service.ProxyService{}
-	service_list := []service.GetProxyInterface{&service.GetProxyXila{}, &service.GetProxyNima{}}
-	for _, getProxyService := range service_list {
-		go proxyService.DoGetProxy(getProxyService, pool, model.DB)
+	serviceList := []service.GetProxyInterface{
+		&service.GetProxyXila{},
+		&service.GetProxyNima{},
+		&service.GetProxyKuai{},
+	}
+	for _, getProxyService := range serviceList {
+		go service.ProxyService.DoGetProxy(getProxyService, pool, model.DB)
 	}
 }

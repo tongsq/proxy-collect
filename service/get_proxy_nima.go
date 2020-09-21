@@ -3,12 +3,11 @@ package service
 import (
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
-	"io"
 	"net/http"
+	"proxy-collect/component"
 	"proxy-collect/component/logger"
 	"proxy-collect/config"
 	"strings"
-	"time"
 )
 
 type GetProxyNima struct {
@@ -18,38 +17,25 @@ func (s *GetProxyNima) GetUrlList() []string {
 	list := []string{
 		"http://www.nimadaili.com/https/",
 	}
-	for i := 1; i < 6; i++ {
+	for i := 2; i < 6; i++ {
 		list = append(list, fmt.Sprintf("http://www.nimadaili.com/https/%d/", i))
 	}
 	return list
 }
-func (s *GetProxyNima) GetContentHtml(requestUrl string) io.ReadCloser {
+func (s *GetProxyNima) GetContentHtml(requestUrl string) string {
 	req, _ := http.NewRequest("GET", requestUrl, nil)
 	req.Header.Set("User-Agent", config.USER_AGENT)
 	req.Header.Set("Host", "www.nimadaili.com")
 	req.Header.Set("Referer", "http://www.nimadaili.com/https/3/")
 	req.Header.Set("Upgrade-Insecure-Requests", "1")
-	client := http.Client{
-		Timeout: time.Second * 5,
-	}
+
 	logger.Info("get proxy from nimadaili", requestUrl)
-	resp, err := client.Do(req)
-	if err != nil {
-		logger.Error("http get error", err)
-		return nil
-	}
-	if resp.StatusCode != 200 {
-		resp.Body.Close()
-		logger.Error("http status error ", resp.StatusCode)
-		return nil
-	}
-	return resp.Body
+	return component.WebRequest(req)
 }
 
-func (s *GetProxyNima) ParseHtml(body io.ReadCloser) [][]string {
-	defer body.Close()
+func (s *GetProxyNima) ParseHtml(body string) [][]string {
 
-	doc, err := goquery.NewDocumentFromReader(body)
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(body))
 	if err != nil {
 		logger.Error(err)
 		return nil

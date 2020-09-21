@@ -3,66 +3,57 @@ package service
 import (
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
-	"io"
 	"net/http"
+	"proxy-collect/component"
 	"proxy-collect/component/logger"
+	"proxy-collect/config"
 	"strings"
-	"time"
 )
 
 type GetProxyKuai struct {
 }
 
-func (s *GetProxyKuai) GetContentHtml(i int) io.ReadCloser {
-	requestUrl := fmt.Sprintf("http://www.nimadaili.com/https/%d/", i)
-	req, _ := http.NewRequest("GET", requestUrl, nil)
-	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.106 Safari/537.36")
-	req.Header.Set("Host", "www.nimadaili.com")
-	req.Header.Set("Referer", "http://www.nimadaili.com/https/3/")
-	req.Header.Set("Upgrade-Insecure-Requests", "1")
-	client := http.Client{
-		Timeout: time.Second * 5,
+func (s *GetProxyKuai) GetUrlList() []string {
+	list := []string{
+		"https://www.kuaidaili.com/free/inha/",
+		"https://www.kuaidaili.com/free/intr/",
 	}
-	logger.Info("get proxy from kuai", i)
-	resp, err := client.Do(req)
-	if err != nil {
-		logger.Error("http get error", err)
-		return nil
+	for i := 2; i < 6; i++ {
+		list = append(list, fmt.Sprintf("https://www.kuaidaili.com/free/inha/%d/", i))
+		list = append(list, fmt.Sprintf("https://www.kuaidaili.com/free/intr/%d/", i))
 	}
-	if resp.StatusCode != 200 {
-		resp.Body.Close()
-		logger.Error("http status error ", resp.StatusCode)
-		return nil
-	}
-	//body, err := ioutil.ReadAll(resp.Body)
-	//if err != nil {
-	//	fmt.Println("read error", err)
-	//	continue
-	//}
-	//bodyString := string(body)
-	//fmt.Println(bodyString)
-	return resp.Body
+	return list
 }
 
-func (s *GetProxyKuai) ParseHtml(body io.ReadCloser) [][]string {
-	defer body.Close()
+func (s *GetProxyKuai) GetContentHtml(requestUrl string) string {
 
-	doc, err := goquery.NewDocumentFromReader(body)
+	req, _ := http.NewRequest("GET", requestUrl, nil)
+	req.Header.Set("User-Agent", config.USER_AGENT)
+	req.Header.Set("Host", "www.kuaidaili.com")
+	req.Header.Set("Referer", "https://www.kuaidaili.com/free/inha/")
+	req.Header.Set("Upgrade-Insecure-Requests", "1")
+	logger.Info("get proxy from kuaidaili", requestUrl)
+	return component.WebRequest(req)
+}
+
+func (s *GetProxyKuai) ParseHtml(body string) [][]string {
+
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(body))
 	if err != nil {
 		logger.Error(err)
 		return nil
 	}
-	var proxy_list [][]string
+	var proxyList [][]string
 	doc.Find("tbody > tr").Each(func(i int, selection *goquery.Selection) {
 		td := selection.ChildrenFiltered("td").First()
-		proxy_str := td.Text()
-		proxy_str = strings.Trim(proxy_str, " ")
-		proxy_arr := strings.Split(proxy_str, ":")
-		if len(proxy_arr) != 2 {
-			logger.Error("格式错误:", proxy_str)
-			return
+		proxyHost := td.Text()
+		td2 := selection.ChildrenFiltered("td").Eq(1)
+		proxyPort := td2.Text()
+		if proxyHost == "" || proxyPort == "" {
+			logger.Error("解析html node 失败")
 		}
-		proxy_list = append(proxy_list, proxy_arr)
+		proxyArr := []string{strings.Trim(proxyHost, " "), strings.Trim(proxyPort, " ")}
+		proxyList = append(proxyList, proxyArr)
 	})
-	return proxy_list
+	return proxyList
 }

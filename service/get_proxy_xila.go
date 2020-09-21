@@ -3,12 +3,11 @@ package service
 import (
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
-	"io"
 	"net/http"
+	"proxy-collect/component"
 	"proxy-collect/component/logger"
 	"proxy-collect/config"
 	"strings"
-	"time"
 )
 
 type GetProxyXila struct {
@@ -18,39 +17,25 @@ func (s *GetProxyXila) GetUrlList() []string {
 	list := []string{
 		"http://www.xiladaili.com/https/",
 	}
-	for i := 1; i < 6; i++ {
+	for i := 2; i < 6; i++ {
 		list = append(list, fmt.Sprintf("http://www.xiladaili.com/https/%d/", i))
 	}
 	return list
 }
 
-func (s *GetProxyXila) GetContentHtml(requestUrl string) io.ReadCloser {
+func (s *GetProxyXila) GetContentHtml(requestUrl string) string {
+
 	req, _ := http.NewRequest("GET", requestUrl, nil)
 	req.Header.Set("User-Agent", config.USER_AGENT)
 	req.Header.Set("Host", "www.xiladaili.com")
 	req.Header.Set("Referer", "http://www.xiladaili.com/https/")
 	req.Header.Set("Upgrade-Insecure-Requests", "1")
-	client := http.Client{
-		Timeout: time.Second * 5,
-	}
 	logger.Info("get proxy from xiladaili", requestUrl)
-	resp, err := client.Do(req)
-	if err != nil {
-		logger.Error("http get error", err)
-		return nil
-	}
-	if resp.StatusCode != 200 {
-		resp.Body.Close()
-		logger.Error("http status error ", resp.StatusCode)
-		return nil
-	}
-	return resp.Body
+	return component.WebRequest(req)
 }
 
-func (s *GetProxyXila) ParseHtml(body io.ReadCloser) [][]string {
-	defer body.Close()
-
-	doc, err := goquery.NewDocumentFromReader(body)
+func (s *GetProxyXila) ParseHtml(body string) [][]string {
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(body))
 	if err != nil {
 		logger.Error(err)
 		return nil

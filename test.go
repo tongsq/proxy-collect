@@ -1,12 +1,14 @@
 package main
 
 import (
-	"proxy-collect/scheduler"
+	"proxy-collect/component"
+	"proxy-collect/model"
+	"proxy-collect/service"
 	"time"
 )
 
 func main() {
-	s := scheduler.CheckIp{}
-	s.Run()
+	pool := component.NewTaskPool(20)
+	service.ProxyService.DoGetProxy(&service.GetProxyKuai{}, pool, model.DB)
 	time.Sleep(50 * time.Second)
 }

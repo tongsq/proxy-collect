@@ -1,9 +1,7 @@
 package service
 
-import "io"
-
 type GetProxyInterface interface {
-	GetContentHtml(requestUrl string) io.ReadCloser
-	ParseHtml(body io.ReadCloser) [][]string
+	GetContentHtml(requestUrl string) string
+	ParseHtml(body string) [][]string
 	GetUrlList() []string
 }

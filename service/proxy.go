@@ -13,10 +13,14 @@ import (
 	"time"
 )
 
-type ProxyService struct {
+func NewProxyService() *proxyService {
+	return &proxyService{}
 }
 
-func (s *ProxyService) CheckIpStatusActive(host, port string) bool {
+type proxyService struct {
+}
+
+func (s *proxyService) CheckIpStatusActive(host, port string) bool {
 	request_url := "https://www.baidu.com"
 	req, _ := http.NewRequest("GET", request_url, nil)
 	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.106 Safari/537.36")
@@ -41,7 +45,7 @@ func (s *ProxyService) CheckIpStatusActive(host, port string) bool {
 	return true
 }
 
-func (s *ProxyService) CheckIpStatus(host, port string) bool {
+func (s *proxyService) CheckIpStatus(host, port string) bool {
 	request_url := "https://www.c5game.com/api/product/sale.json?id=2705689&page=1&sort=1&key=1523539522"
 	req, _ := http.NewRequest("GET", request_url, nil)
 	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.106 Safari/537.36")
@@ -67,7 +71,7 @@ func (s *ProxyService) CheckIpStatus(host, port string) bool {
 	return true
 }
 
-func (s *ProxyService) CheckProxyAndSave(host string, port string, db *gorm.DB) {
+func (s *proxyService) CheckProxyAndSave(host string, port string, db *gorm.DB) {
 	result := s.CheckIpStatus(host, port)
 	if result {
 		logger.Success(result, host, port)
@@ -99,10 +103,10 @@ func (s *ProxyService) CheckProxyAndSave(host string, port string, db *gorm.DB) 
 	return
 }
 
-func (s *ProxyService) DoGetProxy(getProxyService GetProxyInterface, pool *component.Pool, db *gorm.DB) {
+func (s *proxyService) DoGetProxy(getProxyService GetProxyInterface, pool *component.Pool, db *gorm.DB) {
 	for _, requestUrl := range getProxyService.GetUrlList() {
 		contentBody := getProxyService.GetContentHtml(requestUrl)
-		if contentBody == nil {
+		if contentBody == "" {
 			time.Sleep(time.Second * 5)
 			continue
 		}
@@ -115,8 +119,8 @@ func (s *ProxyService) DoGetProxy(getProxyService GetProxyInterface, pool *compo
 			logger.Info("wait 20s ...")
 			time.Sleep(time.Second * 20)
 		}(&wg)
-		for _, proxy_arr := range proxy_list {
-			ip, port := proxy_arr[0], proxy_arr[1]
+		for _, proxyArr := range proxy_list {
+			ip, port := proxyArr[0], proxyArr[1]
 			pool.RunTask(func() { s.CheckProxyAndSave(ip, port, db) })
 		}
 
