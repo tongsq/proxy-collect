@@ -43,14 +43,14 @@ func (s *GetProxyNima) ParseHtml(body string) [][]string {
 	var proxy_list [][]string
 	doc.Find("tbody > tr").Each(func(i int, selection *goquery.Selection) {
 		td := selection.ChildrenFiltered("td").First()
-		proxy_str := td.Text()
-		proxy_str = strings.Trim(proxy_str, " ")
-		proxy_arr := strings.Split(proxy_str, ":")
-		if len(proxy_arr) != 2 {
-			logger.Error("格式错误:", proxy_str)
+		proxyStr := td.Text()
+		proxyStr = strings.Trim(proxyStr, " ")
+		proxyArr := strings.Split(proxyStr, ":")
+		if len(proxyArr) != 2 {
+			logger.Error("格式错误:", proxyStr)
 			return
 		}
-		proxy_list = append(proxy_list, proxy_arr)
+		proxy_list = append(proxy_list, proxyArr)
 	})
 	return proxy_list
 }
