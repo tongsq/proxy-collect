@@ -58,7 +58,7 @@ func (s *proxyService) CheckIpStatus(host, port string) bool {
 	}
 	resp, err := client.Do(req)
 	if err != nil {
-		fmt.Println("http get error", err)
+		//fmt.Println("http get error", err)
 		return false
 	}
 	defer resp.Body.Close()
