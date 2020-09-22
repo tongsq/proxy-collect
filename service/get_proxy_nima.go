@@ -10,10 +10,14 @@ import (
 	"strings"
 )
 
-type GetProxyNima struct {
+func NewGetProxyNima() *getProxyNima {
+	return &getProxyNima{}
 }
 
-func (s *GetProxyNima) GetUrlList() []string {
+type getProxyNima struct {
+}
+
+func (s *getProxyNima) GetUrlList() []string {
 	list := []string{
 		"http://www.nimadaili.com/https/",
 	}
@@ -22,7 +26,7 @@ func (s *GetProxyNima) GetUrlList() []string {
 	}
 	return list
 }
-func (s *GetProxyNima) GetContentHtml(requestUrl string) string {
+func (s *getProxyNima) GetContentHtml(requestUrl string) string {
 	req, _ := http.NewRequest("GET", requestUrl, nil)
 	req.Header.Set("User-Agent", config.USER_AGENT)
 	req.Header.Set("Host", "www.nimadaili.com")
@@ -33,14 +37,14 @@ func (s *GetProxyNima) GetContentHtml(requestUrl string) string {
 	return component.WebRequest(req)
 }
 
-func (s *GetProxyNima) ParseHtml(body string) [][]string {
+func (s *getProxyNima) ParseHtml(body string) [][]string {
 
 	doc, err := goquery.NewDocumentFromReader(strings.NewReader(body))
 	if err != nil {
 		logger.Error(err)
 		return nil
 	}
-	var proxy_list [][]string
+	var proxyList [][]string
 	doc.Find("tbody > tr").Each(func(i int, selection *goquery.Selection) {
 		td := selection.ChildrenFiltered("td").First()
 		proxyStr := td.Text()
@@ -50,7 +54,7 @@ func (s *GetProxyNima) ParseHtml(body string) [][]string {
 			logger.Error("格式错误:", proxyStr)
 			return
 		}
-		proxy_list = append(proxy_list, proxyArr)
+		proxyList = append(proxyList, proxyArr)
 	})
-	return proxy_list
+	return proxyList
 }

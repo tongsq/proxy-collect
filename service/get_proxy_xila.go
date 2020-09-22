@@ -10,10 +10,14 @@ import (
 	"strings"
 )
 
-type GetProxyXila struct {
+func NewGetProxyXila() *getProxyXila {
+	return &getProxyXila{}
 }
 
-func (s *GetProxyXila) GetUrlList() []string {
+type getProxyXila struct {
+}
+
+func (s *getProxyXila) GetUrlList() []string {
 	list := []string{
 		"http://www.xiladaili.com/https/",
 	}
@@ -23,7 +27,7 @@ func (s *GetProxyXila) GetUrlList() []string {
 	return list
 }
 
-func (s *GetProxyXila) GetContentHtml(requestUrl string) string {
+func (s *getProxyXila) GetContentHtml(requestUrl string) string {
 
 	req, _ := http.NewRequest("GET", requestUrl, nil)
 	req.Header.Set("User-Agent", config.USER_AGENT)
@@ -34,7 +38,7 @@ func (s *GetProxyXila) GetContentHtml(requestUrl string) string {
 	return component.WebRequest(req)
 }
 
-func (s *GetProxyXila) ParseHtml(body string) [][]string {
+func (s *getProxyXila) ParseHtml(body string) [][]string {
 	doc, err := goquery.NewDocumentFromReader(strings.NewReader(body))
 	if err != nil {
 		logger.Error(err)

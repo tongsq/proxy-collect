@@ -9,6 +9,7 @@ import (
 	"proxy-collect/component"
 	"proxy-collect/component/logger"
 	"proxy-collect/model"
+	"regexp"
 	"sync"
 	"time"
 )
@@ -126,4 +127,16 @@ func (s *proxyService) DoGetProxy(getProxyService GetProxyInterface, pool *compo
 
 		wg.Wait()
 	}
+}
+
+func (s *proxyService) CheckProxyFormat(host string, port string) bool {
+	ok, _ := regexp.Match(`^[\d\.]+$`, []byte(host))
+	if !ok {
+		return false
+	}
+	ok, _ = regexp.Match(`^\d+$`, []byte(port))
+	if !ok {
+		return false
+	}
+	return true
 }

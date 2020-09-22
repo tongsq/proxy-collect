@@ -9,10 +9,14 @@ import (
 	"strings"
 )
 
-type GetProxyData5u struct {
+func NewGetProxyData5u() *getProxyData5u {
+	return &getProxyData5u{}
 }
 
-func (s *GetProxyData5u) GetUrlList() []string {
+type getProxyData5u struct {
+}
+
+func (s *getProxyData5u) GetUrlList() []string {
 	list := []string{
 		"http://www.data5u.com/",
 		"http://www.data5u.com/free/gngn/index.shtml",
@@ -21,7 +25,7 @@ func (s *GetProxyData5u) GetUrlList() []string {
 	return list
 }
 
-func (s *GetProxyData5u) GetContentHtml(requestUrl string) string {
+func (s *getProxyData5u) GetContentHtml(requestUrl string) string {
 
 	req, _ := http.NewRequest("GET", requestUrl, nil)
 	req.Header.Set("User-Agent", config.USER_AGENT)
@@ -31,7 +35,7 @@ func (s *GetProxyData5u) GetContentHtml(requestUrl string) string {
 	return component.WebRequest(req)
 }
 
-func (s *GetProxyData5u) ParseHtml(body string) [][]string {
+func (s *getProxyData5u) ParseHtml(body string) [][]string {
 
 	doc, err := goquery.NewDocumentFromReader(strings.NewReader(body))
 	if err != nil {

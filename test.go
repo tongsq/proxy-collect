@@ -9,6 +9,6 @@ import (
 
 func main() {
 	pool := component.NewTaskPool(20)
-	service.ProxyService.DoGetProxy(&service.GetProxyData5u{}, pool, model.DB)
+	service.ProxyService.DoGetProxy(service.GetProxy66ip, pool, model.DB)
 	time.Sleep(50 * time.Second)
 }
