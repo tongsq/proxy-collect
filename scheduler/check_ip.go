@@ -17,8 +17,8 @@ func (s CheckIp) Run() {
 	fmt.Printf("count:%d, cap: %d\n", len(proxys), cap(proxys))
 	pool := component.NewTaskPool(20)
 	for _, proxy := range proxys {
-		var proxy_tmp model.Proxy = proxy
-		pool.RunTask(func() { s.CheckProxyStatus(proxy_tmp, model.DB) })
+		var proxyTmp model.Proxy = proxy
+		pool.RunTask(func() { s.CheckProxyStatus(proxyTmp, model.DB) })
 	}
 }
 
