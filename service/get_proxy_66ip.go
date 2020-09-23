@@ -60,7 +60,7 @@ func (s *getProxy66ip) ParseHtml(body string) [][]string {
 		if !ProxyService.CheckProxyFormat(proxyHost, proxyPort) {
 			return
 		}
-		proxyArr := []string{strings.Trim(proxyHost, " "), strings.Trim(proxyPort, " ")}
+		proxyArr := []string{strings.TrimSpace(proxyHost), strings.TrimSpace(proxyPort)}
 		proxyList = append(proxyList, proxyArr)
 	})
 	return proxyList

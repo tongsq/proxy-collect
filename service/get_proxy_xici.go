@@ -48,7 +48,7 @@ func (s *getProxyXici) ParseHtml(body string) [][]string {
 	doc.Find("tbody > tr").Each(func(i int, selection *goquery.Selection) {
 		td := selection.ChildrenFiltered("td").First()
 		proxyStr := td.Text()
-		proxyStr = strings.Trim(proxyStr, " ")
+		proxyStr = strings.TrimSpace(proxyStr)
 		proxyArr := strings.Split(proxyStr, ":")
 		if len(proxyArr) != 2 {
 			logger.Error("格式错误:", proxyStr)

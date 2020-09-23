@@ -52,7 +52,7 @@ func (s *getProxyData5u) ParseHtml(body string) [][]string {
 		if proxyHost == "" || proxyPort == "" {
 			logger.Error("解析html node 失败")
 		}
-		proxyArr := []string{strings.Trim(proxyHost, " "), strings.Trim(proxyPort, " ")}
+		proxyArr := []string{strings.TrimSpace(proxyHost), strings.TrimSpace(proxyPort)}
 		proxyList = append(proxyList, proxyArr)
 	})
 

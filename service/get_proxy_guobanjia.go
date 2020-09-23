@@ -51,7 +51,7 @@ func (s *getProxyGuoBanJia) ParseHtml(body string) [][]string {
 			}
 		})
 		port := td.Children().Last().Text()
-		hostStr = strings.Trim(hostStr, " ")
+		hostStr = strings.TrimSpace(hostStr)
 		if !ProxyService.CheckProxyFormat(hostStr, port) {
 			logger.Error("格式错误:", hostStr, port)
 			return

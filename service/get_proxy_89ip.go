@@ -10,33 +10,33 @@ import (
 	"strings"
 )
 
-func NewGetProxyIp3366() *getProxyIp3366 {
-	return &getProxyIp3366{}
+func NewGetProxy89Ip() *getProxy89Ip {
+	return &getProxy89Ip{}
 }
 
-type getProxyIp3366 struct {
+type getProxy89Ip struct {
 }
 
-func (s *getProxyIp3366) GetUrlList() []string {
+func (s *getProxy89Ip) GetUrlList() []string {
 	list := []string{
-		"http://www.ip3366.net/free/?stype=1",
-		"http://www.ip3366.net/free/?stype=2",
+		"https://www.89ip.cn/",
 	}
 	for i := 2; i < 6; i++ {
-		list = append(list, fmt.Sprintf("http://www.ip3366.net/free/?stype=1&page=%d", i))
-		list = append(list, fmt.Sprintf("http://www.ip3366.net/free/?stype=2&page=%d", i))
+		list = append(list, fmt.Sprintf("https://www.89ip.cn/index_%d.html", i))
 	}
 	return list
 }
-func (s *getProxyIp3366) GetContentHtml(requestUrl string) string {
+func (s *getProxy89Ip) GetContentHtml(requestUrl string) string {
 	req, _ := http.NewRequest("GET", requestUrl, nil)
 	req.Header.Set("User-Agent", config.USER_AGENT)
 	req.Header.Set("Upgrade-Insecure-Requests", "1")
-	logger.Info("get proxy from ip3366", requestUrl)
+	req.Header.Set("Host", "www.89ip.cn")
+	req.Header.Set("Referer", "https://www.89ip.cn/")
+	logger.Info("get proxy from 89ip", requestUrl)
 	return component.WebRequest(req)
 }
 
-func (s *getProxyIp3366) ParseHtml(body string) [][]string {
+func (s *getProxy89Ip) ParseHtml(body string) [][]string {
 
 	doc, err := goquery.NewDocumentFromReader(strings.NewReader(body))
 	if err != nil {
@@ -51,7 +51,7 @@ func (s *getProxyIp3366) ParseHtml(body string) [][]string {
 		port := strings.TrimSpace(td2.Text())
 
 		if !ProxyService.CheckProxyFormat(host, port) {
-			logger.Error("格式错误:", host, port)
+			logger.Error("格式错误:", host+",", port)
 			return
 		}
 		proxyArr := []string{host, port}

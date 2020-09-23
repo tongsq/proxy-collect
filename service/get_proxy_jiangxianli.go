@@ -46,9 +46,9 @@ func (s *getProxyIpJiangXianLi) ParseHtml(body string) [][]string {
 	var proxyList [][]string
 	doc.Find("tbody > tr").Each(func(i int, selection *goquery.Selection) {
 		td := selection.ChildrenFiltered("td").First()
-		host := strings.Trim(td.Text(), " ")
+		host := strings.TrimSpace(td.Text())
 		td2 := selection.ChildrenFiltered("td").Eq(1)
-		port := strings.Trim(td2.Text(), " ")
+		port := strings.TrimSpace(td2.Text())
 
 		if !ProxyService.CheckProxyFormat(host, port) {
 			logger.Error("格式错误:", host, port)
