@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
 	"net/http"
-	"os"
 	"proxy-collect/component"
 	"proxy-collect/component/logger"
 	"proxy-collect/config"
@@ -58,7 +57,5 @@ func (s *getProxyIp3366) ParseHtml(body string) [][]string {
 		proxyArr := []string{host, port}
 		proxyList = append(proxyList, proxyArr)
 	})
-	fmt.Println(proxyList)
-	os.Exit(0)
 	return proxyList
 }
