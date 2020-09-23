@@ -18,6 +18,7 @@ func (s GetIp) Run() {
 		service.GetProxyData5u,
 		service.GetProxy66ip,
 		service.GetProxyGuoBanjia,
+		service.GetProxyCoderBusy,
 	}
 	for _, getProxyService := range serviceList {
 		go service.ProxyService.DoGetProxy(getProxyService, pool, model.DB)

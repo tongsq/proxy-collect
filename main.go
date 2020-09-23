@@ -12,7 +12,7 @@ func main() {
 		cron.SkipIfStillRunning(l),
 	))
 	c.AddJob("@every 3m", scheduler.GetIp{})
-	c.AddJob("@every 3h", scheduler.CheckIp{})
+	c.AddJob("@every 6h", scheduler.CheckIp{})
 	c.Start()
 	defer c.Stop()
 	select {}

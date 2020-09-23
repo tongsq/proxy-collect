@@ -117,8 +117,8 @@ func (s *proxyService) DoGetProxy(getProxyService GetProxyInterface, pool *compo
 		wg.Add(1)
 		go func(wg *sync.WaitGroup) {
 			defer wg.Done()
-			logger.Info("wait 20s ...")
-			time.Sleep(time.Second * 20)
+			logger.Info("wait 10s ...")
+			time.Sleep(time.Second * 10)
 		}(&wg)
 		for _, proxyArr := range proxy_list {
 			ip, port := proxyArr[0], proxyArr[1]
