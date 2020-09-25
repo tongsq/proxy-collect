@@ -10,7 +10,7 @@ import (
 
 func WebRequest(req *http.Request) string {
 	client := http.Client{
-		Timeout: time.Second * 5,
+		Timeout: time.Second * 10,
 	}
 
 	resp, err := client.Do(req)

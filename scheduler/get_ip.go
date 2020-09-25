@@ -23,6 +23,7 @@ func (s GetIp) Run() {
 		service.GetProxyIpJiangXianLi,
 		service.GetProxy89Ip,
 		service.GetProxy7Yip,
+		service.GetProxyProxyList,
 	}
 	for _, getProxyService := range serviceList {
 		go service.ProxyService.DoGetProxy(getProxyService, pool, model.DB)
