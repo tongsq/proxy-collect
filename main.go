@@ -12,7 +12,7 @@ func main() {
 	//))
 	c := cron.New()
 	c.AddJob("@every 3m", scheduler.GetIp{})
-	c.AddJob("@every 6h", scheduler.CheckIp{})
+	c.AddJob("@every 2m", scheduler.CheckIp{})
 	c.Start()
 	defer c.Stop()
 	select {}

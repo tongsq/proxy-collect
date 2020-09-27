@@ -13,7 +13,7 @@ type CheckIp struct {
 
 func (s CheckIp) Run() {
 	var proxys []model.Proxy
-	model.DB.Where("status<>?", 1).Find(&proxys)
+	model.DB.Where("status=?", 1).Find(&proxys)
 	fmt.Printf("count:%d, cap: %d\n", len(proxys), cap(proxys))
 	pool := component.NewTaskPool(20)
 	for _, proxy := range proxys {
@@ -28,6 +28,9 @@ func (s CheckIp) CheckProxyStatus(proxyModel model.Proxy, db *gorm.DB) {
 	fmt.Printf("%s, %s, the result is %v\n", proxyModel.Host, proxyModel.Port, result)
 	if result {
 		proxyModel.Status = 1
+		db.Save(&proxyModel)
+	} else {
+		proxyModel.Status = 0
 		db.Save(&proxyModel)
 	}
 }
