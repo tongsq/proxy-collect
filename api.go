@@ -23,8 +23,9 @@ func main() {
 			list = append(list, str)
 		}
 		c.JSON(200, gin.H{
-			"data": list,
-			"code": 0,
+			"data":  list,
+			"code":  0,
+			"count": len(list),
 		})
 	})
 	r.Run("0.0.0.0:8090")
