@@ -106,9 +106,11 @@ func (s *proxyService) CheckProxyAndSave(host string, port string, source string
 		return
 	}
 	if status == 1 {
-		proxyModel.CheckCount = proxyModel.CheckCount + 1
+		if proxyModel.CheckCount <= 20 {
+			proxyModel.CheckCount = proxyModel.CheckCount + 1
+		}
 		proxyModel.ActiveTime = time.Now().Unix()
-	} else {
+	} else if status == 0 && proxyModel.CheckCount > -10 {
 		proxyModel.CheckCount = proxyModel.CheckCount - 1
 	}
 	if source != "" {
