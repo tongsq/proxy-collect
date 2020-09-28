@@ -138,7 +138,7 @@ func (s *proxyService) DoGetProxy(getProxyService GetProxyInterface, pool *compo
 		}(&wg)
 		for _, proxyArr := range proxyList {
 			ip, port := proxyArr[0], proxyArr[1]
-			source := reflect.TypeOf(getProxyService).String()
+			source := reflect.TypeOf(getProxyService).String()[9:]
 			pool.RunTask(func() { s.CheckProxyAndSave(ip, port, source) })
 		}
 
