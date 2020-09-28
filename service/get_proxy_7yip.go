@@ -60,3 +60,10 @@ func (s *getProxy7Yip) ParseHtml(body string) [][]string {
 
 	return proxyList
 }
+
+//func (s *getProxy7Yip) GetSource() string {
+//	_, file, _, _ := runtime.Caller(0)
+//	arr := strings.Split(file, "/")
+//	name := arr[len(arr)-1]
+//	return name[0:len(name)-3]
+//}

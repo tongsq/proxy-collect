@@ -2,7 +2,6 @@ package scheduler
 
 import (
 	"proxy-collect/component"
-	"proxy-collect/model"
 	"proxy-collect/service"
 )
 
@@ -26,6 +25,6 @@ func (s GetIp) Run() {
 		service.GetProxyProxyList,
 	}
 	for _, getProxyService := range serviceList {
-		go service.ProxyService.DoGetProxy(getProxyService, pool, model.DB)
+		go service.ProxyService.DoGetProxy(getProxyService, pool)
 	}
 }

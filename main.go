@@ -12,7 +12,8 @@ func main() {
 	//))
 	c := cron.New()
 	c.AddJob("@every 3m", scheduler.GetIp{})
-	c.AddJob("@every 2m", scheduler.CheckIp{})
+	c.AddJob("@every 2m", scheduler.CheckActiveIp{})
+	c.AddJob("@delay 5h", scheduler.CheckFailIp{})
 	c.Start()
 	defer c.Stop()
 	select {}

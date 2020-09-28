@@ -9,6 +9,7 @@ import (
 	"proxy-collect/component"
 	"proxy-collect/component/logger"
 	"proxy-collect/model"
+	"reflect"
 	"regexp"
 	"sync"
 	"time"
@@ -72,7 +73,7 @@ func (s *proxyService) CheckIpStatus(host, port string) bool {
 	return true
 }
 
-func (s *proxyService) CheckProxyAndSave(host string, port string, db *gorm.DB) {
+func (s *proxyService) CheckProxyAndSave(host string, port string, source string) {
 	result := s.CheckIpStatus(host, port)
 	if result {
 		logger.Success(result, host, port)
@@ -85,18 +86,33 @@ func (s *proxyService) CheckProxyAndSave(host string, port string, db *gorm.DB) 
 		return
 	}
 	var proxyModel model.Proxy
+	db := model.DB
 	err := db.Where("host = ? AND port = ?", host, port).First(&proxyModel).Error
 
 	if err != nil && gorm.IsRecordNotFoundError(err) {
+		if status == 0 {
+			return
+		}
 		proxyModel = model.Proxy{
 			Host:       host,
 			Port:       port,
 			Status:     status,
 			CreateTime: time.Now().Unix(),
 			UpdateTime: time.Now().Unix(),
+			CheckCount: 1,
+			Source:     source,
 		}
 		db.Create(&proxyModel)
 		return
+	}
+	if status == 1 {
+		proxyModel.CheckCount = proxyModel.CheckCount + 1
+		proxyModel.ActiveTime = time.Now().Unix()
+	} else {
+		proxyModel.CheckCount = proxyModel.CheckCount - 1
+	}
+	if source != "" {
+		proxyModel.Source = source
 	}
 	proxyModel.Status = status
 	proxyModel.UpdateTime = time.Now().Unix()
@@ -104,15 +120,15 @@ func (s *proxyService) CheckProxyAndSave(host string, port string, db *gorm.DB) 
 	return
 }
 
-func (s *proxyService) DoGetProxy(getProxyService GetProxyInterface, pool *component.Pool, db *gorm.DB) {
+func (s *proxyService) DoGetProxy(getProxyService GetProxyInterface, pool *component.Pool) {
 	for _, requestUrl := range getProxyService.GetUrlList() {
 		contentBody := getProxyService.GetContentHtml(requestUrl)
 		if contentBody == "" {
 			time.Sleep(time.Second * 5)
 			continue
 		}
-		proxy_list := getProxyService.ParseHtml(contentBody)
-		logger.Info("获取到ip:", proxy_list)
+		proxyList := getProxyService.ParseHtml(contentBody)
+		logger.Info("获取到ip:", proxyList)
 		var wg sync.WaitGroup = sync.WaitGroup{}
 		wg.Add(1)
 		go func(wg *sync.WaitGroup) {
@@ -120,9 +136,10 @@ func (s *proxyService) DoGetProxy(getProxyService GetProxyInterface, pool *compo
 			logger.Info("wait 10s ...")
 			time.Sleep(time.Second * 10)
 		}(&wg)
-		for _, proxyArr := range proxy_list {
+		for _, proxyArr := range proxyList {
 			ip, port := proxyArr[0], proxyArr[1]
-			pool.RunTask(func() { s.CheckProxyAndSave(ip, port, db) })
+			source := reflect.TypeOf(getProxyService).String()
+			pool.RunTask(func() { s.CheckProxyAndSave(ip, port, source) })
 		}
 
 		wg.Wait()

@@ -15,6 +15,8 @@ type Proxy struct {
 	Region     string `gorm:"column:region"`
 	City       string `gorm:"column:city"`
 	Isp        string `gorm:"column:isp"`
+	CheckCount int64  `gorm:"column:check_count"`
+	Source     string `gorm:"column:source"`
 }
 
 func (Proxy) TableName() string {
