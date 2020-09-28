@@ -83,7 +83,6 @@ func (s *proxyService) CheckProxyAndSave(host string, port string, source string
 	var status int8 = 1
 	if !result {
 		status = 0
-		return
 	}
 	var proxyModel model.Proxy
 	db := model.DB
