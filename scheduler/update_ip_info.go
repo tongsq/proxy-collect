@@ -5,7 +5,6 @@ import (
 	"proxy-collect/component/logger"
 	"proxy-collect/model"
 	"proxy-collect/service"
-	"time"
 )
 
 type UpdateIpInfo struct {
@@ -29,6 +28,5 @@ func (s UpdateIpInfo) Run() {
 		proxy.City = ipInfoDto.City
 		model.DB.Save(proxy)
 		logger.Success("update ip detail success:" + proxy.Host + ":" + proxy.Port)
-		time.Sleep(time.Second)
 	}
 }
