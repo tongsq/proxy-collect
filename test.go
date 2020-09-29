@@ -1,6 +1,9 @@
 package main
 
-import "proxy-collect/scheduler"
+import (
+	"fmt"
+	"proxy-collect/service"
+)
 
 var num int64 = 0
 
@@ -12,6 +15,7 @@ func main() {
 	//pool := component.NewTaskPool(20)
 	//service.ProxyService.DoGetProxy(service.GetProxyProxyList, pool)
 	//time.Sleep(50 * time.Second)
-	//service.ProxyService.GetIpInfo("35.242.210.163")
-	scheduler.UpdateIpInfo{}.Run()
+	info := service.ProxyService.GetIpInfo("110.243.0.176")
+	fmt.Println(info)
+	//scheduler.UpdateIpInfo{}.Run()
 }

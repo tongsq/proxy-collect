@@ -63,17 +63,15 @@ func (s *proxyService) CheckIpStatus(host, port string) bool {
 	}
 	resp, err := client.Do(req)
 	if err != nil {
-		//fmt.Println("http get error", err)
 		return false
 	}
 	defer resp.Body.Close()
 
 	_, err = ioutil.ReadAll(resp.Body)
 	if err != nil {
-		fmt.Println("read error", err)
+		logger.Warning("read error", err)
 		return false
 	}
-	//fmt.Println(string(body))
 	return true
 }
 
@@ -177,7 +175,6 @@ func (s *proxyService) GetIpInfo(host string) *dto.IpInfoDto {
 
 	logger.Info("get ip info from ip138", requestUrl)
 	body := component.WebRequest(req)
-	fmt.Println(body)
 	if body == "" {
 		logger.Error("get from ip138 error")
 		return nil
@@ -192,7 +189,6 @@ func (s *proxyService) GetIpInfo(host string) *dto.IpInfoDto {
 	if err != nil {
 		logger.Error("gb2313 decode error")
 	}
-	fmt.Println(jsonStr)
 	var data map[string][]map[string]string
 	err = json.Unmarshal([]byte(jsonStr), &data)
 
