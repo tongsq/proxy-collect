@@ -28,7 +28,7 @@ func (s UpdateIpInfo) Run() {
 		proxy.Region = ipInfoDto.Region
 		proxy.City = ipInfoDto.City
 		model.DB.Save(proxy)
-		logger.Success("update ip detail success:" + proxy.Host + ":" + proxy.Host)
+		logger.Success("update ip detail success:" + proxy.Host + ":" + proxy.Port)
 		time.Sleep(time.Second)
 	}
 }
