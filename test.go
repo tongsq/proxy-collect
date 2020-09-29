@@ -1,5 +1,7 @@
 package main
 
+import "proxy-collect/scheduler"
+
 var num int64 = 0
 
 func add() {
@@ -11,5 +13,5 @@ func main() {
 	//service.ProxyService.DoGetProxy(service.GetProxyProxyList, pool)
 	//time.Sleep(50 * time.Second)
 	//service.ProxyService.GetIpInfo("35.242.210.163")
-	//scheduler.UpdateIpInfo{}.Run()
+	scheduler.UpdateIpInfo{}.Run()
 }
