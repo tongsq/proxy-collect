@@ -1,13 +1,17 @@
 package service
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/jinzhu/gorm"
+	"golang.org/x/text/encoding/simplifiedchinese"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"proxy-collect/component"
 	"proxy-collect/component/logger"
+	"proxy-collect/config"
+	"proxy-collect/dto"
 	"proxy-collect/model"
 	"reflect"
 	"regexp"
@@ -157,4 +161,49 @@ func (s *proxyService) CheckProxyFormat(host string, port string) bool {
 		return false
 	}
 	return true
+}
+
+func (s *proxyService) UpdateIpDetail(m *model.Proxy) {
+
+}
+
+func (s *proxyService) GetIpInfo(host string) *dto.IpInfoDto {
+	requestUrl := fmt.Sprintf("https://www.ip138.com/iplookup.asp?ip=%s&action=2", host)
+	req, _ := http.NewRequest("GET", requestUrl, nil)
+	req.Header.Set("User-Agent", config.USER_AGENT)
+	req.Header.Set("Host", "www.ip138.com")
+	req.Header.Set("Referer", "https://www.ip138.com/")
+	req.Header.Set("Upgrade-Insecure-Requests", "1")
+
+	logger.Info("get ip info from ip138", requestUrl)
+	body := component.WebRequest(req)
+	fmt.Println(body)
+	if body == "" {
+		logger.Error("get from ip138 error")
+		return nil
+	}
+	re := regexp.MustCompile(`var ip_result = (.+);`)
+	matched := re.FindAllStringSubmatch(body, -1)
+	if len(matched) < 1 {
+		return nil
+	}
+	jsonStr := matched[0][1]
+	jsonStr, err := simplifiedchinese.GBK.NewDecoder().String(jsonStr)
+	if err != nil {
+		logger.Error("gb2313 decode error")
+	}
+	fmt.Println(jsonStr)
+	var data map[string][]map[string]string
+	err = json.Unmarshal([]byte(jsonStr), &data)
+
+	info := data["ip_c_list"][0]
+	ipInfoDto := &dto.IpInfoDto{}
+	ipInfoDto.Country = info["ct"]
+	ipInfoDto.Region = info["prov"]
+	ipInfoDto.City = info["city"]
+	ipInfoDto.Isp = info["yunyin"]
+	if ipInfoDto.Country == "" {
+		return nil
+	}
+	return ipInfoDto
 }

@@ -2,6 +2,7 @@ package scheduler
 
 import (
 	"proxy-collect/component"
+	"proxy-collect/component/logger"
 	"proxy-collect/service"
 )
 
@@ -9,6 +10,7 @@ type GetIp struct {
 }
 
 func (s GetIp) Run() {
+	logger.Success("collect ip start run")
 	pool := component.NewTaskPool(20)
 	serviceList := []service.GetProxyInterface{
 		service.GetProxyXila,

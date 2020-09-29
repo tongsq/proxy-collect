@@ -14,6 +14,7 @@ func main() {
 	c.AddJob("@every 3m", scheduler.GetIp{})
 	c.AddJob("@every 2m", scheduler.CheckActiveIp{})
 	c.AddJob("@delay 5h", scheduler.CheckFailIp{})
+	c.AddJob("@delay 5m", scheduler.UpdateIpInfo{})
 	c.Start()
 	defer c.Stop()
 	select {}
