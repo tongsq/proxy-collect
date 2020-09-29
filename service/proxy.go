@@ -165,7 +165,7 @@ func (s *proxyService) UpdateIpDetail(m *model.Proxy) {
 
 }
 
-func (s *proxyService) GetIpInfo(host string) *dto.IpInfoDto {
+func (s *proxyService) GetIpInfo(host string, port string) *dto.IpInfoDto {
 	requestUrl := fmt.Sprintf("https://www.ip138.com/iplookup.asp?ip=%s&action=2", host)
 	req, _ := http.NewRequest("GET", requestUrl, nil)
 	req.Header.Set("User-Agent", config.USER_AGENT)
@@ -174,7 +174,7 @@ func (s *proxyService) GetIpInfo(host string) *dto.IpInfoDto {
 	req.Header.Set("Upgrade-Insecure-Requests", "1")
 
 	logger.Info("get ip info from ip138", requestUrl)
-	body := component.WebRequest(req)
+	body := component.WebRequestProxy(req, host, port)
 	if body == "" {
 		logger.Error("get from ip138 error")
 		return nil

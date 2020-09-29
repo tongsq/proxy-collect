@@ -18,7 +18,7 @@ func (s UpdateIpInfo) Run() {
 	fmt.Printf("count:%d, cap: %d\n", len(proxies), cap(proxies))
 
 	for _, proxy := range proxies {
-		ipInfoDto := service.ProxyService.GetIpInfo(proxy.Host)
+		ipInfoDto := service.ProxyService.GetIpInfo(proxy.Host, proxy.Port)
 		if ipInfoDto == nil {
 			logger.Error("get ip info fail")
 			continue
