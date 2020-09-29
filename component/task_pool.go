@@ -4,11 +4,10 @@ import (
 	"fmt"
 )
 
-var worker_num int
-
 type Pool struct {
-	worker chan func()
-	size   chan bool
+	worker    chan func()
+	size      chan bool
+	workerNum int
 }
 
 func NewTaskPool(size int) *Pool {
@@ -18,9 +17,9 @@ func NewTaskPool(size int) *Pool {
 	}
 }
 
-func (pool *Pool) workerStart(worker_num int, task func()) {
+func (pool *Pool) workerStart(workerNum int, task func()) {
 	defer func() { <-pool.size }()
-	fmt.Printf("worker number start:%d \n", worker_num)
+	fmt.Printf("worker number start:%d \n", workerNum)
 	for {
 		task()
 		task = <-pool.worker
@@ -31,7 +30,7 @@ func (pool *Pool) RunTask(task func()) {
 	select {
 	case pool.worker <- task:
 	case pool.size <- true:
-		go pool.workerStart(worker_num, task)
-		worker_num++
+		go pool.workerStart(pool.workerNum, task)
+		pool.workerNum++
 	}
 }
