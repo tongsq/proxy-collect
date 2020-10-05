@@ -1,7 +1,8 @@
 package main
 
 import (
-	"proxy-collect/scheduler"
+	"proxy-collect/component"
+	"proxy-collect/service"
 )
 
 var num int64 = 0
@@ -11,8 +12,10 @@ func add() {
 }
 
 func main() {
-	//pool := component.NewTaskPool(20)
-	//service.ProxyService.DoGetProxy(service.GetProxyProxyList, pool)
+	pool := component.NewTaskPool(20)
+	service.ProxyService.DoGetProxy(service.GetProxyZdaye, pool)
 	//time.Sleep(50 * time.Second)
-	scheduler.UpdateIpInfo{}.Run()
+	//scheduler.UpdateIpInfo{}.Run()
+	//res := service.ProxyService.CheckIpStatus("129.28.173.182", "8388")
+	//logger.Info(res)
 }
