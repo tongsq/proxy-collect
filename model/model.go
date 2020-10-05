@@ -7,5 +7,5 @@ var (
 )
 
 func init() {
-	//DB = New()
+	DB = New()
 }
