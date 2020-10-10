@@ -1,6 +1,7 @@
 package component
 
 import (
+	"compress/gzip"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -38,9 +39,18 @@ func request(client *http.Client, req *http.Request) string {
 		return ""
 	}
 	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
+	data := resp.Body
+	if resp.Header.Get("Content-Encoding") == "gzip" {
+		data, err = gzip.NewReader(resp.Body)
+		if err != nil {
+			logger.Error("read gzip response error", err)
+			return ""
+		}
+
+	}
+	body, err := ioutil.ReadAll(data)
 	if err != nil {
-		fmt.Println("read error", err)
+		logger.Error("read error", err)
 		return ""
 	}
 	return string(body)

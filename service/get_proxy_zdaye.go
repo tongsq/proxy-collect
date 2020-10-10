@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
 	"net/http"
-	"os"
 	"proxy-collect/component"
 	"proxy-collect/component/logger"
 	"proxy-collect/config"
@@ -22,7 +21,6 @@ type getProxyZdaye struct {
 func (s *getProxyZdaye) GetUrlList() []string {
 	u := "https://www.zdaye.com/dayProxy/1.html"
 	body := s.GetContentHtml(u)
-	fmt.Println(body)
 	doc, err := goquery.NewDocumentFromReader(strings.NewReader(body))
 	if err != nil {
 		logger.Error(err)
@@ -31,11 +29,10 @@ func (s *getProxyZdaye) GetUrlList() []string {
 	list := []string{}
 	doc.Find("p.thread_tags").Each(func(i int, selection *goquery.Selection) {
 		a := selection.ChildrenFiltered("A").First()
-		fmt.Println(a)
-		fmt.Println(a.Text())
-		//list = append(list, fmt.Sprintf("https://www.zdaye.com%s", a.get("href")))
+		href, _ := a.Attr("href")
+		list = append(list, fmt.Sprintf("https://www.zdaye.com%s", href))
 	})
-	fmt.Println(list)
+
 	return list
 }
 func (s *getProxyZdaye) GetContentHtml(requestUrl string) string {
@@ -56,13 +53,11 @@ func (s *getProxyZdaye) GetContentHtml(requestUrl string) string {
 func (s *getProxyZdaye) ParseHtml(body string) [][]string {
 
 	var proxyList [][]string
-	re := regexp.MustCompile(`(\d+\.\d+\.\d+\.\d+\):(\d+))`)
+	re := regexp.MustCompile(`(\d+\.\d+\.\d+\.\d+):(\d+)`)
 	matched := re.FindAllStringSubmatch(body, -1)
 	for _, match := range matched {
 		proxyArr := []string{match[1], match[2]}
 		proxyList = append(proxyList, proxyArr)
 	}
-	fmt.Println(proxyList)
-	os.Exit(0)
 	return proxyList
 }

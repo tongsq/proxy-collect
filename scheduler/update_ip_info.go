@@ -1,7 +1,6 @@
 package scheduler
 
 import (
-	"fmt"
 	"proxy-collect/component/logger"
 	"proxy-collect/model"
 	"proxy-collect/service"
@@ -14,7 +13,7 @@ func (s UpdateIpInfo) Run() {
 	logger.Success("update ip info start run")
 	var proxies []model.Proxy
 	model.DB.Where("status=?", 1).Where("country=''").Find(&proxies)
-	fmt.Printf("count:%d, cap: %d\n", len(proxies), cap(proxies))
+	logger.Info("count:%d, cap: %d\n", len(proxies), cap(proxies))
 
 	for _, proxy := range proxies {
 		ipInfoDto := service.ProxyService.GetIpInfo(proxy.Host, proxy.Port)

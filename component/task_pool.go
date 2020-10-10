@@ -1,7 +1,7 @@
 package component
 
 import (
-	"fmt"
+	"proxy-collect/component/logger"
 )
 
 type Pool struct {
@@ -19,7 +19,7 @@ func NewTaskPool(size int) *Pool {
 
 func (pool *Pool) workerStart(workerNum int, task func()) {
 	defer func() { <-pool.size }()
-	fmt.Printf("worker number start:%d \n", workerNum)
+	logger.Info("worker number start:%d \n", workerNum)
 	for {
 		task()
 		task = <-pool.worker

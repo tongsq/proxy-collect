@@ -1,8 +1,8 @@
 package main
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
+	"proxy-collect/component/logger"
 	"proxy-collect/model"
 )
 
@@ -16,7 +16,7 @@ func main() {
 	r.GET("/all", func(c *gin.Context) {
 		var proxies []model.Proxy
 		model.DB.Where("status=?", 1).Find(&proxies)
-		fmt.Printf("count:%d, cap: %d\n", len(proxies), cap(proxies))
+		logger.Info("count:%d, cap: %d\n", len(proxies), cap(proxies))
 		list := []string{}
 		for _, proxy := range proxies {
 			str := proxy.Host + ":" + proxy.Port
