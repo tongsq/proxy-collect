@@ -23,7 +23,7 @@ func main() {
 	//	fmt.Println("pprof start...")
 	//	fmt.Println(http.ListenAndServe(":9876", nil))
 	//}()
-	test()
+	go test()
 	for true {
 		logger.Info(runtime.NumGoroutine())
 		time.Sleep(time.Second)
@@ -31,7 +31,7 @@ func main() {
 }
 
 func test() {
-	pool := component.NewTaskPool(1000)
+	pool := component.NewTaskPool(10000)
 	defer pool.Close()
 	for i := 0; i < 100000; i++ {
 		pool.RunTask(func() {

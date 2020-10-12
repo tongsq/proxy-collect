@@ -123,7 +123,8 @@ func (s *proxyService) CheckProxyAndSave(host string, port string, source string
 	return
 }
 
-func (s *proxyService) DoGetProxy(getProxyService GetProxyInterface, pool *component.Pool) {
+func (s *proxyService) DoGetProxy(getProxyService GetProxyInterface, pool *component.Pool, w *sync.WaitGroup) {
+	defer w.Done()
 	for _, requestUrl := range getProxyService.GetUrlList() {
 		contentBody := getProxyService.GetContentHtml(requestUrl)
 		if contentBody == "" {
