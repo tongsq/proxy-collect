@@ -19,7 +19,7 @@ func NewTaskPool(size int) *Pool {
 
 func (pool *Pool) workerStart(workerNum int, task func()) {
 	defer func() { <-pool.size }()
-	logger.Info("worker number start:%d \n", workerNum)
+	logger.Info("worker number start:", workerNum)
 	for {
 		task()
 		task = <-pool.worker
