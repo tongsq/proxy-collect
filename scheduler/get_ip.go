@@ -4,7 +4,6 @@ import (
 	"proxy-collect/component"
 	"proxy-collect/component/logger"
 	"proxy-collect/service"
-	"sync"
 )
 
 type GetIp struct {
@@ -12,8 +11,8 @@ type GetIp struct {
 
 func (s GetIp) Run() {
 	logger.Success("collect ip start run")
-	pool := component.NewTaskPool(100)
-	defer pool.Close()
+	//pool := component.NewTaskPool(100)
+	//defer pool.Close()
 	serviceList := []service.GetProxyInterface{
 		service.GetProxyXila,
 		service.GetProxyNima,
@@ -29,13 +28,8 @@ func (s GetIp) Run() {
 		service.GetProxyProxyList,
 		service.GetProxyZdaye,
 	}
-	var wg sync.WaitGroup = sync.WaitGroup{}
 	for _, getProxyService := range serviceList {
-		wg.Add(1)
-		go service.ProxyService.DoGetProxy(getProxyService, pool, &wg)
+		go service.ProxyService.DoGetProxy(getProxyService, component.TaskPool)
 	}
-	wg.Wait()
-	logger.Success("collect ip end run")
-	logger.Success("collect ip end run")
-	logger.Success("collect ip end run")
+
 }

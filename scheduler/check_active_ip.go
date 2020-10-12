@@ -15,10 +15,10 @@ func (s CheckActiveIp) Run() {
 	var proxies []model.Proxy
 	model.DB.Where("status=?", 1).Find(&proxies)
 	logger.Info("count:%d, cap: %d\n", len(proxies), cap(proxies))
-	pool := component.NewTaskPool(20)
-	defer pool.Close()
+	//pool := component.NewTaskPool(20)
+	//defer pool.Close()
 	for _, proxy := range proxies {
 		var proxyTmp model.Proxy = proxy
-		pool.RunTask(func() { service.ProxyService.CheckProxyAndSave(proxyTmp.Host, proxyTmp.Port, "") })
+		component.TaskPool.RunTask(func() { service.ProxyService.CheckProxyAndSave(proxyTmp.Host, proxyTmp.Port, "") })
 	}
 }
