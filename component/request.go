@@ -46,7 +46,7 @@ func request(client *http.Client, req *http.Request) string {
 			logger.Error("read gzip response error", err)
 			return ""
 		}
-
+		defer data.Close()
 	}
 	body, err := ioutil.ReadAll(data)
 	if err != nil {
