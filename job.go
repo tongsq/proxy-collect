@@ -2,7 +2,9 @@ package main
 
 import (
 	"github.com/robfig/cron/v3"
+	"proxy-collect/component/logger"
 	"proxy-collect/scheduler"
+	"runtime"
 )
 
 func main() {
@@ -17,5 +19,7 @@ func main() {
 	c.AddJob("@delay 5m", scheduler.UpdateIpInfo{})
 	c.Start()
 	defer c.Stop()
-	select {}
+	for true {
+		logger.Warning("routine num : ", runtime.NumGoroutine())
+	}
 }

@@ -23,6 +23,10 @@ func (pool *Pool) workerStart(workerNum int, task func()) {
 	for {
 		task()
 		task = <-pool.worker
+		if task == nil {
+			logger.Success("worker exit:", workerNum)
+			break
+		}
 	}
 }
 
@@ -32,5 +36,12 @@ func (pool *Pool) RunTask(task func()) {
 	case pool.size <- true:
 		go pool.workerStart(pool.workerNum, task)
 		pool.workerNum++
+	}
+}
+
+func (pool *Pool) Close() {
+	l := len(pool.size)
+	for i := 0; i < l; i++ {
+		pool.worker <- nil
 	}
 }

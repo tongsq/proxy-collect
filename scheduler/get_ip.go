@@ -12,6 +12,7 @@ type GetIp struct {
 func (s GetIp) Run() {
 	logger.Success("collect ip start run")
 	pool := component.NewTaskPool(100)
+	defer pool.Close()
 	serviceList := []service.GetProxyInterface{
 		service.GetProxyXila,
 		service.GetProxyNima,

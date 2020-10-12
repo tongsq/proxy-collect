@@ -2,7 +2,9 @@ package main
 
 import (
 	"proxy-collect/component"
-	"proxy-collect/service"
+	"proxy-collect/component/logger"
+	"runtime"
+	"time"
 )
 
 var num int64 = 0
@@ -12,10 +14,28 @@ func add() {
 }
 
 func main() {
-	pool := component.NewTaskPool(20)
-	service.ProxyService.DoGetProxy(service.GetProxyZdaye, pool)
+
 	//time.Sleep(50 * time.Second)
 	//scheduler.UpdateIpInfo{}.Run()
 	//res := service.ProxyService.CheckIpStatus("129.28.173.182", "8388")
 	//logger.Info(res)
+	//go func() {
+	//	fmt.Println("pprof start...")
+	//	fmt.Println(http.ListenAndServe(":9876", nil))
+	//}()
+	test()
+	for true {
+		logger.Info(runtime.NumGoroutine())
+		time.Sleep(time.Second)
+	}
+}
+
+func test() {
+	pool := component.NewTaskPool(1000)
+	defer pool.Close()
+	for i := 0; i < 100000; i++ {
+		pool.RunTask(func() {
+			logger.Info("hello")
+		})
+	}
 }

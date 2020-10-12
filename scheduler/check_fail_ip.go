@@ -16,6 +16,7 @@ func (s CheckFailIp) Run() {
 	model.DB.Where("status<>?", 1).Where("check_count>0").Find(&proxies)
 	logger.Info("count:%d, cap: %d\n", len(proxies), cap(proxies))
 	pool := component.NewTaskPool(40)
+	defer pool.Close()
 	for _, proxy := range proxies {
 		var proxyTmp model.Proxy = proxy
 		pool.RunTask(func() { service.ProxyService.CheckProxyAndSave(proxyTmp.Host, proxyTmp.Port, "") })
