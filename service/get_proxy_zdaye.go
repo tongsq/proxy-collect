@@ -32,7 +32,9 @@ func (s *getProxyZdaye) GetUrlList() []string {
 		href, _ := a.Attr("href")
 		list = append(list, fmt.Sprintf("https://www.zdaye.com%s", href))
 	})
-
+	if len(list) > 5 {
+		return list[0:5]
+	}
 	return list
 }
 func (s *getProxyZdaye) GetContentHtml(requestUrl string) string {
