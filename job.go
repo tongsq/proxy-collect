@@ -5,6 +5,7 @@ import (
 	"proxy-collect/component/logger"
 	"proxy-collect/scheduler"
 	"runtime"
+	"time"
 )
 
 func main() {
@@ -21,5 +22,6 @@ func main() {
 	defer c.Stop()
 	for true {
 		logger.Warning("routine num : ", runtime.NumGoroutine())
+		time.Sleep(time.Second)
 	}
 }
