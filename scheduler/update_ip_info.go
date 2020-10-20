@@ -14,7 +14,7 @@ type UpdateIpInfo struct {
 func (s UpdateIpInfo) Run() {
 	logger.Success("update ip info start run")
 	var proxies []model.Proxy
-	model.DB.Where("status=?", 1).Find(&proxies)
+	model.DB.Where("status=? and country=?", 1, "").Find(&proxies)
 	logger.Info(fmt.Sprintf("count:%d, cap: %d\n", len(proxies), cap(proxies)))
 
 	for _, proxy := range proxies {
