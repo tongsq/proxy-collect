@@ -182,10 +182,11 @@ func (s *proxyService) GetIpInfo(host string, port string) *dto.IpInfoDto {
 		logger.Error("get from ip138 use proxy error")
 		body = component.WebRequest(req)
 		if body == "" {
-			logger.Error("get from ip138 error")
+			logger.Error("get from ip138 no proxy error")
 			return nil
 		}
 	}
+	fmt.Println(body)
 	re := regexp.MustCompile(`var ip_result = (.+);`)
 	matched := re.FindAllStringSubmatch(body, -1)
 	if len(matched) < 1 {

@@ -3,7 +3,7 @@ package main
 import (
 	"proxy-collect/component"
 	"proxy-collect/component/logger"
-	"proxy-collect/scheduler"
+	"proxy-collect/service"
 )
 
 var num int64 = 0
@@ -27,7 +27,9 @@ func main() {
 	//	logger.Info(runtime.NumGoroutine())
 	//	time.Sleep(time.Second)
 	//}
-	scheduler.UpdateIpInfo{}.Run()
+	//scheduler.UpdateIpInfo{}.Run()
+	ipInfoDto := service.ProxyService.GetIpInfo("35.196.118.22", "80")
+	logger.Info("get ip info:", ipInfoDto)
 }
 
 func test() {
