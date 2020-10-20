@@ -3,8 +3,7 @@ package main
 import (
 	"proxy-collect/component"
 	"proxy-collect/component/logger"
-	"runtime"
-	"time"
+	"proxy-collect/scheduler"
 )
 
 var num int64 = 0
@@ -23,11 +22,12 @@ func main() {
 	//	fmt.Println("pprof start...")
 	//	fmt.Println(http.ListenAndServe(":9876", nil))
 	//}()
-	go test()
-	for true {
-		logger.Info(runtime.NumGoroutine())
-		time.Sleep(time.Second)
-	}
+	//go test()
+	//for true {
+	//	logger.Info(runtime.NumGoroutine())
+	//	time.Sleep(time.Second)
+	//}
+	scheduler.UpdateIpInfo{}.Run()
 }
 
 func test() {
