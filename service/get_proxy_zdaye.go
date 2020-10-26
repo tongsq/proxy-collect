@@ -3,10 +3,10 @@ package service
 import (
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
-	"net/http"
 	"proxy-collect/component"
 	"proxy-collect/component/logger"
 	"proxy-collect/config"
+	"proxy-collect/dto"
 	"regexp"
 	"strings"
 )
@@ -38,18 +38,20 @@ func (s *getProxyZdaye) GetUrlList() []string {
 	return list
 }
 func (s *getProxyZdaye) GetContentHtml(requestUrl string) string {
-	req, _ := http.NewRequest("GET", requestUrl, nil)
-	req.Header.Set("user-agent", config.USER_AGENT)
-	req.Header.Set("Upgrade-Insecure-Requests", "1")
-	req.Header.Set("Host", "www.zdaye.com")
-	req.Header.Set("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9")
-	req.Header.Set("Accept-Encoding", "gzip, deflate, br")
-	req.Header.Set("Accept-Language", "zh-CN,zh;q=0.9")
-	req.Header.Set("Sec-Fetch-Dest", "document")
-	req.Header.Set("Sec-Fetch-Mode", "navigate")
+
+	h := dto.RequestHeaderDto{
+		UserAgent:               config.USER_AGENT,
+		UpgradeInsecureRequests: "1",
+		Host:                    "www.zdaye.com",
+		Accept:                  "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+		AcceptEncoding:          "gzip, deflate, br",
+		AcceptLanguage:          "zh-CN,zh;q=0.9",
+		SecFetchDest:            "document",
+		SecFetchMode:            "navigate",
+	}
 
 	logger.Info("get proxy from zdaye.com", requestUrl)
-	return component.WebRequest(req)
+	return component.WebGet(requestUrl, h)
 }
 
 func (s *getProxyZdaye) ParseHtml(body string) [][]string {

@@ -3,10 +3,10 @@ package service
 import (
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
-	"net/http"
 	"proxy-collect/component"
 	"proxy-collect/component/logger"
 	"proxy-collect/config"
+	"proxy-collect/dto"
 	"strings"
 )
 
@@ -29,11 +29,13 @@ func (s *getProxyIp3366) GetUrlList() []string {
 	return list
 }
 func (s *getProxyIp3366) GetContentHtml(requestUrl string) string {
-	req, _ := http.NewRequest("GET", requestUrl, nil)
-	req.Header.Set("User-Agent", config.USER_AGENT)
-	req.Header.Set("Upgrade-Insecure-Requests", "1")
+	h := dto.RequestHeaderDto{
+		UserAgent:               config.USER_AGENT,
+		UpgradeInsecureRequests: "1",
+	}
+
 	logger.Info("get proxy from ip3366", requestUrl)
-	return component.WebRequest(req)
+	return component.WebGet(requestUrl, h)
 }
 
 func (s *getProxyIp3366) ParseHtml(body string) [][]string {

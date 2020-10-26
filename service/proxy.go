@@ -167,20 +167,20 @@ func (s *proxyService) UpdateIpDetail(m *model.Proxy) {
 
 func (s *proxyService) GetIpInfo(host string, port string) *dto.IpInfoDto {
 	requestUrl := fmt.Sprintf("https://www.ip138.com/iplookup.asp?ip=%s&action=2", host)
-	req, _ := http.NewRequest("GET", requestUrl, nil)
-	req.Header.Set("User-Agent", config.USER_AGENT)
-	req.Header.Set("Host", "www.ip138.com")
-	req.Header.Set("Referer", "https://www.ip138.com/")
-	req.Header.Set("Upgrade-Insecure-Requests", "1")
-	req.Header.Set("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9")
-	req.Header.Set("Accept-Encoding", "gzip, deflate, br")
-	//req.Header.Set("Cookie", "Hm_lvt_f4f76646cd877e538aa1fbbdf351c548=1601348274; ASPSESSIONIDCABDDQTR=NBBDCIJABAEGFJADMNGGCIGN; ASPSESSIONIDQCCQCTTR=MMHBOJHCBNCNKHKFGPHJJHOA; Hm_lpvt_f4f76646cd877e538aa1fbbdf351c548=1603158489")
+	h := dto.RequestHeaderDto{
+		UserAgent:               config.USER_AGENT,
+		UpgradeInsecureRequests: "1",
+		Host:                    "www.ip138.com",
+		Referer:                 "https://www.ip138.com/",
+		AcceptEncoding:          "gzip, deflate, br",
+		Accept:                  "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+	}
 
 	logger.Info("get ip info from ip138", requestUrl)
-	body := component.WebRequestProxy(req, host, port)
+	body := component.WebGetProxy(requestUrl, h, host, port)
 	if body == "" {
 		logger.Error("get from ip138 use proxy error")
-		body = component.WebRequest(req)
+		body = component.WebGet(requestUrl, h)
 		if body == "" {
 			logger.Error("get from ip138 no proxy error")
 			return nil

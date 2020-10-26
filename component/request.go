@@ -7,10 +7,13 @@ import (
 	"net/http"
 	"net/url"
 	"proxy-collect/component/logger"
+	"proxy-collect/dto"
 	"time"
 )
 
-func WebRequestProxy(req *http.Request, host string, port string) string {
+func WebGetProxy(requestUrl string, header dto.RequestHeaderDto, host string, port string) string {
+	req, _ := http.NewRequest("GET", requestUrl, nil)
+	req = addHeader(req, &header)
 	proxyServer := fmt.Sprintf("http://%s:%s", host, port)
 	proxyUrl, _ := url.Parse(proxyServer)
 	client := &http.Client{
@@ -20,9 +23,29 @@ func WebRequestProxy(req *http.Request, host string, port string) string {
 	return request(client, req)
 }
 
+func WebGet(requestUrl string, header dto.RequestHeaderDto) string {
+	req, _ := http.NewRequest("GET", requestUrl, nil)
+	req = addHeader(req, &header)
+
+	client := &http.Client{
+		Timeout: time.Second * 5,
+	}
+	return request(client, req)
+}
+
 func WebRequest(req *http.Request) string {
 	client := &http.Client{
 		Timeout: time.Second * 10,
+	}
+	return request(client, req)
+}
+
+func WebRequestProxy(req *http.Request, host string, port string) string {
+	proxyServer := fmt.Sprintf("http://%s:%s", host, port)
+	proxyUrl, _ := url.Parse(proxyServer)
+	client := &http.Client{
+		Transport: &http.Transport{Proxy: http.ProxyURL(proxyUrl)},
+		Timeout:   time.Second * 5,
 	}
 	return request(client, req)
 }
@@ -54,4 +77,35 @@ func request(client *http.Client, req *http.Request) string {
 		return ""
 	}
 	return string(body)
+}
+
+func addHeader(req *http.Request, h *dto.RequestHeaderDto) *http.Request {
+	if h.Host != "" {
+		req.Header.Set("Host", h.Host)
+	}
+	if h.Accept != "" {
+		req.Header.Set("Accept", h.Accept)
+	}
+	if h.AcceptEncoding != "" {
+		req.Header.Set("Accept-Encoding", h.AcceptEncoding)
+	}
+	if h.Referer != "" {
+		req.Header.Set("Referer", h.Referer)
+	}
+	if h.UpgradeInsecureRequests != "" {
+		req.Header.Set("Upgrade-Insecure-Requests", h.UpgradeInsecureRequests)
+	}
+	if h.UserAgent != "" {
+		req.Header.Set("User-Agent", h.UserAgent)
+	}
+	if h.AcceptLanguage != "" {
+		req.Header.Set("Accept-Language", h.AcceptLanguage)
+	}
+	if h.SecFetchDest != "" {
+		req.Header.Set("Sec-Fetch-Dest", h.SecFetchDest)
+	}
+	if h.SecFetchMode != "" {
+		req.Header.Set("Sec-Fetch-Mode", h.SecFetchMode)
+	}
+	return req
 }
