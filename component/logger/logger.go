@@ -24,7 +24,7 @@ func init() {
 }
 
 func Info(v ...interface{}) {
-	logger.Println(getLogContent("", v))
+	logger.Println(getLogContent("", v)...)
 }
 
 func Success(v ...interface{}) {
