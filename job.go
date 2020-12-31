@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/robfig/cron/v3"
-	"proxy-collect/component/logger"
+	"github.com/tongsq/go-lib/logger"
 	"proxy-collect/scheduler"
 	"runtime"
 	"time"

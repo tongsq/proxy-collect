@@ -3,10 +3,9 @@ package service
 import (
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
-	"proxy-collect/component"
-	"proxy-collect/component/logger"
+	"github.com/tongsq/go-lib/logger"
+	"github.com/tongsq/go-lib/request"
 	"proxy-collect/config"
-	"proxy-collect/dto"
 	"strings"
 )
 
@@ -29,13 +28,18 @@ func (s *getProxyIp3366) GetUrlList() []string {
 	return list
 }
 func (s *getProxyIp3366) GetContentHtml(requestUrl string) string {
-	h := dto.RequestHeaderDto{
+	h := &request.RequestHeaderDto{
 		UserAgent:               config.USER_AGENT,
 		UpgradeInsecureRequests: "1",
 	}
 
 	logger.Info("get proxy from ip3366", requestUrl)
-	return component.WebGet(requestUrl, h)
+	data, err := request.WebGet(requestUrl, h, nil)
+	if err != nil || data == nil {
+		logger.Error("get proxy from ip3366 fail", err, data)
+		return ""
+	}
+	return data.Body
 }
 
 func (s *getProxyIp3366) ParseHtml(body string) [][]string {

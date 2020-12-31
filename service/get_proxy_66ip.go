@@ -3,11 +3,10 @@ package service
 import (
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
+	"github.com/tongsq/go-lib/logger"
+	"github.com/tongsq/go-lib/request"
 	"golang.org/x/text/encoding/simplifiedchinese"
-	"proxy-collect/component"
-	"proxy-collect/component/logger"
 	"proxy-collect/config"
-	"proxy-collect/dto"
 	"strings"
 )
 
@@ -29,14 +28,19 @@ func (s *getProxy66ip) GetUrlList() []string {
 }
 
 func (s *getProxy66ip) GetContentHtml(requestUrl string) string {
-	h := dto.RequestHeaderDto{
+	h := &request.RequestHeaderDto{
 		UserAgent:               config.USER_AGENT,
 		Host:                    "www.66ip.cn",
 		Referer:                 "http://www.66ip.cn/2.html",
 		UpgradeInsecureRequests: "1",
 	}
 	logger.Info("get proxy from 66ip", requestUrl)
-	return component.WebGet(requestUrl, h)
+	data, err := request.WebGet(requestUrl, h, nil)
+	if err != nil || data == nil {
+		logger.Error("get proxy from 66ip fail", err, data)
+		return ""
+	}
+	return data.Body
 }
 
 func (s *getProxy66ip) ParseHtml(body string) [][]string {

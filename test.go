@@ -1,9 +1,12 @@
 package main
 
 import (
-	"proxy-collect/component"
-	"proxy-collect/component/logger"
+	"fmt"
+	"github.com/tongsq/go-lib/component"
+	"github.com/tongsq/go-lib/logger"
+	"github.com/tongsq/go-lib/util"
 	"proxy-collect/service"
+	"time"
 )
 
 var num int64 = 0
@@ -13,7 +16,9 @@ func add() {
 }
 
 func main() {
-
+	fmt.Println(time.Now().Unix())
+	fmt.Println(util.Add(1, 2, 3))
+	return
 	//time.Sleep(50 * time.Second)
 	//scheduler.UpdateIpInfo{}.Run()
 	//res := service.ProxyService.CheckIpStatus("129.28.173.182", "8388")

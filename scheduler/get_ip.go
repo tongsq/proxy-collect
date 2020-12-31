@@ -1,8 +1,8 @@
 package scheduler
 
 import (
-	"proxy-collect/component"
-	"proxy-collect/component/logger"
+	"github.com/tongsq/go-lib/component"
+	"github.com/tongsq/go-lib/logger"
 	"proxy-collect/service"
 )
 

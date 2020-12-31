@@ -3,10 +3,9 @@ package service
 import (
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
-	"proxy-collect/component"
-	"proxy-collect/component/logger"
+	"github.com/tongsq/go-lib/logger"
+	"github.com/tongsq/go-lib/request"
 	"proxy-collect/config"
-	"proxy-collect/dto"
 	"strings"
 )
 
@@ -27,14 +26,18 @@ func (s *getProxy7Yip) GetUrlList() []string {
 	return list
 }
 func (s *getProxy7Yip) GetContentHtml(requestUrl string) string {
-	h := dto.RequestHeaderDto{
+	h := &request.RequestHeaderDto{
 		UserAgent:               config.USER_AGENT,
 		UpgradeInsecureRequests: "1",
 		Host:                    "www.7yip.cn",
 		Referer:                 "https://www.7yip.cn/",
 	}
 	logger.Info("get proxy from 7yip", requestUrl)
-	return component.WebGet(requestUrl, h)
+	data, err := request.WebGet(requestUrl, h, nil)
+	if err != nil || data == nil {
+		logger.Error("get proxy from 7yip fail", err, data)
+	}
+	return data.Body
 }
 
 func (s *getProxy7Yip) ParseHtml(body string) [][]string {

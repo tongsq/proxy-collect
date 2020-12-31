@@ -4,12 +4,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/jinzhu/gorm"
+	"github.com/tongsq/go-lib/component"
+	"github.com/tongsq/go-lib/logger"
+	"github.com/tongsq/go-lib/request"
 	"golang.org/x/text/encoding/simplifiedchinese"
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"proxy-collect/component"
-	"proxy-collect/component/logger"
 	"proxy-collect/config"
 	"proxy-collect/dto"
 	"proxy-collect/model"
@@ -167,7 +168,7 @@ func (s *proxyService) UpdateIpDetail(m *model.Proxy) {
 
 func (s *proxyService) GetIpInfo(host string, port string) *dto.IpInfoDto {
 	requestUrl := fmt.Sprintf("https://www.ip138.com/iplookup.asp?ip=%s&action=2", host)
-	h := dto.RequestHeaderDto{
+	h := &request.RequestHeaderDto{
 		UserAgent:               config.USER_AGENT,
 		UpgradeInsecureRequests: "1",
 		Host:                    "www.ip138.com",
@@ -177,30 +178,30 @@ func (s *proxyService) GetIpInfo(host string, port string) *dto.IpInfoDto {
 	}
 
 	logger.Info("get ip info from ip138", requestUrl)
-	body := component.WebGetProxy(requestUrl, h, host, port)
-	if body == "" {
-		logger.Error("get from ip138 use proxy error")
-		body = component.WebGet(requestUrl, h)
-		if body == "" {
-			logger.Error("get from ip138 no proxy error")
+	data, err := request.WebGetProxy(requestUrl, h, host, port)
+	if err != nil || data == nil {
+		logger.Error("get from ip138 use proxy error", err, data)
+		data, err = request.WebGet(requestUrl, h, nil)
+		if err != nil || data == nil {
+			logger.Error("get from ip138 no proxy error", err, data)
 			return nil
 		}
 	}
-	fmt.Println(body)
+	fmt.Println(data.Body)
 	re := regexp.MustCompile(`var ip_result = (.+);`)
-	matched := re.FindAllStringSubmatch(body, -1)
+	matched := re.FindAllStringSubmatch(data.Body, -1)
 	if len(matched) < 1 {
 		return nil
 	}
 	jsonStr := matched[0][1]
-	jsonStr, err := simplifiedchinese.GBK.NewDecoder().String(jsonStr)
+	jsonStr, err = simplifiedchinese.GBK.NewDecoder().String(jsonStr)
 	if err != nil {
 		logger.Error("gb2313 decode error")
 	}
-	var data map[string][]map[string]string
+	var result map[string][]map[string]string
 	err = json.Unmarshal([]byte(jsonStr), &data)
 
-	info := data["ip_c_list"][0]
+	info := result["ip_c_list"][0]
 	ipInfoDto := &dto.IpInfoDto{}
 	ipInfoDto.Country = info["ct"]
 	ipInfoDto.Region = info["prov"]

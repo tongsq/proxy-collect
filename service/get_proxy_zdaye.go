@@ -3,10 +3,9 @@ package service
 import (
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
-	"proxy-collect/component"
-	"proxy-collect/component/logger"
+	"github.com/tongsq/go-lib/logger"
+	"github.com/tongsq/go-lib/request"
 	"proxy-collect/config"
-	"proxy-collect/dto"
 	"regexp"
 	"strings"
 )
@@ -37,9 +36,10 @@ func (s *getProxyZdaye) GetUrlList() []string {
 	}
 	return list
 }
+
 func (s *getProxyZdaye) GetContentHtml(requestUrl string) string {
 
-	h := dto.RequestHeaderDto{
+	h := &request.RequestHeaderDto{
 		UserAgent:               config.USER_AGENT,
 		UpgradeInsecureRequests: "1",
 		Host:                    "www.zdaye.com",
@@ -51,7 +51,12 @@ func (s *getProxyZdaye) GetContentHtml(requestUrl string) string {
 	}
 
 	logger.Info("get proxy from zdaye.com", requestUrl)
-	return component.WebGet(requestUrl, h)
+	data, err := request.WebGet(requestUrl, h, nil)
+	if err != nil || data == nil {
+		logger.Error("get proxy from zdaye.com fail", err, data)
+		return ""
+	}
+	return data.Body
 }
 
 func (s *getProxyZdaye) ParseHtml(body string) [][]string {

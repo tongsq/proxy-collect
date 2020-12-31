@@ -3,10 +3,9 @@ package service
 import (
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
-	"proxy-collect/component"
-	"proxy-collect/component/logger"
+	"github.com/tongsq/go-lib/logger"
+	"github.com/tongsq/go-lib/request"
 	"proxy-collect/config"
-	"proxy-collect/dto"
 	"strings"
 )
 
@@ -29,14 +28,19 @@ func (s *getProxyXila) GetUrlList() []string {
 
 func (s *getProxyXila) GetContentHtml(requestUrl string) string {
 
-	h := dto.RequestHeaderDto{
+	h := &request.RequestHeaderDto{
 		UserAgent:               config.USER_AGENT,
 		Host:                    "www.xiladaili.com",
 		Referer:                 "http://www.xiladaili.com/https/",
 		UpgradeInsecureRequests: "1",
 	}
 	logger.Info("get proxy from xiladaili", requestUrl)
-	return component.WebGet(requestUrl, h)
+	data, err := request.WebGet(requestUrl, h, nil)
+	if err != nil || data == nil {
+		logger.Error("get proxy from xiladaili fail", err, data)
+		return ""
+	}
+	return data.Body
 }
 
 func (s *getProxyXila) ParseHtml(body string) [][]string {

@@ -2,10 +2,9 @@ package service
 
 import (
 	"github.com/PuerkitoBio/goquery"
-	"proxy-collect/component"
-	"proxy-collect/component/logger"
+	"github.com/tongsq/go-lib/logger"
+	"github.com/tongsq/go-lib/request"
 	"proxy-collect/config"
-	"proxy-collect/dto"
 	"strings"
 )
 
@@ -26,14 +25,19 @@ func (s *getProxyData5u) GetUrlList() []string {
 }
 
 func (s *getProxyData5u) GetContentHtml(requestUrl string) string {
-	h := dto.RequestHeaderDto{
+	h := &request.RequestHeaderDto{
 		UserAgent:               config.USER_AGENT,
 		Host:                    "www.data5u.com",
 		UpgradeInsecureRequests: "1",
 	}
 
 	logger.Info("get proxy from data5u", requestUrl)
-	return component.WebGet(requestUrl, h)
+	data, err := request.WebGet(requestUrl, h, nil)
+	if err != nil || data == nil {
+		logger.Error("get proxy from data5u fail", err, data)
+		return ""
+	}
+	return data.Body
 }
 
 func (s *getProxyData5u) ParseHtml(body string) [][]string {

@@ -2,7 +2,7 @@ package scheduler
 
 import (
 	"fmt"
-	"proxy-collect/component/logger"
+	"github.com/tongsq/go-lib/logger"
 	"proxy-collect/model"
 	"proxy-collect/service"
 	"time"
