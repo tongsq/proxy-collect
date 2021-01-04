@@ -6,6 +6,7 @@ import (
 	"github.com/tongsq/go-lib/logger"
 	"github.com/tongsq/go-lib/request"
 	"proxy-collect/config"
+	"proxy-collect/consts"
 	"strings"
 )
 
@@ -34,10 +35,10 @@ func (s *getProxyXila) GetContentHtml(requestUrl string) string {
 		Referer:                 "http://www.xiladaili.com/https/",
 		UpgradeInsecureRequests: "1",
 	}
-	logger.Info("get proxy from xiladaili", requestUrl)
+	logger.Info("get proxy from xiladaili", logger.Fields{"url": requestUrl})
 	data, err := request.WebGet(requestUrl, h, nil)
 	if err != nil || data == nil {
-		logger.Error("get proxy from xiladaili fail", err, data)
+		logger.Error("get proxy from xiladaili fail", logger.Fields{"err": err, "data": data})
 		return ""
 	}
 	return data.Body
@@ -46,7 +47,7 @@ func (s *getProxyXila) GetContentHtml(requestUrl string) string {
 func (s *getProxyXila) ParseHtml(body string) [][]string {
 	doc, err := goquery.NewDocumentFromReader(strings.NewReader(body))
 	if err != nil {
-		logger.Error(err)
+		logger.Error(consts.GO_QUERY_READ_ERROR, logger.Fields{"err": err})
 		return nil
 	}
 	var proxyList [][]string
@@ -56,7 +57,7 @@ func (s *getProxyXila) ParseHtml(body string) [][]string {
 		proxyStr = strings.TrimSpace(proxyStr)
 		proxyArr := strings.Split(proxyStr, ":")
 		if len(proxyArr) != 2 {
-			logger.Error("格式错误:", proxyStr)
+			logger.Error(consts.PROXY_FORMAT_ERROR, logger.Fields{"proxyStr": proxyStr})
 			return
 		}
 		proxyList = append(proxyList, proxyArr)

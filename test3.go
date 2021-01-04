@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/robfig/cron/v3"
-	"proxy-collect/component/logger"
+	"github.com/tongsq/go-lib/logger"
 	"time"
 )
 
@@ -11,7 +11,7 @@ type Test1 struct {
 
 func (s Test1) Run() {
 	for true {
-		logger.Info("hello")
+		logger.FInfo("hello")
 		time.Sleep(time.Second)
 	}
 }
@@ -21,7 +21,7 @@ type Test2 struct {
 
 func (s Test2) Run() {
 
-	logger.Info("hello22222")
+	logger.FInfo("hello22222")
 
 }
 func main() {

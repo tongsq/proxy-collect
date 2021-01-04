@@ -6,6 +6,7 @@ import (
 	"github.com/tongsq/go-lib/logger"
 	"github.com/tongsq/go-lib/request"
 	"proxy-collect/config"
+	"proxy-collect/consts"
 	"strings"
 )
 
@@ -32,10 +33,10 @@ func (s *getProxy7Yip) GetContentHtml(requestUrl string) string {
 		Host:                    "www.7yip.cn",
 		Referer:                 "https://www.7yip.cn/",
 	}
-	logger.Info("get proxy from 7yip", requestUrl)
+	logger.Info("get proxy from 7yip", logger.Fields{"url": requestUrl})
 	data, err := request.WebGet(requestUrl, h, nil)
 	if err != nil || data == nil {
-		logger.Error("get proxy from 7yip fail", err, data)
+		logger.Error("get proxy from 7yip fail", logger.Fields{"err": err, "data": data})
 	}
 	return data.Body
 }
@@ -44,7 +45,7 @@ func (s *getProxy7Yip) ParseHtml(body string) [][]string {
 
 	doc, err := goquery.NewDocumentFromReader(strings.NewReader(body))
 	if err != nil {
-		logger.Error(err)
+		logger.Error(consts.GO_QUERY_READ_ERROR, logger.Fields{"err": err})
 		return nil
 	}
 	var proxyList [][]string
@@ -55,7 +56,7 @@ func (s *getProxy7Yip) ParseHtml(body string) [][]string {
 		port := strings.TrimSpace(td2.Text())
 
 		if !ProxyService.CheckProxyFormat(host, port) {
-			logger.Error("格式错误:", host+",", port)
+			logger.Error(consts.PROXY_FORMAT_ERROR, logger.Fields{"host": host, "port": port})
 			return
 		}
 		proxyArr := []string{host, port}

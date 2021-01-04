@@ -6,6 +6,7 @@ import (
 	"github.com/tongsq/go-lib/logger"
 	"github.com/tongsq/go-lib/request"
 	"proxy-collect/config"
+	"proxy-collect/consts"
 	"strings"
 )
 
@@ -36,10 +37,10 @@ func (s *getProxyKuai) GetContentHtml(requestUrl string) string {
 		Referer:                 "https://www.kuaidaili.com/free/inha/",
 		UpgradeInsecureRequests: "1",
 	}
-	logger.Info("get proxy from kuaidaili", requestUrl)
+	logger.Info("get proxy from kuaidaili", logger.Fields{"url": requestUrl})
 	data, err := request.WebGet(requestUrl, h, nil)
 	if err != nil || data == nil {
-		logger.Error("ger proxy from kuaidaili fail", err, data)
+		logger.Error("ger proxy from kuaidaili fail", logger.Fields{"err": err, "data": data})
 		return ""
 	}
 	return data.Body
@@ -49,7 +50,7 @@ func (s *getProxyKuai) ParseHtml(body string) [][]string {
 
 	doc, err := goquery.NewDocumentFromReader(strings.NewReader(body))
 	if err != nil {
-		logger.Error(err)
+		logger.Error(consts.GO_QUERY_READ_ERROR, logger.Fields{"err": err})
 		return nil
 	}
 	var proxyList [][]string
@@ -59,7 +60,7 @@ func (s *getProxyKuai) ParseHtml(body string) [][]string {
 		td2 := selection.ChildrenFiltered("td").Eq(1)
 		proxyPort := td2.Text()
 		if proxyHost == "" || proxyPort == "" {
-			logger.Error("解析html node 失败")
+			logger.FError("parse html node fail")
 		}
 		proxyArr := []string{strings.TrimSpace(proxyHost), strings.TrimSpace(proxyPort)}
 		proxyList = append(proxyList, proxyArr)

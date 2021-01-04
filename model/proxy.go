@@ -3,7 +3,7 @@ package model
 //import (
 //	"github.com/jinzhu/gorm"
 //)
-type Proxy struct {
+type ProxyModel struct {
 	Id         int    `gorm:"column:id;AUTO_INCREMENT;PRIMARY_KEY"`
 	Host       string `gorm:"column:host"`
 	Port       string
@@ -19,6 +19,6 @@ type Proxy struct {
 	Source     string `gorm:"column:source"`
 }
 
-func (Proxy) TableName() string {
+func (ProxyModel) TableName() string {
 	return "proxy"
 }

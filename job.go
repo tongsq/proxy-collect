@@ -14,14 +14,14 @@ func main() {
 	//	cron.SkipIfStillRunning(l),
 	//))
 	c := cron.New()
-	c.AddJob("@every 3m", scheduler.GetIp{})
-	c.AddJob("@every 2m", scheduler.CheckActiveIp{})
-	c.AddJob("@delay 5h", scheduler.CheckFailIp{})
-	c.AddJob("@delay 5m", scheduler.UpdateIpInfo{})
+	c.AddJob("*/3 * * * *", scheduler.GetIp{})
+	c.AddJob("*/2 * * * *", scheduler.CheckActiveIp{})
+	c.AddJob("@every 5h", scheduler.CheckFailIp{})
+	c.AddJob("@every 5m", scheduler.UpdateIpInfo{})
 	c.Start()
 	defer c.Stop()
 	for true {
-		logger.Warning("routine num : ", runtime.NumGoroutine())
+		logger.FWarning("routine num : %d", runtime.NumGoroutine())
 		time.Sleep(time.Second)
 	}
 }

@@ -31,10 +31,10 @@ func (s *getProxyData5u) GetContentHtml(requestUrl string) string {
 		UpgradeInsecureRequests: "1",
 	}
 
-	logger.Info("get proxy from data5u", requestUrl)
+	logger.Info("get proxy from data5u", logger.Fields{"url": requestUrl})
 	data, err := request.WebGet(requestUrl, h, nil)
 	if err != nil || data == nil {
-		logger.Error("get proxy from data5u fail", err, data)
+		logger.Error("get proxy from data5u fail", logger.Fields{"err": err, "data": data})
 		return ""
 	}
 	return data.Body
@@ -44,7 +44,7 @@ func (s *getProxyData5u) ParseHtml(body string) [][]string {
 
 	doc, err := goquery.NewDocumentFromReader(strings.NewReader(body))
 	if err != nil {
-		logger.Error(err)
+		logger.Error("read fail", logger.Fields{"err": err})
 		return nil
 	}
 
@@ -55,7 +55,7 @@ func (s *getProxyData5u) ParseHtml(body string) [][]string {
 		td2 := selection.Find("span>li").Eq(1)
 		proxyPort := td2.Text()
 		if proxyHost == "" || proxyPort == "" {
-			logger.Error("解析html node 失败")
+			logger.FError("parse html node fail")
 		}
 		proxyArr := []string{strings.TrimSpace(proxyHost), strings.TrimSpace(proxyPort)}
 		proxyList = append(proxyList, proxyArr)

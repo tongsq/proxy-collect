@@ -3,7 +3,6 @@ package service
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/jinzhu/gorm"
 	"github.com/tongsq/go-lib/component"
 	"github.com/tongsq/go-lib/logger"
 	"github.com/tongsq/go-lib/request"
@@ -12,6 +11,7 @@ import (
 	"net/http"
 	"net/url"
 	"proxy-collect/config"
+	"proxy-collect/dao"
 	"proxy-collect/dto"
 	"proxy-collect/model"
 	"reflect"
@@ -39,14 +39,14 @@ func (s *proxyService) CheckIpStatusActive(host, port string) bool {
 	}
 	resp, err := client.Do(req)
 	if err != nil {
-		logger.Error("http get error", err)
+		logger.Error("http get error", logger.Fields{"err": err})
 		return false
 	}
 	defer resp.Body.Close()
 
 	_, err = ioutil.ReadAll(resp.Body)
 	if err != nil {
-		logger.Error("http read error", err)
+		logger.Error("http read error", logger.Fields{"err": err})
 		return false
 	}
 	return true
@@ -70,7 +70,7 @@ func (s *proxyService) CheckIpStatus(host, port string) bool {
 
 	_, err = ioutil.ReadAll(resp.Body)
 	if err != nil {
-		logger.Warning("read error", err)
+		logger.Warning("read error", logger.Fields{"err": err})
 		return false
 	}
 	return true
@@ -79,32 +79,25 @@ func (s *proxyService) CheckIpStatus(host, port string) bool {
 func (s *proxyService) CheckProxyAndSave(host string, port string, source string) {
 	result := s.CheckIpStatus(host, port)
 	if result {
-		logger.Success(result, host, port)
+		logger.Success("ip is success", logger.Fields{"host": host, "port": port})
 	} else {
-		logger.Warning(result, host, port)
+		logger.Warning("ip is fail", logger.Fields{"host": host, "port": port})
 	}
 	var status int8 = 1
 	if !result {
 		status = 0
 	}
-	var proxyModel model.Proxy
-	db := model.DB
-	err := db.Where("host = ? AND port = ?", host, port).First(&proxyModel).Error
 
-	if err != nil && gorm.IsRecordNotFoundError(err) {
+	proxyModel, err := dao.ProxyDao.GetOne(host, port)
+	if err != nil {
+		logger.Error("get model fail:%s", logger.Fields{"err": err})
+		return
+	}
+	if proxyModel == nil {
 		if status == 0 {
 			return
 		}
-		proxyModel = model.Proxy{
-			Host:       host,
-			Port:       port,
-			Status:     status,
-			CreateTime: time.Now().Unix(),
-			UpdateTime: time.Now().Unix(),
-			CheckCount: 1,
-			Source:     source,
-		}
-		db.Create(&proxyModel)
+		_, err = dao.ProxyDao.Create(host, port, status, source)
 		return
 	}
 	if status == 1 {
@@ -120,7 +113,7 @@ func (s *proxyService) CheckProxyAndSave(host string, port string, source string
 	}
 	proxyModel.Status = status
 	proxyModel.UpdateTime = time.Now().Unix()
-	db.Save(&proxyModel)
+	err = dao.ProxyDao.Save(proxyModel)
 	return
 }
 
@@ -132,12 +125,12 @@ func (s *proxyService) DoGetProxy(getProxyService GetProxyInterface, pool *compo
 			continue
 		}
 		proxyList := getProxyService.ParseHtml(contentBody)
-		logger.Info("获取到ip:", proxyList)
+		logger.Info("get ip list:", logger.Fields{"list": proxyList})
 		var wg sync.WaitGroup = sync.WaitGroup{}
 		wg.Add(1)
 		go func(wg *sync.WaitGroup) {
 			defer wg.Done()
-			logger.Info("wait 10s ...")
+			logger.FInfo("wait 10s ...")
 			time.Sleep(time.Second * 10)
 		}(&wg)
 		for _, proxyArr := range proxyList {
@@ -162,7 +155,7 @@ func (s *proxyService) CheckProxyFormat(host string, port string) bool {
 	return true
 }
 
-func (s *proxyService) UpdateIpDetail(m *model.Proxy) {
+func (s *proxyService) UpdateIpDetail(m *model.ProxyModel) {
 
 }
 
@@ -177,17 +170,16 @@ func (s *proxyService) GetIpInfo(host string, port string) *dto.IpInfoDto {
 		Accept:                  "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
 	}
 
-	logger.Info("get ip info from ip138", requestUrl)
+	logger.Info("get ip info from ip138", logger.Fields{"url": requestUrl})
 	data, err := request.WebGetProxy(requestUrl, h, host, port)
 	if err != nil || data == nil {
-		logger.Error("get from ip138 use proxy error", err, data)
+		logger.Error("get from ip138 use proxy error", logger.Fields{"err": err, "data": data})
 		data, err = request.WebGet(requestUrl, h, nil)
 		if err != nil || data == nil {
-			logger.Error("get from ip138 no proxy error", err, data)
+			logger.Error("get from ip138 no proxy error", logger.Fields{"err": err, "data": data})
 			return nil
 		}
 	}
-	fmt.Println(data.Body)
 	re := regexp.MustCompile(`var ip_result = (.+);`)
 	matched := re.FindAllStringSubmatch(data.Body, -1)
 	if len(matched) < 1 {
@@ -196,17 +188,18 @@ func (s *proxyService) GetIpInfo(host string, port string) *dto.IpInfoDto {
 	jsonStr := matched[0][1]
 	jsonStr, err = simplifiedchinese.GBK.NewDecoder().String(jsonStr)
 	if err != nil {
-		logger.Error("gb2313 decode error")
+		logger.FError("gb2313 decode error")
 	}
 	var result map[string][]map[string]string
-	err = json.Unmarshal([]byte(jsonStr), &data)
-
+	err = json.Unmarshal([]byte(jsonStr), &result)
+	logger.Info("get ip info result", logger.Fields{"jsonStr": jsonStr, "result": result})
 	info := result["ip_c_list"][0]
-	ipInfoDto := &dto.IpInfoDto{}
-	ipInfoDto.Country = info["ct"]
-	ipInfoDto.Region = info["prov"]
-	ipInfoDto.City = info["city"]
-	ipInfoDto.Isp = info["yunyin"]
+	ipInfoDto := &dto.IpInfoDto{
+		Country: info["ct"],
+		Region:  info["prov"],
+		City:    info["city"],
+		Isp:     info["yunyin"],
+	}
 	if ipInfoDto.Country == "" {
 		return nil
 	}

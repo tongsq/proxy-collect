@@ -6,6 +6,7 @@ import (
 	"github.com/tongsq/go-lib/logger"
 	"github.com/tongsq/go-lib/request"
 	"proxy-collect/config"
+	"proxy-collect/consts"
 	"strings"
 )
 
@@ -32,10 +33,10 @@ func (s *getProxyIpJiangXianLi) GetContentHtml(requestUrl string) string {
 		Host:                    "ip.jiangxianli.com",
 		Referer:                 "https://ip.jiangxianli.com/",
 	}
-	logger.Info("get proxy from jangxianli", requestUrl)
+	logger.Info("get proxy from jangxianli", logger.Fields{"url": requestUrl})
 	data, err := request.WebGet(requestUrl, h, nil)
 	if err != nil || data == nil {
-		logger.Error("get proxy from jangxianli fail", err, data)
+		logger.Error("get proxy from jangxianli fail", logger.Fields{"err": err, "data": data})
 		return ""
 	}
 	return data.Body
@@ -45,7 +46,7 @@ func (s *getProxyIpJiangXianLi) ParseHtml(body string) [][]string {
 
 	doc, err := goquery.NewDocumentFromReader(strings.NewReader(body))
 	if err != nil {
-		logger.Error(err)
+		logger.Error("read fail", logger.Fields{"err": err})
 		return nil
 	}
 	var proxyList [][]string
@@ -56,7 +57,7 @@ func (s *getProxyIpJiangXianLi) ParseHtml(body string) [][]string {
 		port := strings.TrimSpace(td2.Text())
 
 		if !ProxyService.CheckProxyFormat(host, port) {
-			logger.Error("格式错误:", host, port)
+			logger.Error(consts.PROXY_FORMAT_ERROR, logger.Fields{"host": host, "port": port})
 			return
 		}
 		proxyArr := []string{host, port}

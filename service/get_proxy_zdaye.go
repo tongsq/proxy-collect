@@ -6,6 +6,7 @@ import (
 	"github.com/tongsq/go-lib/logger"
 	"github.com/tongsq/go-lib/request"
 	"proxy-collect/config"
+	"proxy-collect/consts"
 	"regexp"
 	"strings"
 )
@@ -22,7 +23,7 @@ func (s *getProxyZdaye) GetUrlList() []string {
 	body := s.GetContentHtml(u)
 	doc, err := goquery.NewDocumentFromReader(strings.NewReader(body))
 	if err != nil {
-		logger.Error(err)
+		logger.Error(consts.GO_QUERY_READ_ERROR, logger.Fields{"err": err})
 		return nil
 	}
 	list := []string{}
@@ -50,10 +51,10 @@ func (s *getProxyZdaye) GetContentHtml(requestUrl string) string {
 		SecFetchMode:            "navigate",
 	}
 
-	logger.Info("get proxy from zdaye.com", requestUrl)
+	logger.Info("get proxy from zdaye.com", logger.Fields{"url": requestUrl})
 	data, err := request.WebGet(requestUrl, h, nil)
 	if err != nil || data == nil {
-		logger.Error("get proxy from zdaye.com fail", err, data)
+		logger.Error("get proxy from zdaye.com fail", logger.Fields{"err": err, "data": data})
 		return ""
 	}
 	return data.Body

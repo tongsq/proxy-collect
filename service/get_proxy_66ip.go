@@ -7,6 +7,7 @@ import (
 	"github.com/tongsq/go-lib/request"
 	"golang.org/x/text/encoding/simplifiedchinese"
 	"proxy-collect/config"
+	"proxy-collect/consts"
 	"strings"
 )
 
@@ -34,10 +35,10 @@ func (s *getProxy66ip) GetContentHtml(requestUrl string) string {
 		Referer:                 "http://www.66ip.cn/2.html",
 		UpgradeInsecureRequests: "1",
 	}
-	logger.Info("get proxy from 66ip", requestUrl)
+	logger.Info("get proxy from 66ip", logger.Fields{"url": requestUrl})
 	data, err := request.WebGet(requestUrl, h, nil)
 	if err != nil || data == nil {
-		logger.Error("get proxy from 66ip fail", err, data)
+		logger.Error("get proxy from 66ip fail", logger.Fields{"err": err, "data": data})
 		return ""
 	}
 	return data.Body
@@ -46,12 +47,12 @@ func (s *getProxy66ip) GetContentHtml(requestUrl string) string {
 func (s *getProxy66ip) ParseHtml(body string) [][]string {
 	body, err := simplifiedchinese.GBK.NewDecoder().String(body)
 	if err != nil {
-		logger.Error("chang charset to utf8 fail")
+		logger.FError("chang charset to utf8 fail")
 		return nil
 	}
 	doc, err := goquery.NewDocumentFromReader(strings.NewReader(body))
 	if err != nil {
-		logger.Error(err)
+		logger.FError(consts.GO_QUERY_READ_ERROR, logger.Fields{"err": err})
 		return nil
 	}
 	var proxyList [][]string
