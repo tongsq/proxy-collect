@@ -3,7 +3,8 @@ package main
 import (
 	"github.com/tongsq/go-lib/component"
 	"github.com/tongsq/go-lib/logger"
-	"proxy-collect/scheduler"
+	"proxy-collect/dao"
+	"proxy-collect/dao/redis"
 	"proxy-collect/service"
 )
 
@@ -13,9 +14,15 @@ func add() {
 	num = num + 1
 }
 
+func testa() {
+	r, e := redis.Client.Get("name")
+	logger.Info("get", logger.Fields{"r": r, "e": e})
+}
+
 func main() {
-	s := scheduler.UpdateIpInfo{}
-	s.Run()
+
+	result, err := dao.ProxyDao.GetOne("110.243.4.213", "9999")
+	logger.Info("get active proxy list", logger.Fields{"result": result, "err": err})
 	return
 	//time.Sleep(50 * time.Second)
 	//scheduler.UpdateIpInfo{}.Run()

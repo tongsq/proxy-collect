@@ -1,5 +1,7 @@
 package dao
 
-import "proxy-collect/dao/mysql"
+import (
+	"proxy-collect/dao/redis"
+)
 
-var ProxyDao proxyDaoInterface = mysql.NewMysqlProxyDao()
+var ProxyDao proxyDaoInterface = redis.NewRedisProxyDao()

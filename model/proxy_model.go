@@ -1,12 +1,14 @@
 package model
 
+import "fmt"
+
 //import (
 //	"github.com/jinzhu/gorm"
 //)
 type ProxyModel struct {
 	Id         int    `gorm:"column:id;AUTO_INCREMENT;PRIMARY_KEY"`
 	Host       string `gorm:"column:host"`
-	Port       string
+	Port       string `gorm:"column:port"`
 	Status     int8   `gorm:"column:status"`
 	CreateTime int64  `gorm:"column:create_time"`
 	UpdateTime int64  `gorm:"column:update_time"`
@@ -21,4 +23,8 @@ type ProxyModel struct {
 
 func (ProxyModel) TableName() string {
 	return "proxy"
+}
+
+func (m ProxyModel) String() string {
+	return fmt.Sprintf("%#v", m)
 }
