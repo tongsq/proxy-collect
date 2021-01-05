@@ -4,7 +4,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/tongsq/go-lib/logger"
 	"proxy-collect/dao"
-	"proxy-collect/model"
 )
 
 func main() {
@@ -15,7 +14,16 @@ func main() {
 		})
 	})
 	r.GET("/all", func(c *gin.Context) {
-		var proxies []model.ProxyModel = dao.ProxyDao.GetActiveList()
+		proxies, err := dao.ProxyDao.GetActiveList()
+		if err != nil {
+			logger.Error("get active proxy fail", logger.Fields{"err": err})
+			c.JSON(200, gin.H{
+				"data":  []string{},
+				"code":  0,
+				"count": 0,
+			})
+			return
+		}
 		logger.FInfo("count:%d, cap: %d\n", len(proxies), cap(proxies))
 		var list []string
 		for _, proxy := range proxies {
