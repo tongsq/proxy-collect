@@ -1,0 +1,12 @@
+dao: redis #set storage type -> redis|database
+redis: #redis config
+  MaxIdle: 10
+  MaxActive: 20
+  Network: tcp
+  Address: 127.0.0.1:6379
+  Password:
+database: #database config
+  Dialect: mysql
+  Args: python:123456@(127.0.0.1:3306)/py?charset=utf8&loc=Local
+
+

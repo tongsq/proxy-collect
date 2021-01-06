@@ -1,10 +1,14 @@
 package redis
 
-import redis_client "github.com/tongsq/go-lib/redis-client"
+import (
+	redis_client "github.com/tongsq/go-lib/redis-client"
+	"proxy-collect/config"
+)
 
 var Client *redis_client.RedisClient = &redis_client.RedisClient{
-	MaxIdle:   10,
-	MaxActive: 20,
-	Network:   "tcp",
-	Address:   "127.0.0.1:6379",
+	MaxIdle:   config.Get().Redis.MaxIdle,
+	MaxActive: config.Get().Redis.MaxActive,
+	Network:   config.Get().Redis.Network,
+	Address:   config.Get().Redis.Address,
+	Password:  config.Get().Redis.Password,
 }

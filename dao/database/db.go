@@ -1,6 +1,9 @@
-package mysql
+package database
 
-import "github.com/jinzhu/gorm"
+import (
+	"github.com/jinzhu/gorm"
+	"proxy-collect/config"
+)
 import _ "github.com/jinzhu/gorm/dialects/mysql"
 
 var (
@@ -15,7 +18,8 @@ func DB() *gorm.DB {
 }
 
 func NewDB() (db *gorm.DB) {
-	db, err := gorm.Open("mysql", "python:123456@(127.0.0.1:3306)/py?charset=utf8&loc=Local")
+	c := config.Get().Database
+	db, err := gorm.Open(c.Dialect, c.Args)
 	if err != nil {
 		panic(err)
 	}
