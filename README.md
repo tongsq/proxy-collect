@@ -1,6 +1,9 @@
 # free proxy ip collector
-#免费代理ip收集器、爬虫代理ip池
-##Quick Start（使用方法）：
+
+# 免费代理ip收集器、爬虫代理ip池
+
+## Quick Start（使用方法）：
+
 1、get code
 
     git clone https://github.com/tongsq/proxy-collect.git
@@ -15,9 +18,9 @@
 
     curl 127.0.0.1:8090/all
 
-#Config your yaml (yaml配置)
-##Config storage media (设置存储媒介)
-一、use redis as storage (数据存储到redis)
+## Config your yaml (yaml配置)
+## Config storage media (设置存储媒介)
+### 一、use redis as storage (数据存储到redis)
     
     dao: redis
     redis:
@@ -27,7 +30,7 @@
       Address: 127.0.0.1:6379
       Password: your password
       
-二、use mysql as storage (数据存储到mysql)
+### 二、use mysql as storage (数据存储到mysql)
 
 1、config
 
