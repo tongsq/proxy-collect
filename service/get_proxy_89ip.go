@@ -5,7 +5,6 @@ import (
 	"github.com/PuerkitoBio/goquery"
 	"github.com/tongsq/go-lib/logger"
 	"github.com/tongsq/go-lib/request"
-	"proxy-collect/config"
 	"proxy-collect/consts"
 	"strings"
 )
@@ -28,7 +27,7 @@ func (s *getProxy89Ip) GetUrlList() []string {
 }
 func (s *getProxy89Ip) GetContentHtml(requestUrl string) string {
 	h := &request.RequestHeaderDto{
-		UserAgent:               config.USER_AGENT,
+		UserAgent:               consts.USER_AGENT,
 		UpgradeInsecureRequests: "1",
 		Host:                    "www.89ip.cn",
 		Referer:                 "https://www.89ip.cn/",

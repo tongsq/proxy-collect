@@ -6,7 +6,6 @@ import (
 	"github.com/tongsq/go-lib/logger"
 	"github.com/tongsq/go-lib/request"
 	"golang.org/x/text/encoding/simplifiedchinese"
-	"proxy-collect/config"
 	"proxy-collect/consts"
 	"strings"
 )
@@ -30,7 +29,7 @@ func (s *getProxy66ip) GetUrlList() []string {
 
 func (s *getProxy66ip) GetContentHtml(requestUrl string) string {
 	h := &request.RequestHeaderDto{
-		UserAgent:               config.USER_AGENT,
+		UserAgent:               consts.USER_AGENT,
 		Host:                    "www.66ip.cn",
 		Referer:                 "http://www.66ip.cn/2.html",
 		UpgradeInsecureRequests: "1",

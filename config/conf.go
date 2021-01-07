@@ -45,6 +45,10 @@ type confDto struct {
 		Dialect string `yaml:"Dialect"`
 		Args    string `yaml:"Args"`
 	}
+	Api struct {
+		Host string `yaml:"host"`
+		Port string `yaml:"port"`
+	}
 }
 
 func (c confDto) String() string {

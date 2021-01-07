@@ -1,9 +1,12 @@
 package main
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/tongsq/go-lib/logger"
+	"proxy-collect/config"
 	"proxy-collect/dao"
+	"proxy-collect/dto"
 )
 
 func main() {
@@ -25,10 +28,9 @@ func main() {
 			return
 		}
 		logger.FInfo("count:%d, cap: %d\n", len(proxies), cap(proxies))
-		var list []string
+		var list []dto.ProxyDto
 		for _, proxy := range proxies {
-			str := proxy.Host + ":" + proxy.Port
-			list = append(list, str)
+			list = append(list, dto.NewProxyDto(proxy))
 		}
 		c.JSON(200, gin.H{
 			"data":  list,
@@ -36,5 +38,5 @@ func main() {
 			"count": len(list),
 		})
 	})
-	r.Run("0.0.0.0:8090")
+	r.Run(fmt.Sprintf("%s:%s", config.Get().Api.Host, config.Get().Api.Port))
 }

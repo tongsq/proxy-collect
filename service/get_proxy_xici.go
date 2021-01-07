@@ -5,7 +5,6 @@ import (
 	"github.com/PuerkitoBio/goquery"
 	"github.com/tongsq/go-lib/logger"
 	"github.com/tongsq/go-lib/request"
-	"proxy-collect/config"
 	"proxy-collect/consts"
 	"strings"
 )
@@ -30,7 +29,7 @@ func (s *getProxyXici) GetUrlList() []string {
 func (s *getProxyXici) GetContentHtml(requestUrl string) string {
 
 	h := &request.RequestHeaderDto{
-		UserAgent:               config.USER_AGENT,
+		UserAgent:               consts.USER_AGENT,
 		Host:                    "www.xicidaili.com",
 		Referer:                 "http://www.xicidaili.com",
 		UpgradeInsecureRequests: "1",

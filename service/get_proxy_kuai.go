@@ -5,7 +5,6 @@ import (
 	"github.com/PuerkitoBio/goquery"
 	"github.com/tongsq/go-lib/logger"
 	"github.com/tongsq/go-lib/request"
-	"proxy-collect/config"
 	"proxy-collect/consts"
 	"strings"
 )
@@ -32,7 +31,7 @@ func (s *getProxyKuai) GetUrlList() []string {
 func (s *getProxyKuai) GetContentHtml(requestUrl string) string {
 
 	h := &request.RequestHeaderDto{
-		UserAgent:               config.USER_AGENT,
+		UserAgent:               consts.USER_AGENT,
 		Host:                    "www.kuaidaili.com",
 		Referer:                 "https://www.kuaidaili.com/free/inha/",
 		UpgradeInsecureRequests: "1",

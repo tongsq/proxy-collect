@@ -4,7 +4,7 @@ import (
 	"github.com/PuerkitoBio/goquery"
 	"github.com/tongsq/go-lib/logger"
 	"github.com/tongsq/go-lib/request"
-	"proxy-collect/config"
+	"proxy-collect/consts"
 	"strings"
 )
 
@@ -26,7 +26,7 @@ func (s *getProxyData5u) GetUrlList() []string {
 
 func (s *getProxyData5u) GetContentHtml(requestUrl string) string {
 	h := &request.RequestHeaderDto{
-		UserAgent:               config.USER_AGENT,
+		UserAgent:               consts.USER_AGENT,
 		Host:                    "www.data5u.com",
 		UpgradeInsecureRequests: "1",
 	}

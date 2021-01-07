@@ -5,7 +5,6 @@ import (
 	"github.com/PuerkitoBio/goquery"
 	"github.com/tongsq/go-lib/logger"
 	"github.com/tongsq/go-lib/request"
-	"proxy-collect/config"
 	"proxy-collect/consts"
 	"regexp"
 	"strings"
@@ -41,7 +40,7 @@ func (s *getProxyZdaye) GetUrlList() []string {
 func (s *getProxyZdaye) GetContentHtml(requestUrl string) string {
 
 	h := &request.RequestHeaderDto{
-		UserAgent:               config.USER_AGENT,
+		UserAgent:               consts.USER_AGENT,
 		UpgradeInsecureRequests: "1",
 		Host:                    "www.zdaye.com",
 		Accept:                  "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",

@@ -2,10 +2,7 @@ package main
 
 import (
 	"github.com/robfig/cron/v3"
-	"github.com/tongsq/go-lib/logger"
 	"proxy-collect/scheduler"
-	"runtime"
-	"time"
 )
 
 func main() {
@@ -20,8 +17,6 @@ func main() {
 	c.AddJob("@every 5m", scheduler.UpdateIpInfo{})
 	c.Start()
 	defer c.Stop()
-	for true {
-		logger.FWarning("routine num : %d", runtime.NumGoroutine())
-		time.Sleep(time.Second)
-	}
+	scheduler.GetIp{}.Run()
+	select {}
 }

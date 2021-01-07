@@ -10,7 +10,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"proxy-collect/config"
+	"proxy-collect/consts"
 	"proxy-collect/dao"
 	"proxy-collect/dto"
 	"proxy-collect/model"
@@ -168,7 +168,7 @@ func (s *proxyService) UpdateIpDetail(m *model.ProxyModel) {
 func (s *proxyService) GetIpInfo(host string, port string) *dto.IpInfoDto {
 	requestUrl := fmt.Sprintf("https://www.ip138.com/iplookup.asp?ip=%s&action=2", host)
 	h := &request.RequestHeaderDto{
-		UserAgent:               config.USER_AGENT,
+		UserAgent:               consts.USER_AGENT,
 		UpgradeInsecureRequests: "1",
 		Host:                    "www.ip138.com",
 		Referer:                 "https://www.ip138.com/",
