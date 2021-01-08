@@ -1,7 +1,7 @@
 dao: redis #set storage type -> redis|database
 redis: #redis config
-  MaxIdle: 10
-  MaxActive: 20
+  MaxIdle: 2
+  MaxActive: 5
   Network: tcp
   Address: 127.0.0.1:6379
   Password:

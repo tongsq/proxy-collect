@@ -47,7 +47,7 @@ func (d *proxyDao) Create(host string, port string, status int8, source string) 
 		Source:     source,
 	}
 	key := getProxyKey(host, port)
-	logger.FInfo(key)
+	logger.FInfo("redis dao create new proxy")
 	value, err := json.Marshal(m)
 	if err != nil {
 		return nil, err

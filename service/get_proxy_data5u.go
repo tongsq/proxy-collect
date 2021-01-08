@@ -44,7 +44,7 @@ func (s *getProxyData5u) ParseHtml(body string) [][]string {
 
 	doc, err := goquery.NewDocumentFromReader(strings.NewReader(body))
 	if err != nil {
-		logger.Error("read fail", logger.Fields{"err": err})
+		logger.Error(consts.GO_QUERY_READ_ERROR, logger.Fields{"err": err})
 		return nil
 	}
 

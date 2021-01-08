@@ -27,6 +27,7 @@ func (s GetIp) Run() {
 		service.GetProxy7Yip,
 		service.GetProxyProxyList,
 		service.GetProxyZdaye,
+		service.GetProxyFanQie,
 	}
 	for _, getProxyService := range serviceList {
 		go service.ProxyService.DoGetProxy(getProxyService, component.TaskPool)
