@@ -1,17 +1,12 @@
-package scheduler
+package main
 
 import (
+	"fmt"
 	"github.com/tongsq/go-lib/logger"
 	"proxy-collect/dao"
-	"proxy-collect/global"
-	"proxy-collect/model"
-	"proxy-collect/service"
 )
 
-type CheckActiveIp struct {
-}
-
-func (s CheckActiveIp) Run() {
+func main() {
 	logger.FSuccess("check active ip start run")
 	proxies, err := dao.ProxyDao.GetActiveList()
 	if err != nil {
@@ -21,7 +16,12 @@ func (s CheckActiveIp) Run() {
 	//pool := component.NewTaskPool(20)
 	//defer pool.Close()
 	for _, proxy := range proxies {
-		var proxyTmp model.ProxyModel = proxy
-		global.Pool.RunTask(func() { service.ProxyService.CheckProxyAndSave(proxyTmp.Host, proxyTmp.Port, "") })
+		//var proxyTmp model.ProxyModel = proxy
+		proxy := proxy
+		go func(h, p string) {
+			fmt.Println(h, p)
+			fmt.Println(proxy.Host, proxy.Port, "a")
+		}(proxy.Host, proxy.Port)
+		//component.TaskPool.RunTask(func() { service.ProxyService.CheckProxyAndSave(proxyTmp.Host, proxyTmp.Port, "") })
 	}
 }

@@ -11,5 +11,5 @@ database: #database config
 api:
   host: 0.0.0.0
   port: 8090
-
+poolSize: 500
 

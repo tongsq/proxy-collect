@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/tongsq/go-lib/component"
 	"proxy-collect/config"
+	"proxy-collect/global"
 	"proxy-collect/service"
 )
 
@@ -27,5 +27,5 @@ type T struct {
 func main() {
 	d := config.Get()
 	fmt.Println(d.Redis.MaxIdle, d.Redis.Address)
-	service.ProxyService.DoGetProxy(service.NewGetProxyFanQie(), component.TaskPool)
+	service.ProxyService.DoGetProxy(service.NewGetProxyFanQie(), global.Pool)
 }

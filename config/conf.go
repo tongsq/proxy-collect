@@ -49,6 +49,7 @@ type confDto struct {
 		Host string `yaml:"host"`
 		Port string `yaml:"port"`
 	}
+	PoolSize int `yaml:"poolSize"`
 }
 
 func (c confDto) String() string {

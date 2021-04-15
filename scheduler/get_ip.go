@@ -1,8 +1,8 @@
 package scheduler
 
 import (
-	"github.com/tongsq/go-lib/component"
 	"github.com/tongsq/go-lib/logger"
+	"proxy-collect/global"
 	"proxy-collect/service"
 )
 
@@ -30,7 +30,7 @@ func (s GetIp) Run() {
 		service.GetProxyFanQie,
 	}
 	for _, getProxyService := range serviceList {
-		go service.ProxyService.DoGetProxy(getProxyService, component.TaskPool)
+		go service.ProxyService.DoGetProxy(getProxyService, global.Pool)
 	}
 
 }
