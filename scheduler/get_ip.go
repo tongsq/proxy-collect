@@ -29,6 +29,7 @@ func (s GetIp) Run() {
 		service.GetProxyZdaye,
 		service.GetProxyFanQie,
 		service.GetProxyZdayeIndex,
+		service.GetProxySeofangfa,
 	}
 	for _, getProxyService := range serviceList {
 		go service.ProxyService.DoGetProxy(getProxyService, global.Pool)

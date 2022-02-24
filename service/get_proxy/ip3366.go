@@ -23,7 +23,7 @@ func (s *getProxyIp3366) GetUrlList() []string {
 		"http://www.ip3366.net/free/?stype=1",
 		"http://www.ip3366.net/free/?stype=2",
 	}
-	for i := 2; i < 6; i++ {
+	for i := 2; i < 4; i++ {
 		list = append(list, fmt.Sprintf("http://www.ip3366.net/free/?stype=1&page=%d", i))
 		list = append(list, fmt.Sprintf("http://www.ip3366.net/free/?stype=2&page=%d", i))
 	}
