@@ -1,10 +1,9 @@
-package main
+package tests
 
 import (
 	"fmt"
-	"proxy-collect/config"
-	"proxy-collect/global"
-	"proxy-collect/service"
+
+	"github.com/tongsq/go-lib/request"
 )
 
 var data = `
@@ -25,7 +24,20 @@ type T struct {
 }
 
 func main() {
-	d := config.Get()
-	fmt.Println(d.Redis.MaxIdle, d.Redis.Address)
-	service.ProxyService.DoGetProxy(service.NewGetProxyFanQie(), global.Pool)
+	//d := config.Get()
+	//fmt.Println(d.Redis.MaxIdle, d.Redis.Address)
+	//service.ProxyService.DoGetProxy(service.NewGetProxyFanQie(), global.Pool)
+	u := "http://10.4.12.12/inside/v1/ssq/set"
+	h := &request.RequestHeaderDto{
+		//UserAgent:               consts.USER_AGENT,
+		UpgradeInsecureRequests: "1",
+		//Host:                    "socket-apit.weipaitang.com",
+	}
+	data, err := request.WebPost(u, nil, h, nil)
+	fmt.Printf("%#v", data)
+	if err != nil || data.HttpCode != request.HTTP_CODE_OK {
+		fmt.Println("test post request fail", err)
+	} else {
+		fmt.Println("test post request success", err)
+	}
 }

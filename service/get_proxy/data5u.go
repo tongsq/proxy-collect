@@ -1,11 +1,12 @@
-package service
+package get_proxy
 
 import (
+	"strings"
+
 	"github.com/PuerkitoBio/goquery"
 	"github.com/tongsq/go-lib/logger"
 	"github.com/tongsq/go-lib/request"
 	"proxy-collect/consts"
-	"strings"
 )
 
 func NewGetProxyData5u() *getProxyData5u {

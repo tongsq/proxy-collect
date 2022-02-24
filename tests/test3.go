@@ -1,8 +1,9 @@
-package main
+package tests
 
 import (
 	"github.com/robfig/cron/v3"
 	"github.com/tongsq/go-lib/logger"
+	"testing"
 	"time"
 )
 
@@ -24,7 +25,7 @@ func (s Test2) Run() {
 	logger.FInfo("hello22222")
 
 }
-func main() {
+func TestCron(t *testing.T) {
 	l := &logger.CronLogger{}
 	c := cron.New(cron.WithChain(
 		cron.SkipIfStillRunning(l),

@@ -1,12 +1,14 @@
-package main
+package tests
 
 import (
 	"fmt"
+	"testing"
+
 	"github.com/tongsq/go-lib/logger"
 	"proxy-collect/dao"
 )
 
-func main() {
+func TestActive(t *testing.T) {
 	logger.FSuccess("check active ip start run")
 	proxies, err := dao.ProxyDao.GetActiveList()
 	if err != nil {

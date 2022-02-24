@@ -1,50 +1,54 @@
-package service
+package get_proxy
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/PuerkitoBio/goquery"
 	"github.com/tongsq/go-lib/logger"
 	"github.com/tongsq/go-lib/request"
 	"proxy-collect/consts"
-	"strings"
+	"proxy-collect/service/common"
 )
 
-func NewGetProxy7Yip() *getProxy7Yip {
-	return &getProxy7Yip{}
+func NewGetProxyIp3366() *getProxyIp3366 {
+	return &getProxyIp3366{}
 }
 
-type getProxy7Yip struct {
+type getProxyIp3366 struct {
 }
 
-func (s *getProxy7Yip) GetUrlList() []string {
+func (s *getProxyIp3366) GetUrlList() []string {
 	list := []string{
-		"https://www.7yip.cn/free/",
+		"http://www.ip3366.net/free/?stype=1",
+		"http://www.ip3366.net/free/?stype=2",
 	}
 	for i := 2; i < 6; i++ {
-		list = append(list, fmt.Sprintf("https://www.7yip.cn/free/?action=china&page=%d", i))
+		list = append(list, fmt.Sprintf("http://www.ip3366.net/free/?stype=1&page=%d", i))
+		list = append(list, fmt.Sprintf("http://www.ip3366.net/free/?stype=2&page=%d", i))
 	}
 	return list
 }
-func (s *getProxy7Yip) GetContentHtml(requestUrl string) string {
+func (s *getProxyIp3366) GetContentHtml(requestUrl string) string {
 	h := &request.RequestHeaderDto{
 		UserAgent:               consts.USER_AGENT,
 		UpgradeInsecureRequests: "1",
-		Host:                    "www.7yip.cn",
-		Referer:                 "https://www.7yip.cn/",
 	}
-	logger.Info("get proxy from 7yip", logger.Fields{"url": requestUrl})
+
+	logger.Info("get proxy from ip3366", logger.Fields{"url": requestUrl})
 	data, err := request.WebGet(requestUrl, h, nil)
 	if err != nil || data == nil {
-		logger.Error("get proxy from 7yip fail", logger.Fields{"err": err, "data": data})
+		logger.Error("get proxy from ip3366 fail", logger.Fields{"err": err, "data": data})
+		return ""
 	}
 	return data.Body
 }
 
-func (s *getProxy7Yip) ParseHtml(body string) [][]string {
+func (s *getProxyIp3366) ParseHtml(body string) [][]string {
 
 	doc, err := goquery.NewDocumentFromReader(strings.NewReader(body))
 	if err != nil {
-		logger.Error(consts.GO_QUERY_READ_ERROR, logger.Fields{"err": err})
+		logger.Error("read fail", logger.Fields{"err": err})
 		return nil
 	}
 	var proxyList [][]string
@@ -54,20 +58,12 @@ func (s *getProxy7Yip) ParseHtml(body string) [][]string {
 		td2 := selection.ChildrenFiltered("td").Eq(1)
 		port := strings.TrimSpace(td2.Text())
 
-		if !ProxyService.CheckProxyFormat(host, port) {
+		if !common.CheckProxyFormat(host, port) {
 			logger.Error(consts.PROXY_FORMAT_ERROR, logger.Fields{"host": host, "port": port})
 			return
 		}
 		proxyArr := []string{host, port}
 		proxyList = append(proxyList, proxyArr)
 	})
-
 	return proxyList
 }
-
-//func (s *getProxy7Yip) GetSource() string {
-//	_, file, _, _ := runtime.Caller(0)
-//	arr := strings.Split(file, "/")
-//	name := arr[len(arr)-1]
-//	return name[0:len(name)-3]
-//}

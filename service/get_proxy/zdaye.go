@@ -1,23 +1,27 @@
-package service
+package get_proxy
 
 import (
 	"fmt"
+	"math/rand"
+	"regexp"
+	"strings"
+	"time"
+
 	"github.com/PuerkitoBio/goquery"
 	"github.com/tongsq/go-lib/logger"
 	"github.com/tongsq/go-lib/request"
 	"proxy-collect/consts"
-	"regexp"
-	"strings"
+	"proxy-collect/dao"
 )
 
-func NewGetProxyZdaye() *getProxyZdaye {
-	return &getProxyZdaye{}
+func NewGetProxyZdaye() *Zdaye {
+	return &Zdaye{}
 }
 
-type getProxyZdaye struct {
+type Zdaye struct {
 }
 
-func (s *getProxyZdaye) GetUrlList() []string {
+func (s *Zdaye) GetUrlList() []string {
 	u := "https://www.zdaye.com/dayProxy/1.html"
 	body := s.GetContentHtml(u)
 	doc, err := goquery.NewDocumentFromReader(strings.NewReader(body))
@@ -37,7 +41,7 @@ func (s *getProxyZdaye) GetUrlList() []string {
 	return list
 }
 
-func (s *getProxyZdaye) GetContentHtml(requestUrl string) string {
+func (s *Zdaye) GetContentHtml(requestUrl string) string {
 
 	h := &request.RequestHeaderDto{
 		UserAgent:               consts.USER_AGENT,
@@ -51,7 +55,16 @@ func (s *getProxyZdaye) GetContentHtml(requestUrl string) string {
 	}
 
 	logger.Info("get proxy from zdaye.com", logger.Fields{"url": requestUrl})
-	data, err := request.WebGet(requestUrl, h, nil)
+	proxies, err := dao.ProxyDao.GetActiveList()
+	var data *request.HttpResultDto
+	if err == nil && len(proxies) > 0 {
+		rand.Seed(time.Now().Unix())
+		i := rand.Intn(len(proxies))
+		proxy := proxies[i]
+		data, err = request.WebGetProxy(requestUrl, h, proxy.Host, proxy.Port)
+	} else {
+		data, err = request.WebGet(requestUrl, h, nil)
+	}
 	if err != nil || data == nil {
 		logger.Error("get proxy from zdaye.com fail", logger.Fields{"err": err, "data": data})
 		return ""
@@ -59,7 +72,7 @@ func (s *getProxyZdaye) GetContentHtml(requestUrl string) string {
 	return data.Body
 }
 
-func (s *getProxyZdaye) ParseHtml(body string) [][]string {
+func (s *Zdaye) ParseHtml(body string) [][]string {
 
 	var proxyList [][]string
 	re := regexp.MustCompile(`(\d+\.\d+\.\d+\.\d+):(\d+)`)

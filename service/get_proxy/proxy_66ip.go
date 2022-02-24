@@ -1,13 +1,15 @@
-package service
+package get_proxy
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/PuerkitoBio/goquery"
 	"github.com/tongsq/go-lib/logger"
 	"github.com/tongsq/go-lib/request"
 	"golang.org/x/text/encoding/simplifiedchinese"
 	"proxy-collect/consts"
-	"strings"
+	"proxy-collect/service/common"
 )
 
 func NewGetProxy66ip() *getProxy66ip {
@@ -61,7 +63,7 @@ func (s *getProxy66ip) ParseHtml(body string) [][]string {
 		td2 := selection.ChildrenFiltered("td").Eq(1)
 		proxyHost := td.Text()
 		proxyPort := td2.Text()
-		if !ProxyService.CheckProxyFormat(proxyHost, proxyPort) {
+		if !common.CheckProxyFormat(proxyHost, proxyPort) {
 			return
 		}
 		proxyArr := []string{strings.TrimSpace(proxyHost), strings.TrimSpace(proxyPort)}

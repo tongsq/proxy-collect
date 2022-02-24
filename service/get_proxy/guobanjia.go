@@ -1,10 +1,12 @@
-package service
+package get_proxy
 
 import (
 	"github.com/PuerkitoBio/goquery"
 	"github.com/tongsq/go-lib/logger"
 	"github.com/tongsq/go-lib/request"
 	"proxy-collect/consts"
+	"proxy-collect/service/common"
+
 	"strings"
 )
 
@@ -56,7 +58,7 @@ func (s *getProxyGuoBanJia) ParseHtml(body string) [][]string {
 		})
 		port := td.Children().Last().Text()
 		hostStr = strings.TrimSpace(hostStr)
-		if !ProxyService.CheckProxyFormat(hostStr, port) {
+		if !common.CheckProxyFormat(hostStr, port) {
 			logger.Error(consts.PROXY_FORMAT_ERROR, logger.Fields{"host": hostStr, "port": port})
 			return
 		}

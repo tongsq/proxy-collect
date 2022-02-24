@@ -1,12 +1,14 @@
-package service
+package get_proxy
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/PuerkitoBio/goquery"
 	"github.com/tongsq/go-lib/logger"
 	"github.com/tongsq/go-lib/request"
 	"proxy-collect/consts"
-	"strings"
+	"proxy-collect/service/common"
 )
 
 func NewGetProxyProxyList() *getProxyProxyList {
@@ -56,7 +58,7 @@ func (s *getProxyProxyList) ParseHtml(body string) [][]string {
 		td2 := selection.ChildrenFiltered("td").Eq(2)
 		port := strings.TrimSpace(td2.Text())
 
-		if !ProxyService.CheckProxyFormat(host, port) {
+		if !common.CheckProxyFormat(host, port) {
 			return
 		}
 		proxyArr := []string{host, port}
