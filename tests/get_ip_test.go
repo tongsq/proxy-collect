@@ -10,8 +10,9 @@ import (
 )
 
 func TestGetIp(t *testing.T) {
-	s := service.GetProxySeofangfa
+	s := service.GetProxyXsdaili
 	for _, requestUrl := range s.GetUrlList() {
+		t.Log(requestUrl)
 		contentBody := s.GetContentHtml(requestUrl)
 		if contentBody == "" {
 			time.Sleep(time.Second * 5)
