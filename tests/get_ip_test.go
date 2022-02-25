@@ -10,7 +10,7 @@ import (
 )
 
 func TestGetIp(t *testing.T) {
-	s := service.GetProxyXsdaili
+	s := service.GetProxyPaChong
 	for _, requestUrl := range s.GetUrlList() {
 		t.Log(requestUrl)
 		contentBody := s.GetContentHtml(requestUrl)
@@ -35,12 +35,12 @@ func TestRand(t *testing.T) {
 
 func TestCheckIp(t *testing.T) {
 	items := [][]string{
-		{"213.101.151.4", "1080"},
-		{"177.54.195.48", "4145"},
-		{"197.232.47.102", "52567"},
-		{"70.35.213.226", "4153"},
-		{"117.4.145.16", "41889"},
-		{"185.94.218.57", "44421"},
+		{"223.96.90.216", "8085"},
+		{"39.96.11.1", "8003"},
+		{"47.106.105.236", "80"},
+		{"1.180.156.226", "65001"},
+		{"221.122.91.34", "80"},
+		{"153.35.185.69", "80"},
 	}
 	for _, item := range items {
 		r := service.ProxyService.CheckIpStatus(item[0], item[1])
