@@ -117,7 +117,6 @@ func (s *proxyService) CheckProxyAndSave(host string, port string, source string
 	//if ip is ok, update ip info
 	if result && proxyModel.City == "" {
 		ipInfo := ip.GetIpInfo(host, port)
-		logger.Success("get ip info", map[string]interface{}{"result": ipInfo})
 		proxyModel.City = ipInfo.City
 		proxyModel.Country = ipInfo.Country
 		proxyModel.Isp = ipInfo.Isp
