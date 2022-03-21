@@ -12,4 +12,4 @@ api:
   host: 0.0.0.0
   port: 8090
 poolSize: 500
-
+localIpDataPath: /tmp/local_ip_data.dat

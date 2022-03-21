@@ -2,9 +2,10 @@ package config
 
 import (
 	"fmt"
+	"io/ioutil"
+
 	"github.com/tongsq/go-lib/logger"
 	"gopkg.in/yaml.v2"
-	"io/ioutil"
 )
 
 var conf *confDto
@@ -49,7 +50,8 @@ type confDto struct {
 		Host string `yaml:"host"`
 		Port string `yaml:"port"`
 	}
-	PoolSize int `yaml:"poolSize"`
+	PoolSize        int    `yaml:"poolSize"`
+	LocalIpDataPath string `yaml:"localIpDataPath"`
 }
 
 func (c confDto) String() string {

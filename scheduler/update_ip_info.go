@@ -2,10 +2,11 @@ package scheduler
 
 import (
 	"fmt"
+	"time"
+
 	"github.com/tongsq/go-lib/logger"
 	"proxy-collect/dao"
-	"proxy-collect/service"
-	"time"
+	"proxy-collect/service/ip"
 )
 
 type UpdateIpInfo struct {
@@ -16,7 +17,8 @@ func (s UpdateIpInfo) Run() {
 	proxies := dao.ProxyDao.GetNeedUpdateInfoList()
 	logger.FInfo(fmt.Sprintf("count:%d, cap: %d\n", len(proxies), cap(proxies)))
 	for _, proxy := range proxies {
-		ipInfoDto := service.ProxyService.GetIpInfo(proxy.Host, proxy.Port)
+		//use online ip database
+		ipInfoDto := ip.GetIpInfoByIp138(proxy.Host, proxy.Port)
 		logger.Info("get ip info:", logger.Fields{"ipInfoDto": ipInfoDto})
 		time.Sleep(5 * time.Second)
 		if ipInfoDto == nil {
