@@ -6,6 +6,7 @@ import (
 	"net"
 	"strings"
 
+	"github.com/tongsq/go-lib/logger"
 	"golang.org/x/text/encoding/simplifiedchinese"
 	"proxy-collect/dto"
 )
@@ -57,6 +58,11 @@ func (q *localIpService) SetOffset(offset int64) {
 
 // Find ip地址查询对应归属地信息
 func (q *localIpService) Find(ip string) (res *dto.IpInfoDto, err error) {
+	defer func() {
+		if err := recover(); err != nil {
+			logger.Error("get ip info from local data fail", map[string]interface{}{"err": err})
+		}
+	}()
 	res = &dto.IpInfoDto{}
 	if strings.Count(ip, ".") != 3 {
 		return res, errors.New("ip format error")
