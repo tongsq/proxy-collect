@@ -16,7 +16,7 @@
     go run api.go
 4、get proxy ip
 
-    curl 127.0.0.1:8090/all
+    curl 127.0.0.1:8090/all?city=上海&duration=100
 
 ## Config your yaml (yaml配置)
 ## Config storage media (设置存储媒介)
