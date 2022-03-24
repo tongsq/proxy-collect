@@ -1,9 +1,10 @@
 package database
 
 import (
+	"time"
+
 	"github.com/jinzhu/gorm"
 	"proxy-collect/model"
-	"time"
 )
 
 func NewMysqlProxyDao() *proxyDao {
@@ -37,6 +38,7 @@ func (d *proxyDao) Create(host string, port string, status int8, source string) 
 		Host:       host,
 		Port:       port,
 		Status:     status,
+		ActiveTime: time.Now().Unix(),
 		CreateTime: time.Now().Unix(),
 		UpdateTime: time.Now().Unix(),
 		CheckCount: 1,

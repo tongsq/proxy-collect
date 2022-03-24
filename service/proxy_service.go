@@ -101,14 +101,19 @@ func (s *proxyService) CheckProxyAndSave(host string, port string, source string
 		if proxyModel.CheckCount <= 20 {
 			proxyModel.CheckCount = proxyModel.CheckCount + 1
 		}
-		proxyModel.ActiveTime = time.Now().Unix()
-	} else if status == 0 && proxyModel.CheckCount > -10 {
-		proxyModel.CheckCount = proxyModel.CheckCount - 1
-		if proxyModel.CheckCount <= -10 {
-			if err := dao.ProxyDao.Delete(host, port); err != nil {
-				logger.Error("delete proxy fail", logger.Fields{"host": host, "port": port})
+		if proxyModel.ActiveTime == 0 || proxyModel.Status == 0 {
+			proxyModel.ActiveTime = time.Now().Unix()
+		}
+	} else {
+		proxyModel.ActiveTime = 0
+		if proxyModel.CheckCount > -10 {
+			proxyModel.CheckCount = proxyModel.CheckCount - 1
+			if proxyModel.CheckCount <= -10 {
+				if err := dao.ProxyDao.Delete(host, port); err != nil {
+					logger.Error("delete proxy fail", logger.Fields{"host": host, "port": port})
+				}
+				return
 			}
-			return
 		}
 	}
 	if source != "" {

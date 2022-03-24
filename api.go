@@ -2,6 +2,10 @@ package main
 
 import (
 	"fmt"
+	"strconv"
+	"strings"
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/tongsq/go-lib/logger"
 	"proxy-collect/config"
@@ -27,9 +31,21 @@ func main() {
 			})
 			return
 		}
-		logger.FInfo("count:%d, cap: %d\n", len(proxies), cap(proxies))
+		city := c.Query("city")
+		var durationI int64
+		duration := c.Query("duration")
+		if duration != "" {
+			durationI, err = strconv.ParseInt(duration, 10, 64)
+		}
 		var list []dto.ProxyDto
+		nowTime := time.Now().Unix()
 		for _, proxy := range proxies {
+			if city != "" && !strings.Contains(proxy.City, city) {
+				continue
+			}
+			if durationI > 0 && ((nowTime - proxy.ActiveTime) < durationI) {
+				continue
+			}
 			list = append(list, dto.NewProxyDto(proxy))
 		}
 		c.JSON(200, gin.H{

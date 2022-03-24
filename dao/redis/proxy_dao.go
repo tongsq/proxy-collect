@@ -3,10 +3,11 @@ package redis
 import (
 	"encoding/json"
 	"fmt"
+	"time"
+
 	"github.com/tongsq/go-lib/logger"
 	redis_client "github.com/tongsq/go-lib/redis-client"
 	"proxy-collect/model"
-	"time"
 )
 
 const PROXY_FAIL_SET = "proxy_fail_set"
@@ -43,6 +44,7 @@ func (d *proxyDao) Create(host string, port string, status int8, source string) 
 		Status:     status,
 		CreateTime: time.Now().Unix(),
 		UpdateTime: time.Now().Unix(),
+		ActiveTime: time.Now().Unix(),
 		CheckCount: 1,
 		Source:     source,
 	}
