@@ -53,6 +53,8 @@
       `region` varchar(100) NOT NULL DEFAULT '',
       `city` varchar(100) NOT NULL DEFAULT '',
       `isp` varchar(255) NOT NULL DEFAULT '',
+      `check_count` int(11) NOT NULL DEFAULT '10',
+      `source` varchar(50) NOT NULL DEFAULT '',
       PRIMARY KEY (`id`) USING BTREE,
       UNIQUE KEY `IDX_HOST_PORT` (`host`,`port`) USING BTREE,
       KEY `IDX_STATUS` (`status`) USING BTREE,
