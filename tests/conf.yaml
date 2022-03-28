@@ -13,3 +13,4 @@ api:
   port: 8090
 poolSize: 500
 localIpDataPath: /tmp/local_ip_data.dat
+recheckCount: 10 #recheck count if ip is invalid

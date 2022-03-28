@@ -12,6 +12,8 @@ import (
 
 	"github.com/tongsq/go-lib/component"
 	"github.com/tongsq/go-lib/logger"
+	"proxy-collect/config"
+	"proxy-collect/consts"
 	"proxy-collect/dao"
 	"proxy-collect/model"
 	"proxy-collect/service/ip"
@@ -78,11 +80,11 @@ func (s *proxyService) CheckProxyAndSave(host string, port string, source string
 	if result {
 		logger.Success("ip is success", logger.Fields{"host": host, "port": port})
 	} else {
-		logger.Warning("ip is fail", logger.Fields{"host": host, "port": port})
+		logger.Info("ip is fail", logger.Fields{"host": host, "port": port})
 	}
-	var status int8 = 1
+	var status int8 = consts.STATUS_YES
 	if !result {
-		status = 0
+		status = consts.STATUS_NO
 	}
 
 	proxyModel, err := dao.ProxyDao.GetOne(host, port)
@@ -91,21 +93,31 @@ func (s *proxyService) CheckProxyAndSave(host string, port string, source string
 		return
 	}
 	if proxyModel == nil {
-		if status == 0 {
+		if status == consts.STATUS_NO {
 			return
 		}
 		_, err = dao.ProxyDao.Create(host, port, status, source)
 		return
 	}
-	if status == 1 {
+	if status == consts.STATUS_YES {
 		if proxyModel.CheckCount <= 20 {
 			proxyModel.CheckCount = proxyModel.CheckCount + 1
 		}
-		if proxyModel.ActiveTime == 0 || proxyModel.Status == 0 {
+		if proxyModel.ActiveTime == 0 || proxyModel.Status == consts.STATUS_NO {
 			proxyModel.ActiveTime = time.Now().Unix()
 		}
 	} else {
 		proxyModel.ActiveTime = 0
+		//set yes to no, need recheck
+		if proxyModel.Status == consts.STATUS_YES && config.Get().RecheckCount > 0 {
+			proxyModel.CheckCount = config.Get().RecheckCount
+			status = consts.STATUS_RECHECK
+		} else if proxyModel.Status == consts.STATUS_RECHECK {
+			proxyModel.CheckCount = proxyModel.CheckCount - 1
+			if proxyModel.CheckCount >= 0 {
+				status = consts.STATUS_RECHECK
+			}
+		}
 		if proxyModel.CheckCount > -10 {
 			proxyModel.CheckCount = proxyModel.CheckCount - 1
 			if proxyModel.CheckCount <= -10 {

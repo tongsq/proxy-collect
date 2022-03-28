@@ -1,4 +1,4 @@
-dao: redis #set storage type -> redis|database
+dao: database #set storage type -> redis|database
 redis: #redis config
   MaxIdle: 2
   MaxActive: 5
@@ -13,4 +13,4 @@ api:
   port: 8090
 poolSize: 1000
 localIpDataPath: /tmp/local_ip_data.dat
-
+recheckCount: 10 #recheck count if ip is invalid

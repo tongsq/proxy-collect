@@ -7,12 +7,14 @@ import (
 
 	"github.com/tongsq/go-lib/logger"
 	redis_client "github.com/tongsq/go-lib/redis-client"
+	"proxy-collect/consts"
 	"proxy-collect/model"
 )
 
 const PROXY_FAIL_SET = "proxy_fail_set"
 const PROXY_INFO_MAP = "proxy_info_map"
 const PROXY_SUCCESS_SET = "proxy_success_set"
+const PROXY_RECHECK_SET = "proxy_recheck_set"
 
 func NewRedisProxyDao() *proxyDao {
 	return &proxyDao{}
@@ -23,6 +25,10 @@ type proxyDao struct {
 
 func (d *proxyDao) GetFailList() ([]model.ProxyModel, error) {
 	return d.getProxyList(PROXY_FAIL_SET)
+}
+
+func (d *proxyDao) GetRecheckList() ([]model.ProxyModel, error) {
+	return d.getProxyList(PROXY_RECHECK_SET)
 }
 
 func (d *proxyDao) GetOne(host string, port string) (*model.ProxyModel, error) {
@@ -142,12 +148,18 @@ func updateProxySet(m *model.ProxyModel) {
 		return
 	}
 	key := getProxyKey(m.Host, m.Port)
-	if m.Status == 1 {
+	if m.Status == consts.STATUS_YES {
 		Client.SAdd(PROXY_SUCCESS_SET, key)
+		Client.SRem(PROXY_FAIL_SET, key)
+		Client.SRem(PROXY_RECHECK_SET, key)
+	} else if m.Status == consts.STATUS_RECHECK {
+		Client.SAdd(PROXY_RECHECK_SET, key)
+		Client.SRem(PROXY_SUCCESS_SET, key)
 		Client.SRem(PROXY_FAIL_SET, key)
 	} else {
 		Client.SAdd(PROXY_FAIL_SET, key)
 		Client.SRem(PROXY_SUCCESS_SET, key)
+		Client.SRem(PROXY_RECHECK_SET, key)
 	}
 }
 
@@ -155,4 +167,5 @@ func deleteProxySet(host string, port string) {
 	key := getProxyKey(host, port)
 	Client.SRem(PROXY_SUCCESS_SET, key)
 	Client.SRem(PROXY_FAIL_SET, key)
+	Client.SRem(PROXY_RECHECK_SET, key)
 }

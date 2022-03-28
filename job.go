@@ -16,6 +16,7 @@ func main() {
 	c.AddJob("*/2 * * * *", scheduler.CheckActiveIp{})
 	c.AddJob("@every 5h", scheduler.CheckFailIp{})
 	c.AddJob("@every 5m", scheduler.UpdateIpInfo{})
+	c.AddJob("@every 1m", scheduler.RecheckIp{})
 	//update local ip database
 	c.AddFunc("2 2 * * *", func() {
 		ip.UpdateLocalIpData()

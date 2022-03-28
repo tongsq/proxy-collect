@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/jinzhu/gorm"
+	"proxy-collect/consts"
 	"proxy-collect/model"
 )
 
@@ -16,7 +17,13 @@ type proxyDao struct {
 
 func (d *proxyDao) GetFailList() ([]model.ProxyModel, error) {
 	var proxies []model.ProxyModel
-	DB().Where("status<>?", 1).Where("check_count>0").Find(&proxies)
+	DB().Where("status=?", consts.STATUS_NO).Where("check_count>0").Find(&proxies)
+	return proxies, nil
+}
+
+func (d *proxyDao) GetRecheckList() ([]model.ProxyModel, error) {
+	var proxies []model.ProxyModel
+	DB().Where("status=?", consts.STATUS_RECHECK).Where("check_count>0").Find(&proxies)
 	return proxies, nil
 }
 
@@ -55,13 +62,13 @@ func (d *proxyDao) Save(m *model.ProxyModel) error {
 
 func (d *proxyDao) GetActiveList() ([]model.ProxyModel, error) {
 	var proxies []model.ProxyModel
-	DB().Where("status=?", 1).Find(&proxies)
+	DB().Where("status=?", consts.STATUS_YES).Find(&proxies)
 	return proxies, nil
 }
 
 func (d *proxyDao) GetNeedUpdateInfoList() []model.ProxyModel {
 	var proxies []model.ProxyModel
-	DB().Where("status=? and country=?", 1, "").Find(&proxies)
+	DB().Where("status=? and country=?", consts.STATUS_YES, "").Find(&proxies)
 	return proxies
 }
 
