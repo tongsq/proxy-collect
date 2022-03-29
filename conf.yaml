@@ -1,4 +1,4 @@
-dao: database #set storage type -> redis|database
+dao: redis #set storage type -> redis|database
 redis: #redis config
   MaxIdle: 2
   MaxActive: 5
@@ -8,6 +8,8 @@ redis: #redis config
 database: #database config
   Dialect: mysql
   Args: python:123456@(127.0.0.1:3306)/py?charset=utf8&loc=Local
+  MaxIdle: 5 #max idle connections count
+  MaxOpen: 50 #max connections count
 api:
   host: 0.0.0.0
   port: 8090

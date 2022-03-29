@@ -45,6 +45,8 @@ type confDto struct {
 	Database struct {
 		Dialect string `yaml:"Dialect"`
 		Args    string `yaml:"Args"`
+		MaxIdle int    `yaml:"MaxIdle"`
+		MaxOpen int    `yaml:"MaxOpen"`
 	}
 	Api struct {
 		Host string `yaml:"host"`

@@ -24,5 +24,7 @@ func NewDB() (db *gorm.DB) {
 		panic(err)
 	}
 	db.SingularTable(true)
+	db.DB().SetMaxOpenConns(c.MaxOpen)
+	db.DB().SetMaxIdleConns(c.MaxIdle)
 	return db
 }
