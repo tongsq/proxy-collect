@@ -1,4 +1,4 @@
-package main
+package bootstrap
 
 import (
 	"github.com/robfig/cron/v3"
@@ -6,11 +6,7 @@ import (
 	"proxy-collect/service/ip"
 )
 
-func main() {
-	//l := &logger.CronLogger{}
-	//c := cron.New(cron.WithChain(
-	//	cron.SkipIfStillRunning(l),
-	//))
+func StartJobServer() {
 	c := cron.New()
 	c.AddJob("*/3 * * * *", scheduler.GetIp{})
 	c.AddJob("*/2 * * * *", scheduler.CheckActiveIp{})

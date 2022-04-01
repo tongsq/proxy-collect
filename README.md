@@ -10,13 +10,19 @@
     cd proxy-collect
 2、start daemon job collect free ip (启动脚本收集免费代理ip)
 
-    go run job.go
+    go run ./cmd -S=job -C=conf.yaml
 3、start api server (启动api服务)
 
-    go run api.go
+    go run ./cmd -S=api -C=conf.yaml
 4、get proxy ip
 
     curl 127.0.0.1:8090/all?city=上海&duration=100
+
+同时启动收集服务和api可使用以下两种方式之一
+
+    go run ./cmd -S=job -S=api -C=conf.yaml
+
+    go run ./cmd -S=all -C=conf.yaml
 
 ## Config your yaml (yaml配置)
 ## Config storage media (设置存储媒介)

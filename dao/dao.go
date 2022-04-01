@@ -8,7 +8,7 @@ import (
 
 var ProxyDao proxyDaoInterface
 
-func init() {
+func LoadDao() {
 	c := config.Get().Dao
 	if c == "redis" {
 		ProxyDao = redis.NewRedisProxyDao()

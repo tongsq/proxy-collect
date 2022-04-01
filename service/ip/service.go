@@ -7,7 +7,7 @@ import (
 
 var LocalIpService *localIpService
 
-func init() {
+func LoadLocalIpData() {
 	// IPData IP库的数据
 	var IPData = &fileData{
 		FilePath: config.Get().LocalIpDataPath,

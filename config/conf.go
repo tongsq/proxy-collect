@@ -9,7 +9,7 @@ import (
 )
 
 var conf *confDto
-var YamlPath string = "conf.yaml"
+var YamlPath = "conf.yaml"
 
 func Get() *confDto {
 	if conf == nil {
@@ -26,6 +26,20 @@ func Get() *confDto {
 		logger.Info("load config success", logger.Fields{"conf": conf})
 	}
 	return conf
+}
+
+func LoadConfig() {
+	yamls, err := ioutil.ReadFile(YamlPath)
+	if err != nil {
+		ReadConfigError(err)
+	}
+	c := confDto{}
+	err = yaml.Unmarshal(yamls, &c)
+	if err != nil {
+		ReadConfigError(err)
+	}
+	conf = &c
+	logger.Info("load config success", logger.Fields{"conf": conf})
 }
 
 func ReadConfigError(err error) {

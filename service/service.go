@@ -1,6 +1,9 @@
 package service
 
-import "proxy-collect/service/get_proxy"
+import (
+	"proxy-collect/service/get_proxy"
+	"proxy-collect/service/ip"
+)
 
 var ProxyService = NewProxyService()
 var GetProxy66ip = get_proxy.NewGetProxy66ip()
@@ -22,3 +25,7 @@ var GetProxySeofangfa = get_proxy.NewGetProxySeofangfa()
 var GetProxyXsdaili = get_proxy.NewGetProxyXsdaili()
 var GetProxyYqie = get_proxy.NewGetProxyYqie()
 var GetProxyPaChong = get_proxy.NewGetProxyPachong()
+
+func LoadService() {
+	ip.LoadLocalIpData()
+}

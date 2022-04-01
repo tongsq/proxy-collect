@@ -7,6 +7,6 @@ import (
 
 var Pool *component.Pool
 
-func init() {
+func LoadGlobal() {
 	Pool = component.NewTaskPool(config.Get().PoolSize)
 }

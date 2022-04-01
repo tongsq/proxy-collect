@@ -33,7 +33,7 @@ func (d *proxyDao) GetRecheckList() ([]model.ProxyModel, error) {
 
 func (d *proxyDao) GetOne(host string, port string) (*model.ProxyModel, error) {
 	var m model.ProxyModel
-	info, err := Client.HMGetOne(PROXY_INFO_MAP, getProxyKey(host, port))
+	info, err := Client().HMGetOne(PROXY_INFO_MAP, getProxyKey(host, port))
 	if info == "" || err != nil {
 		return nil, err
 	}
@@ -60,7 +60,7 @@ func (d *proxyDao) Create(host string, port string, status int8, source string) 
 	if err != nil {
 		return nil, err
 	}
-	result, err := Client.HMSet(PROXY_INFO_MAP, redis_client.HMDto{Field: key, Value: string(value)})
+	result, err := Client().HMSet(PROXY_INFO_MAP, redis_client.HMDto{Field: key, Value: string(value)})
 	if !result || err != nil {
 		return nil, err
 	}
@@ -74,7 +74,7 @@ func (d *proxyDao) Save(m *model.ProxyModel) error {
 	if err != nil {
 		return err
 	}
-	result, err := Client.HMSet(PROXY_INFO_MAP, redis_client.HMDto{Field: key, Value: string(value)})
+	result, err := Client().HMSet(PROXY_INFO_MAP, redis_client.HMDto{Field: key, Value: string(value)})
 	if !result || err != nil {
 		return err
 	}
@@ -102,7 +102,7 @@ func (d *proxyDao) GetNeedUpdateInfoList() []model.ProxyModel {
 
 func (d *proxyDao) Delete(host string, port string) error {
 	key := getProxyKey(host, port)
-	_, err := Client.HDel(PROXY_INFO_MAP, key)
+	_, err := Client().HDel(PROXY_INFO_MAP, key)
 	if err != nil {
 		return err
 	}
@@ -119,11 +119,11 @@ func ConvertInterface(args ...string) []interface{} {
 }
 
 func (d *proxyDao) getProxyList(key string) ([]model.ProxyModel, error) {
-	proxys, err := Client.SMembers(key)
+	proxys, err := Client().SMembers(key)
 	if err != nil || proxys == nil {
 		return nil, err
 	}
-	infoList, err := Client.HMGet(PROXY_INFO_MAP, ConvertInterface(proxys...)...)
+	infoList, err := Client().HMGet(PROXY_INFO_MAP, ConvertInterface(proxys...)...)
 	if err != nil || infoList == nil {
 		return nil, err
 	}
@@ -149,23 +149,23 @@ func updateProxySet(m *model.ProxyModel) {
 	}
 	key := getProxyKey(m.Host, m.Port)
 	if m.Status == consts.STATUS_YES {
-		Client.SAdd(PROXY_SUCCESS_SET, key)
-		Client.SRem(PROXY_FAIL_SET, key)
-		Client.SRem(PROXY_RECHECK_SET, key)
+		Client().SAdd(PROXY_SUCCESS_SET, key)
+		Client().SRem(PROXY_FAIL_SET, key)
+		Client().SRem(PROXY_RECHECK_SET, key)
 	} else if m.Status == consts.STATUS_RECHECK {
-		Client.SAdd(PROXY_RECHECK_SET, key)
-		Client.SRem(PROXY_SUCCESS_SET, key)
-		Client.SRem(PROXY_FAIL_SET, key)
+		Client().SAdd(PROXY_RECHECK_SET, key)
+		Client().SRem(PROXY_SUCCESS_SET, key)
+		Client().SRem(PROXY_FAIL_SET, key)
 	} else {
-		Client.SAdd(PROXY_FAIL_SET, key)
-		Client.SRem(PROXY_SUCCESS_SET, key)
-		Client.SRem(PROXY_RECHECK_SET, key)
+		Client().SAdd(PROXY_FAIL_SET, key)
+		Client().SRem(PROXY_SUCCESS_SET, key)
+		Client().SRem(PROXY_RECHECK_SET, key)
 	}
 }
 
 func deleteProxySet(host string, port string) {
 	key := getProxyKey(host, port)
-	Client.SRem(PROXY_SUCCESS_SET, key)
-	Client.SRem(PROXY_FAIL_SET, key)
-	Client.SRem(PROXY_RECHECK_SET, key)
+	Client().SRem(PROXY_SUCCESS_SET, key)
+	Client().SRem(PROXY_FAIL_SET, key)
+	Client().SRem(PROXY_RECHECK_SET, key)
 }
