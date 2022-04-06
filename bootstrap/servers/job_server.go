@@ -1,4 +1,4 @@
-package bootstrap
+package servers
 
 import (
 	"github.com/robfig/cron/v3"

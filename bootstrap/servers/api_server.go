@@ -1,4 +1,4 @@
-package bootstrap
+package servers
 
 import (
 	"fmt"
