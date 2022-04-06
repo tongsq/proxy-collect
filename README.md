@@ -66,3 +66,8 @@
       KEY `IDX_STATUS` (`status`) USING BTREE,
       KEY `IDX_ACTIVE_TIME` (`active_time`) USING BTREE
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT
+
+# 待开发
+- [ ] 支持socket5等其它协议代理采集、较验
+- [ ] 支持配置日志分级
+- [ ] 支持开启隧道代理服务：用户名密码验证、限流功能
