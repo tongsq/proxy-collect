@@ -13,7 +13,7 @@ func (s GetIp) Run() {
 	logger.FSuccess("collect ip start run")
 	//pool := component.NewTaskPool(100)
 	//defer pool.Close()
-	serviceList := []service.GetProxyInterface{
+	serviceList := []service.ProxyGetterInterface{
 		service.GetProxyXila,
 		service.GetProxyNima,
 		service.GetProxyKuai,

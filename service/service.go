@@ -1,31 +1,31 @@
 package service
 
 import (
-	"proxy-collect/service/get_proxy"
 	"proxy-collect/service/ip"
+	"proxy-collect/service/proxy_getter"
 )
 
 var ProxyService = NewProxyService()
-var GetProxy66ip = get_proxy.NewGetProxy66ip()
-var GetProxyData5u = get_proxy.NewGetProxyData5u()
-var GetProxyKuai = get_proxy.NewGetProxyKuai()
-var GetProxyXila = get_proxy.NewGetProxyXila()
-var GetProxyNima = get_proxy.NewGetProxyNima()
-var GetProxyGuoBanjia = get_proxy.NewGetProxyGuoBanJia()
-var GetProxyCoderBusy = get_proxy.NewGetProxyCoderBusy()
-var GetProxyIp3366 = get_proxy.NewGetProxyIp3366()
-var GetProxyIpJiangXianLi = get_proxy.NewGetProxyIpJiangXianLi()
-var GetProxy89Ip = get_proxy.NewGetProxy89Ip()
-var GetProxy7Yip = get_proxy.NewGetProxy7Yip()
-var GetProxyProxyList = get_proxy.NewGetProxyProxyList()
-var GetProxyZdaye = get_proxy.NewGetProxyZdaye()
-var GetProxyZdayeIndex = get_proxy.NewGetProxyZdayeIndex()
-var GetProxyFanQie = get_proxy.NewGetProxyFanQie()
-var GetProxySeofangfa = get_proxy.NewGetProxySeofangfa()
-var GetProxyXsdaili = get_proxy.NewGetProxyXsdaili()
-var GetProxyYqie = get_proxy.NewGetProxyYqie()
-var GetProxyPaChong = get_proxy.NewGetProxyPachong()
-var KxDaili = get_proxy.NewGetProxyKxDaili()
+var GetProxy66ip = proxy_getter.NewGetProxy66ip()
+var GetProxyData5u = proxy_getter.NewGetProxyData5u()
+var GetProxyKuai = proxy_getter.NewGetProxyKuai()
+var GetProxyXila = proxy_getter.NewGetProxyXila()
+var GetProxyNima = proxy_getter.NewGetProxyNima()
+var GetProxyGuoBanjia = proxy_getter.NewGetProxyGuoBanJia()
+var GetProxyCoderBusy = proxy_getter.NewGetProxyCoderBusy()
+var GetProxyIp3366 = proxy_getter.NewGetProxyIp3366()
+var GetProxyIpJiangXianLi = proxy_getter.NewGetProxyIpJiangXianLi()
+var GetProxy89Ip = proxy_getter.NewGetProxy89Ip()
+var GetProxy7Yip = proxy_getter.NewGetProxy7Yip()
+var GetProxyProxyList = proxy_getter.NewGetProxyProxyList()
+var GetProxyZdaye = proxy_getter.NewGetProxyZdaye()
+var GetProxyZdayeIndex = proxy_getter.NewGetProxyZdayeIndex()
+var GetProxyFanQie = proxy_getter.NewGetProxyFanQie()
+var GetProxySeofangfa = proxy_getter.NewGetProxySeofangfa()
+var GetProxyXsdaili = proxy_getter.NewGetProxyXsdaili()
+var GetProxyYqie = proxy_getter.NewGetProxyYqie()
+var GetProxyPaChong = proxy_getter.NewGetProxyPachong()
+var KxDaili = proxy_getter.NewGetProxyKxDaili()
 
 func LoadService() {
 	ip.LoadLocalIpData()

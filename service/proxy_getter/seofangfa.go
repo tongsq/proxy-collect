@@ -1,7 +1,6 @@
-package get_proxy
+package proxy_getter
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
@@ -10,43 +9,42 @@ import (
 	"proxy-collect/consts"
 )
 
-func NewGetProxyKuai() *getProxyKuai {
-	return &getProxyKuai{}
+func NewGetProxySeofangfa() *Seofangfa {
+	return &Seofangfa{}
 }
 
-type getProxyKuai struct {
+type Seofangfa struct {
 }
 
-func (s *getProxyKuai) GetUrlList() []string {
-	list := []string{
-		"https://www.kuaidaili.com/free/inha/",
-		"https://www.kuaidaili.com/free/intr/",
-	}
-	for i := 2; i < 6; i++ {
-		list = append(list, fmt.Sprintf("https://www.kuaidaili.com/free/inha/%d/", i))
-		list = append(list, fmt.Sprintf("https://www.kuaidaili.com/free/intr/%d/", i))
-	}
-	return list
+func (s *Seofangfa) GetUrlList() []string {
+	return []string{"https://proxy.seofangfa.com/"}
 }
 
-func (s *getProxyKuai) GetContentHtml(requestUrl string) string {
+func (s *Seofangfa) GetContentHtml(requestUrl string) string {
 
 	h := &request.RequestHeaderDto{
 		UserAgent:               consts.USER_AGENT,
-		Host:                    "www.kuaidaili.com",
-		Referer:                 "https://www.kuaidaili.com/free/inha/",
 		UpgradeInsecureRequests: "1",
+		Host:                    "proxy.seofangfa.com",
+		Accept:                  "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+		AcceptEncoding:          "gzip, deflate, br",
+		AcceptLanguage:          "zh-CN,zh;q=0.9",
+		SecFetchDest:            "document",
+		SecFetchMode:            "navigate",
 	}
-	logger.Info("get proxy from kuaidaili", logger.Fields{"url": requestUrl})
+
+	logger.Info("get proxy from proxy.seofangfa.com", logger.Fields{"url": requestUrl})
+
 	data, err := request.WebGet(requestUrl, h, nil)
+
 	if err != nil || data == nil {
-		logger.Error("ger proxy from kuaidaili fail", logger.Fields{"err": err, "data": data})
+		logger.Error("get proxy from proxy.seofangfa.com fail", logger.Fields{"err": err, "data": data})
 		return ""
 	}
 	return data.Body
 }
 
-func (s *getProxyKuai) ParseHtml(body string) [][]string {
+func (s *Seofangfa) ParseHtml(body string) [][]string {
 
 	doc, err := goquery.NewDocumentFromReader(strings.NewReader(body))
 	if err != nil {

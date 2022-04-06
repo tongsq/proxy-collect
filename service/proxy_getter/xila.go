@@ -1,4 +1,4 @@
-package get_proxy
+package proxy_getter
 
 import (
 	"fmt"
@@ -10,42 +10,41 @@ import (
 	"proxy-collect/consts"
 )
 
-func NewGetProxyXici() *getProxyXici {
-	return &getProxyXici{}
+func NewGetProxyXila() *getProxyXila {
+	return &getProxyXila{}
 }
 
-type getProxyXici struct {
+type getProxyXila struct {
 }
 
-func (s *getProxyXici) GetUrlList() []string {
+func (s *getProxyXila) GetUrlList() []string {
 	list := []string{
-		"http://www.xicidaili.com/wn/",
+		"http://www.xiladaili.com/https/",
 	}
 	for i := 2; i < 6; i++ {
-		list = append(list, fmt.Sprintf("http://www.xicidaili.com/wn/%d", i))
+		list = append(list, fmt.Sprintf("http://www.xiladaili.com/https/%d/", i))
 	}
 	return list
 }
 
-func (s *getProxyXici) GetContentHtml(requestUrl string) string {
+func (s *getProxyXila) GetContentHtml(requestUrl string) string {
 
 	h := &request.RequestHeaderDto{
 		UserAgent:               consts.USER_AGENT,
-		Host:                    "www.xicidaili.com",
-		Referer:                 "http://www.xicidaili.com",
+		Host:                    "www.xiladaili.com",
+		Referer:                 "http://www.xiladaili.com/https/",
 		UpgradeInsecureRequests: "1",
 	}
-
-	logger.Info("get proxy from xicidaili", logger.Fields{"url": requestUrl})
+	logger.Info("get proxy from xiladaili", logger.Fields{"url": requestUrl})
 	data, err := request.WebGet(requestUrl, h, nil)
 	if err != nil || data == nil {
-		logger.Error("get proxy from xicidaili fail", logger.Fields{"err": err, "data": data})
+		logger.Error("get proxy from xiladaili fail", logger.Fields{"err": err, "data": data})
 		return ""
 	}
 	return data.Body
 }
 
-func (s *getProxyXici) ParseHtml(body string) [][]string {
+func (s *getProxyXila) ParseHtml(body string) [][]string {
 	doc, err := goquery.NewDocumentFromReader(strings.NewReader(body))
 	if err != nil {
 		logger.Error(consts.GO_QUERY_READ_ERROR, logger.Fields{"err": err})

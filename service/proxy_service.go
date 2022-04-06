@@ -145,7 +145,7 @@ func (s *proxyService) CheckProxyAndSave(host string, port string, source string
 	return
 }
 
-func (s *proxyService) DoGetProxy(getProxyService GetProxyInterface, pool *component.Pool) {
+func (s *proxyService) DoGetProxy(getProxyService ProxyGetterInterface, pool *component.Pool) {
 	for _, requestUrl := range getProxyService.GetUrlList() {
 		contentBody := getProxyService.GetContentHtml(requestUrl)
 		if contentBody == "" {

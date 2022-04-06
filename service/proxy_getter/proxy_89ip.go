@@ -1,4 +1,4 @@
-package get_proxy
+package proxy_getter
 
 import (
 	"fmt"
@@ -11,38 +11,40 @@ import (
 	"proxy-collect/service/common"
 )
 
-func NewGetProxy7Yip() *getProxy7Yip {
-	return &getProxy7Yip{}
+func NewGetProxy89Ip() *getProxy89Ip {
+	return &getProxy89Ip{}
 }
 
-type getProxy7Yip struct {
+type getProxy89Ip struct {
 }
 
-func (s *getProxy7Yip) GetUrlList() []string {
+func (s *getProxy89Ip) GetUrlList() []string {
 	list := []string{
-		"https://www.7yip.cn/free/",
+		"https://www.89ip.cn/",
 	}
 	for i := 2; i < 6; i++ {
-		list = append(list, fmt.Sprintf("https://www.7yip.cn/free/?action=china&page=%d", i))
+		list = append(list, fmt.Sprintf("https://www.89ip.cn/index_%d.html", i))
 	}
 	return list
 }
-func (s *getProxy7Yip) GetContentHtml(requestUrl string) string {
+func (s *getProxy89Ip) GetContentHtml(requestUrl string) string {
 	h := &request.RequestHeaderDto{
 		UserAgent:               consts.USER_AGENT,
 		UpgradeInsecureRequests: "1",
-		Host:                    "www.7yip.cn",
-		Referer:                 "https://www.7yip.cn/",
+		Host:                    "www.89ip.cn",
+		Referer:                 "https://www.89ip.cn/",
 	}
-	logger.Info("get proxy from 7yip", logger.Fields{"url": requestUrl})
+
+	logger.Info("get proxy from 89ip", logger.Fields{"url": requestUrl})
 	data, err := request.WebGet(requestUrl, h, nil)
 	if err != nil || data == nil {
-		logger.Error("get proxy from 7yip fail", logger.Fields{"err": err, "data": data})
+		logger.Error("get proxy from 89ip fail", logger.Fields{"err": err, "data": data})
+		return ""
 	}
 	return data.Body
 }
 
-func (s *getProxy7Yip) ParseHtml(body string) [][]string {
+func (s *getProxy89Ip) ParseHtml(body string) [][]string {
 
 	doc, err := goquery.NewDocumentFromReader(strings.NewReader(body))
 	if err != nil {
@@ -63,13 +65,5 @@ func (s *getProxy7Yip) ParseHtml(body string) [][]string {
 		proxyArr := []string{host, port}
 		proxyList = append(proxyList, proxyArr)
 	})
-
 	return proxyList
 }
-
-//func (s *getProxy7Yip) GetSource() string {
-//	_, file, _, _ := runtime.Caller(0)
-//	arr := strings.Split(file, "/")
-//	name := arr[len(arr)-1]
-//	return name[0:len(name)-3]
-//}
