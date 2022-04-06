@@ -25,6 +25,7 @@ var GetProxySeofangfa = get_proxy.NewGetProxySeofangfa()
 var GetProxyXsdaili = get_proxy.NewGetProxyXsdaili()
 var GetProxyYqie = get_proxy.NewGetProxyYqie()
 var GetProxyPaChong = get_proxy.NewGetProxyPachong()
+var KxDaili = get_proxy.NewGetProxyKxDaili()
 
 func LoadService() {
 	ip.LoadLocalIpData()

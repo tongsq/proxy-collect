@@ -1,6 +1,7 @@
 package tests
 
 import (
+	"fmt"
 	"math/rand"
 	"sync/atomic"
 	"testing"
@@ -11,7 +12,7 @@ import (
 )
 
 func TestGetIp(t *testing.T) {
-	s := service.GetProxyPaChong
+	s := service.KxDaili
 	for _, requestUrl := range s.GetUrlList() {
 		t.Log(requestUrl)
 		contentBody := s.GetContentHtml(requestUrl)
@@ -22,8 +23,8 @@ func TestGetIp(t *testing.T) {
 		proxyList := s.ParseHtml(contentBody)
 		logger.Info("get ip list:", logger.Fields{"list": proxyList})
 		for _, item := range proxyList {
-			r := service.ProxyService.CheckIpStatus(item[0], item[1])
-			t.Log(r)
+			r := service.ProxyService.CheckIpStatus(fmt.Sprintf("http://%s:%s", item[0], item[1]))
+			t.Log(item[0], item[1], r)
 		}
 	}
 }
@@ -34,14 +35,15 @@ func TestRand(t *testing.T) {
 	t.Log(i)
 }
 
+//https://pzzqz.com/
 func TestCheckIp(t *testing.T) {
-	items := [][]string{
-		{"root:123@127.0.0.1", "8090"},
+	items := []string{
+		"socks4://78.140.7.239:40009",
 	}
 	for i := 0; i < 10; i++ {
 		go func() {
 			for _, item := range items {
-				r := service.ProxyService.CheckIpStatus(item[0], item[1])
+				r := service.ProxyService.CheckIpStatus(item)
 				t.Log(r)
 			}
 		}()
