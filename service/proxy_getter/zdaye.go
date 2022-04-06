@@ -1,4 +1,4 @@
-package get_proxy
+package proxy_getter
 
 import (
 	"fmt"

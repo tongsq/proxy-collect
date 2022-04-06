@@ -1,6 +1,7 @@
-package get_proxy
+package proxy_getter
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
@@ -9,42 +10,43 @@ import (
 	"proxy-collect/consts"
 )
 
-func NewGetProxyYqie() *Yqie {
-	return &Yqie{}
+func NewGetProxyKuai() *getProxyKuai {
+	return &getProxyKuai{}
 }
 
-type Yqie struct {
+type getProxyKuai struct {
 }
 
-func (s *Yqie) GetUrlList() []string {
-	return []string{"http://ip.yqie.com/ipproxy.htm"}
+func (s *getProxyKuai) GetUrlList() []string {
+	list := []string{
+		"https://www.kuaidaili.com/free/inha/",
+		"https://www.kuaidaili.com/free/intr/",
+	}
+	for i := 2; i < 6; i++ {
+		list = append(list, fmt.Sprintf("https://www.kuaidaili.com/free/inha/%d/", i))
+		list = append(list, fmt.Sprintf("https://www.kuaidaili.com/free/intr/%d/", i))
+	}
+	return list
 }
 
-func (s *Yqie) GetContentHtml(requestUrl string) string {
+func (s *getProxyKuai) GetContentHtml(requestUrl string) string {
 
 	h := &request.RequestHeaderDto{
 		UserAgent:               consts.USER_AGENT,
+		Host:                    "www.kuaidaili.com",
+		Referer:                 "https://www.kuaidaili.com/free/inha/",
 		UpgradeInsecureRequests: "1",
-		Host:                    "ip.yqie.com",
-		Accept:                  "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
-		AcceptEncoding:          "gzip, deflate, br",
-		AcceptLanguage:          "zh-CN,zh;q=0.9",
-		SecFetchDest:            "document",
-		SecFetchMode:            "navigate",
 	}
-
-	logger.Info("get proxy from ip.yqie.com", logger.Fields{"url": requestUrl})
-
+	logger.Info("get proxy from kuaidaili", logger.Fields{"url": requestUrl})
 	data, err := request.WebGet(requestUrl, h, nil)
-
 	if err != nil || data == nil {
-		logger.Error("get proxy from ip.yqie.com fail", logger.Fields{"err": err, "data": data})
+		logger.Error("ger proxy from kuaidaili fail", logger.Fields{"err": err, "data": data})
 		return ""
 	}
 	return data.Body
 }
 
-func (s *Yqie) ParseHtml(body string) [][]string {
+func (s *getProxyKuai) ParseHtml(body string) [][]string {
 
 	doc, err := goquery.NewDocumentFromReader(strings.NewReader(body))
 	if err != nil {
@@ -59,7 +61,6 @@ func (s *Yqie) ParseHtml(body string) [][]string {
 		proxyPort := td2.Text()
 		if proxyHost == "" || proxyPort == "" {
 			logger.FError("parse html node fail")
-			return
 		}
 		proxyArr := []string{strings.TrimSpace(proxyHost), strings.TrimSpace(proxyPort)}
 		proxyList = append(proxyList, proxyArr)

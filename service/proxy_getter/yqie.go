@@ -1,4 +1,4 @@
-package get_proxy
+package proxy_getter
 
 import (
 	"strings"
@@ -9,23 +9,23 @@ import (
 	"proxy-collect/consts"
 )
 
-func NewGetProxySeofangfa() *Seofangfa {
-	return &Seofangfa{}
+func NewGetProxyYqie() *Yqie {
+	return &Yqie{}
 }
 
-type Seofangfa struct {
+type Yqie struct {
 }
 
-func (s *Seofangfa) GetUrlList() []string {
-	return []string{"https://proxy.seofangfa.com/"}
+func (s *Yqie) GetUrlList() []string {
+	return []string{"http://ip.yqie.com/ipproxy.htm"}
 }
 
-func (s *Seofangfa) GetContentHtml(requestUrl string) string {
+func (s *Yqie) GetContentHtml(requestUrl string) string {
 
 	h := &request.RequestHeaderDto{
 		UserAgent:               consts.USER_AGENT,
 		UpgradeInsecureRequests: "1",
-		Host:                    "proxy.seofangfa.com",
+		Host:                    "ip.yqie.com",
 		Accept:                  "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
 		AcceptEncoding:          "gzip, deflate, br",
 		AcceptLanguage:          "zh-CN,zh;q=0.9",
@@ -33,18 +33,18 @@ func (s *Seofangfa) GetContentHtml(requestUrl string) string {
 		SecFetchMode:            "navigate",
 	}
 
-	logger.Info("get proxy from proxy.seofangfa.com", logger.Fields{"url": requestUrl})
+	logger.Info("get proxy from ip.yqie.com", logger.Fields{"url": requestUrl})
 
 	data, err := request.WebGet(requestUrl, h, nil)
 
 	if err != nil || data == nil {
-		logger.Error("get proxy from proxy.seofangfa.com fail", logger.Fields{"err": err, "data": data})
+		logger.Error("get proxy from ip.yqie.com fail", logger.Fields{"err": err, "data": data})
 		return ""
 	}
 	return data.Body
 }
 
-func (s *Seofangfa) ParseHtml(body string) [][]string {
+func (s *Yqie) ParseHtml(body string) [][]string {
 
 	doc, err := goquery.NewDocumentFromReader(strings.NewReader(body))
 	if err != nil {
@@ -59,6 +59,7 @@ func (s *Seofangfa) ParseHtml(body string) [][]string {
 		proxyPort := td2.Text()
 		if proxyHost == "" || proxyPort == "" {
 			logger.FError("parse html node fail")
+			return
 		}
 		proxyArr := []string{strings.TrimSpace(proxyHost), strings.TrimSpace(proxyPort)}
 		proxyList = append(proxyList, proxyArr)

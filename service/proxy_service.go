@@ -51,18 +51,18 @@ func (s *proxyService) CheckIpStatusActive(host, port string) bool {
 	return true
 }
 
-func (s *proxyService) CheckIpStatus(host, port string) bool {
+func (s *proxyService) CheckIpStatus(proxyUrlStr string) bool {
 	request_url := "https://www.baidu.com"
 	req, _ := http.NewRequest("GET", request_url, nil)
 	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.106 Safari/537.36")
-	proxyServer := fmt.Sprintf("http://%s:%s", host, port)
-	proxyUrl, _ := url.Parse(proxyServer)
+	proxyUrl, _ := url.Parse(proxyUrlStr)
 	client := http.Client{
 		Transport: &http.Transport{Proxy: http.ProxyURL(proxyUrl)},
 		Timeout:   time.Second * 5,
 	}
 	resp, err := client.Do(req)
 	if err != nil {
+		//fmt.Println(err)
 		return false
 	}
 	defer resp.Body.Close()
@@ -76,11 +76,11 @@ func (s *proxyService) CheckIpStatus(host, port string) bool {
 }
 
 func (s *proxyService) CheckProxyAndSave(host string, port string, source string) {
-	result := s.CheckIpStatus(host, port)
+	result := s.CheckIpStatus(fmt.Sprintf("http://%s:%s", host, port))
 	if result {
-		logger.Success("ip is success", logger.Fields{"host": host, "port": port})
+		logger.Success("ip is success", logger.Fields{"host": host, "port": port, "source": source})
 	} else {
-		logger.Info("ip is fail", logger.Fields{"host": host, "port": port})
+		logger.Info("ip is fail", logger.Fields{"host": host, "port": port, "source": source})
 	}
 	var status int8 = consts.STATUS_YES
 	if !result {
@@ -145,7 +145,7 @@ func (s *proxyService) CheckProxyAndSave(host string, port string, source string
 	return
 }
 
-func (s *proxyService) DoGetProxy(getProxyService GetProxyInterface, pool *component.Pool) {
+func (s *proxyService) DoGetProxy(getProxyService ProxyGetterInterface, pool *component.Pool) {
 	for _, requestUrl := range getProxyService.GetUrlList() {
 		contentBody := getProxyService.GetContentHtml(requestUrl)
 		if contentBody == "" {
@@ -163,7 +163,7 @@ func (s *proxyService) DoGetProxy(getProxyService GetProxyInterface, pool *compo
 		}(&wg)
 		for _, proxyArr := range proxyList {
 			ip, port := proxyArr[0], proxyArr[1]
-			source := reflect.TypeOf(getProxyService).String()[9:]
+			source := reflect.TypeOf(getProxyService).String()[14:]
 			pool.RunTask(func() { s.CheckProxyAndSave(ip, port, source) })
 		}
 

@@ -1,6 +1,6 @@
 package service
 
-type GetProxyInterface interface {
+type ProxyGetterInterface interface {
 	GetContentHtml(requestUrl string) string
 	ParseHtml(body string) [][]string
 	GetUrlList() []string

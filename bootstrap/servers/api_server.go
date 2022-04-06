@@ -1,4 +1,4 @@
-package main
+package servers
 
 import (
 	"fmt"
@@ -13,7 +13,7 @@ import (
 	"proxy-collect/dto"
 )
 
-func main() {
+func StartApiServer() {
 	r := gin.Default()
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{
