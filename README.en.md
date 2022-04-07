@@ -1,49 +1,47 @@
 ### proxy-collect - GO Proxy Collector
 
-### GO语言实现的ip代理池
+### A simple proxy pool written in Golang
 
-#### [English README](README.en.md)
+#### [中文文档](README.md)
 
-功能
+Features
 ------
 
-* 支持redis或mysql作为存储
-* 自动抓取互联网上的免费代理ip
-* 定时检测ip可用性，失效ip复检、记录ip存活时间
-* 获取ip归属地等信息
-* 通过api获取可用代理ip列表
+* Support redis or MySQL as storage
+* Automatically grab free proxy IP on the Internet
+* Regularly check IP availability and recheck failed IP
+* Get the list of available proxy IP through API
 
-## 使用方法：
+## Usage：
 
-#### 安装
+#### install
 
     git clone https://github.com/tongsq/proxy-collect.git
     cd proxy-collect
 
-#### 启动服务
-1、启动脚本收集免费代理ip
+#### start service
+1、Start script to collect free proxy IP
 
     go run ./cmd -S=job -C=conf.yaml
-2、启动api服务
+2、Start API service
 
     go run ./cmd -S=api -C=conf.yaml
 
-#### 通过接口获取可用ip
+#### Get available IP through the API
 
     curl 127.0.0.1:8090/all?city=上海&duration=100
 
-#### 启动多个服务
+#### Start multiple services
 
     go run ./cmd -S=job -S=api -C=conf.yaml
-#### 一键启动
-
+#### One touch start
     go run ./cmd -S=all -C=conf.yaml
 
-## yaml配置
-### 设置存储媒介
-A、数据存储到redis
+## yaml configure
+### Set storage media
+A、 Set redis as storage media
 
-* 修改配置文件conf.yaml如下
+* Modify the configuration file conf.yaml as follows
 ```
     dao: redis
     redis:
@@ -52,17 +50,17 @@ A、数据存储到redis
       Network: tcp
       Address: 127.0.0.1:6379
       Password: your password
-``` 
-B、数据存储到mysql
+```
+B、Set mysql as storage media
 
-* 修改配置文件conf.yaml如下
+* Modify the configuration file conf.yaml as follows
 ```
     dao: database
     database:
       Dialect: mysql
       Args: user:password@(127.0.0.1:3306)/dbname?charset=utf8&loc=Local
 ```
-* 创建表
+* Create table
 ```
     CREATE TABLE `proxy` (
       `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -84,7 +82,7 @@ B、数据存储到mysql
       KEY `IDX_ACTIVE_TIME` (`active_time`) USING BTREE
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT
 ```
-# 待开发
-- [ ] 支持socket5等其它协议代理采集、较验
-- [ ] 支持配置日志分级
-- [ ] 支持开启隧道代理服务：用户名密码验证、限流功能
+# TODO list
+- [ ] Supports proxy collection and comparison of other protocols such as socket5
+- [ ] Support configuring log classification
+- [ ] Support tunnel agent services
