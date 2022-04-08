@@ -8,6 +8,7 @@ import (
 	"github.com/tongsq/go-lib/logger"
 	redis_client "github.com/tongsq/go-lib/redis-client"
 	"proxy-collect/consts"
+	"proxy-collect/dto"
 	"proxy-collect/model"
 )
 
@@ -31,9 +32,9 @@ func (d *proxyDao) GetRecheckList() ([]model.ProxyModel, error) {
 	return d.getProxyList(PROXY_RECHECK_SET)
 }
 
-func (d *proxyDao) GetOne(host string, port string) (*model.ProxyModel, error) {
+func (d *proxyDao) GetOne(host string, port string, proto string) (*model.ProxyModel, error) {
 	var m model.ProxyModel
-	info, err := Client().HMGetOne(PROXY_INFO_MAP, getProxyKey(host, port))
+	info, err := Client().HMGetOne(PROXY_INFO_MAP, getProxyKey(host, port, proto))
 	if info == "" || err != nil {
 		return nil, err
 	}
@@ -43,18 +44,21 @@ func (d *proxyDao) GetOne(host string, port string) (*model.ProxyModel, error) {
 	return &m, nil
 }
 
-func (d *proxyDao) Create(host string, port string, status int8, source string) (*model.ProxyModel, error) {
+func (d *proxyDao) Create(proxy dto.ProxyDto, status int8) (*model.ProxyModel, error) {
 	m := &model.ProxyModel{
-		Host:       host,
-		Port:       port,
+		Host:       proxy.Host,
+		Port:       proxy.Port,
 		Status:     status,
 		CreateTime: time.Now().Unix(),
 		UpdateTime: time.Now().Unix(),
 		ActiveTime: time.Now().Unix(),
 		CheckCount: 1,
-		Source:     source,
+		Source:     proxy.Source,
+		Proto:      proxy.Proto,
+		User:       proxy.User,
+		Password:   proxy.Password,
 	}
-	key := getProxyKey(host, port)
+	key := getProxyKey(proxy.Host, proxy.Port, proxy.Proto)
 	logger.FInfo("redis dao create new proxy")
 	value, err := json.Marshal(m)
 	if err != nil {
@@ -69,7 +73,7 @@ func (d *proxyDao) Create(host string, port string, status int8, source string) 
 }
 
 func (d *proxyDao) Save(m *model.ProxyModel) error {
-	key := getProxyKey(m.Host, m.Port)
+	key := getProxyKey(m.Host, m.Port, m.Proto)
 	value, err := json.Marshal(m)
 	if err != nil {
 		return err
@@ -100,13 +104,13 @@ func (d *proxyDao) GetNeedUpdateInfoList() []model.ProxyModel {
 	return needUpdateList
 }
 
-func (d *proxyDao) Delete(host string, port string) error {
-	key := getProxyKey(host, port)
+func (d *proxyDao) Delete(host string, port string, proto string) error {
+	key := getProxyKey(host, port, proto)
 	_, err := Client().HDel(PROXY_INFO_MAP, key)
 	if err != nil {
 		return err
 	}
-	deleteProxySet(host, port)
+	deleteProxySet(host, port, proto)
 	return nil
 }
 
@@ -139,32 +143,36 @@ func (d *proxyDao) getProxyList(key string) ([]model.ProxyModel, error) {
 	return models, nil
 }
 
-func getProxyKey(host string, port string) string {
-	return fmt.Sprintf("%s:%s", host, port)
+func getProxyKey(host string, port string, proto string) string {
+	if proto == "" || proto == consts.PROTO_HTTP {
+		return fmt.Sprintf("%s:%s", host, port)
+	} else {
+		return fmt.Sprintf("%s:%s:%s", host, port, proto)
+	}
 }
 
 func updateProxySet(m *model.ProxyModel) {
 	if m == nil {
 		return
 	}
-	key := getProxyKey(m.Host, m.Port)
+	key := getProxyKey(m.Host, m.Port, m.Proto)
 	if m.Status == consts.STATUS_YES {
-		Client().SAdd(PROXY_SUCCESS_SET, key)
-		Client().SRem(PROXY_FAIL_SET, key)
-		Client().SRem(PROXY_RECHECK_SET, key)
+		_, _ = Client().SAdd(PROXY_SUCCESS_SET, key)
+		_, _ = Client().SRem(PROXY_FAIL_SET, key)
+		_, _ = Client().SRem(PROXY_RECHECK_SET, key)
 	} else if m.Status == consts.STATUS_RECHECK {
-		Client().SAdd(PROXY_RECHECK_SET, key)
-		Client().SRem(PROXY_SUCCESS_SET, key)
-		Client().SRem(PROXY_FAIL_SET, key)
+		_, _ = Client().SAdd(PROXY_RECHECK_SET, key)
+		_, _ = Client().SRem(PROXY_SUCCESS_SET, key)
+		_, _ = Client().SRem(PROXY_FAIL_SET, key)
 	} else {
-		Client().SAdd(PROXY_FAIL_SET, key)
-		Client().SRem(PROXY_SUCCESS_SET, key)
-		Client().SRem(PROXY_RECHECK_SET, key)
+		_, _ = Client().SAdd(PROXY_FAIL_SET, key)
+		_, _ = Client().SRem(PROXY_SUCCESS_SET, key)
+		_, _ = Client().SRem(PROXY_RECHECK_SET, key)
 	}
 }
 
-func deleteProxySet(host string, port string) {
-	key := getProxyKey(host, port)
+func deleteProxySet(host string, port string, proto string) {
+	key := getProxyKey(host, port, proto)
 	Client().SRem(PROXY_SUCCESS_SET, key)
 	Client().SRem(PROXY_FAIL_SET, key)
 	Client().SRem(PROXY_RECHECK_SET, key)

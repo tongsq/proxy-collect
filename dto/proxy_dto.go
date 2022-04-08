@@ -1,10 +1,11 @@
 package dto
 
-import "proxy-collect/model"
+import (
+	"proxy-collect/model"
+)
 
-type ProxyDto struct {
-	Host       string `json:"host"`
-	Port       string `json:"port"`
+type ProxyInfoDto struct {
+	ProxyDto
 	Status     int8   `json:"status"`
 	CreateTime int64  `json:"create_time"`
 	ActiveTime int64  `json:"active_time"`
@@ -12,13 +13,27 @@ type ProxyDto struct {
 	Region     string `json:"region"`
 	City       string `json:"city"`
 	Isp        string `json:"isp"`
-	Source     string `json:"source"`
 }
 
-func NewProxyDto(m model.ProxyModel) ProxyDto {
-	return ProxyDto{
-		Host:       m.Host,
-		Port:       m.Port,
+type ProxyDto struct {
+	Host     string `json:"host"`
+	Port     string `json:"port"`
+	Source   string `json:"source"`
+	Proto    string `json:"proto"`
+	User     string `json:"user"`
+	Password string `json:"password"`
+}
+
+func NewProxyDto(m model.ProxyModel) ProxyInfoDto {
+	return ProxyInfoDto{
+		ProxyDto: ProxyDto{
+			Host:     m.Host,
+			Port:     m.Port,
+			Proto:    m.Proto,
+			User:     m.User,
+			Password: m.Password,
+			Source:   m.Source,
+		},
 		Status:     m.Status,
 		CreateTime: m.CreateTime,
 		ActiveTime: m.ActiveTime,
@@ -26,6 +41,5 @@ func NewProxyDto(m model.ProxyModel) ProxyDto {
 		Region:     m.Region,
 		City:       m.City,
 		Isp:        m.Isp,
-		Source:     m.Source,
 	}
 }
