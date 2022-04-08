@@ -165,25 +165,8 @@ func (s *proxyService) DoGetProxy(getProxyService ProxyGetterInterface, pool *co
 			time.Sleep(time.Second * 10)
 		}(&wg)
 		for _, proxyArr := range proxyList {
-			p := dto.ProxyDto{
-				Proto:  consts.PROTO_HTTP,
-				Source: reflect.TypeOf(getProxyService).String()[14:],
-			}
-			for i, val := range proxyArr {
-				switch i {
-				case 0:
-					p.Host = val
-				case 1:
-					p.Port = val
-				case 2:
-					p.Proto = val
-				case 3:
-					p.User = val
-				case 4:
-					p.Password = val
-				}
-			}
-
+			p := s.ParseProxyArr(proxyArr)
+			p.Source = reflect.TypeOf(getProxyService).String()[14:]
 			pool.RunTask(func() { s.CheckProxyAndSave(p) })
 		}
 
@@ -201,6 +184,27 @@ func (s *proxyService) CheckProxyFormat(host string, port string) bool {
 		return false
 	}
 	return true
+}
+
+func (s *proxyService) ParseProxyArr(proxyArr []string) dto.ProxyDto {
+	p := dto.ProxyDto{
+		Proto: consts.PROTO_HTTP,
+	}
+	for i, val := range proxyArr {
+		switch i {
+		case 0:
+			p.Host = val
+		case 1:
+			p.Port = val
+		case 2:
+			p.Proto = val
+		case 3:
+			p.User = val
+		case 4:
+			p.Password = val
+		}
+	}
+	return p
 }
 
 func (s *proxyService) GetProxyUrl(p dto.ProxyDto) string {
