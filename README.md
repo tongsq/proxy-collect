@@ -1,5 +1,5 @@
-### proxy-collect - GO Proxy Collector
-
+proxy-collect - GO Proxy Collector
+------
 ### GO语言实现的ip代理池
 
 #### [English README](README.en.md)
@@ -78,13 +78,16 @@ B、数据存储到mysql
       `isp` varchar(255) NOT NULL DEFAULT '',
       `check_count` int(11) NOT NULL DEFAULT '10',
       `source` varchar(50) NOT NULL DEFAULT '',
+      `proto` varchar(20) NOT NULL DEFAULT 'http',
+      `user` varchar(50) NOT NULL DEFAULT '',
+      `password` varchar(50) NOT NULL DEFAULT '',
       PRIMARY KEY (`id`) USING BTREE,
-      UNIQUE KEY `IDX_HOST_PORT` (`host`,`port`) USING BTREE,
+      UNIQUE KEY `IDX_HOST_PORT_PROTO` (`host`,`port`, `proto`) USING BTREE,
       KEY `IDX_STATUS` (`status`) USING BTREE,
       KEY `IDX_ACTIVE_TIME` (`active_time`) USING BTREE
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT
 ```
 # 待开发
-- [ ] 支持socket5等其它协议代理采集、较验
+- [X] 支持socket5等其它协议代理采集、较验
 - [ ] 支持配置日志分级
 - [ ] 支持开启隧道代理服务：用户名密码验证、限流功能

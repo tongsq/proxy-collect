@@ -1,8 +1,8 @@
 package tests
 
 import (
-	"fmt"
 	"math/rand"
+	"sync"
 	"sync/atomic"
 	"testing"
 	"time"
@@ -12,7 +12,8 @@ import (
 )
 
 func TestGetIp(t *testing.T) {
-	s := service.KxDaili
+	s := service.Geonode
+	wg := sync.WaitGroup{}
 	for _, requestUrl := range s.GetUrlList() {
 		t.Log(requestUrl)
 		contentBody := s.GetContentHtml(requestUrl)
@@ -23,10 +24,16 @@ func TestGetIp(t *testing.T) {
 		proxyList := s.ParseHtml(contentBody)
 		logger.Info("get ip list:", logger.Fields{"list": proxyList})
 		for _, item := range proxyList {
-			r := service.ProxyService.CheckIpStatus(fmt.Sprintf("http://%s:%s", item[0], item[1]))
-			t.Log(item[0], item[1], r)
+			p := service.ProxyService.ParseProxyArr(item)
+			wg.Add(1)
+			go func() {
+				defer wg.Done()
+				r := service.ProxyService.CheckIpStatus(service.ProxyService.GetProxyUrl(p))
+				t.Log(p, r)
+			}()
 		}
 	}
+	wg.Wait()
 }
 
 func TestRand(t *testing.T) {
@@ -38,13 +45,14 @@ func TestRand(t *testing.T) {
 //https://pzzqz.com/
 func TestCheckIp(t *testing.T) {
 	items := []string{
-		"socks4://78.140.7.239:40009",
+		"socks5://root:123@localhost:9988",
+		"socks4://root:123@localhost:8899",
 	}
-	for i := 0; i < 10; i++ {
+	for i := 0; i < 1; i++ {
 		go func() {
 			for _, item := range items {
 				r := service.ProxyService.CheckIpStatus(item)
-				t.Log(r)
+				t.Log(item, r)
 			}
 		}()
 	}

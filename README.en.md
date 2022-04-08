@@ -76,13 +76,16 @@ B、Set mysql as storage media
       `isp` varchar(255) NOT NULL DEFAULT '',
       `check_count` int(11) NOT NULL DEFAULT '10',
       `source` varchar(50) NOT NULL DEFAULT '',
+      `proto` varchar(20) NOT NULL DEFAULT 'http',
+      `user` varchar(50) NOT NULL DEFAULT '',
+      `password` varchar(50) NOT NULL DEFAULT '',
       PRIMARY KEY (`id`) USING BTREE,
-      UNIQUE KEY `IDX_HOST_PORT` (`host`,`port`) USING BTREE,
+      UNIQUE KEY `IDX_HOST_PORT_PROTO` (`host`,`port`, `proto`) USING BTREE,
       KEY `IDX_STATUS` (`status`) USING BTREE,
       KEY `IDX_ACTIVE_TIME` (`active_time`) USING BTREE
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT
 ```
 # TODO list
-- [ ] Supports proxy collection and comparison of other protocols such as socket5
+- [x] Supports proxy collection and comparison of other protocols such as socket5
 - [ ] Support configuring log classification
 - [ ] Support tunnel agent services

@@ -19,6 +19,9 @@ type ProxyModel struct {
 	Isp        string `gorm:"column:isp"`
 	CheckCount int64  `gorm:"column:check_count"`
 	Source     string `gorm:"column:source"`
+	Proto      string `gorm:"proto"`
+	User       string `gorm:"user"`
+	Password   string `gorm:"password"`
 }
 
 func (ProxyModel) TableName() string {

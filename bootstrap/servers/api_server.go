@@ -37,7 +37,7 @@ func StartApiServer() {
 		if duration != "" {
 			durationI, err = strconv.ParseInt(duration, 10, 64)
 		}
-		var list []dto.ProxyDto
+		var list []dto.ProxyInfoDto
 		nowTime := time.Now().Unix()
 		for _, proxy := range proxies {
 			if city != "" && !strings.Contains(proxy.City, city) {
@@ -54,5 +54,8 @@ func StartApiServer() {
 			"count": len(list),
 		})
 	})
-	r.Run(fmt.Sprintf("%s:%s", config.Get().Api.Host, config.Get().Api.Port))
+	err := r.Run(fmt.Sprintf("%s:%s", config.Get().Api.Host, config.Get().Api.Port))
+	if err != nil {
+		panic("start api server fail:" + err.Error())
+	}
 }

@@ -8,8 +8,5 @@ func CheckProxyFormat(host string, port string) bool {
 		return false
 	}
 	ok, _ = regexp.Match(`^\d+$`, []byte(port))
-	if !ok {
-		return false
-	}
-	return true
+	return ok
 }

@@ -5,6 +5,7 @@ import (
 
 	"github.com/jinzhu/gorm"
 	"proxy-collect/consts"
+	"proxy-collect/dto"
 	"proxy-collect/model"
 )
 
@@ -27,10 +28,10 @@ func (d *proxyDao) GetRecheckList() ([]model.ProxyModel, error) {
 	return proxies, nil
 }
 
-func (d *proxyDao) GetOne(host string, port string) (*model.ProxyModel, error) {
+func (d *proxyDao) GetOne(host string, port string, proto string) (*model.ProxyModel, error) {
 	var m model.ProxyModel
 	db := DB()
-	err := db.Where("host = ? AND port = ?", host, port).First(&m).Error
+	err := db.Where("host = ? AND port = ? AND proto = ?", host, port, proto).First(&m).Error
 	if err != nil {
 		if gorm.IsRecordNotFoundError(err) {
 			return nil, nil
@@ -40,16 +41,19 @@ func (d *proxyDao) GetOne(host string, port string) (*model.ProxyModel, error) {
 	return &m, nil
 }
 
-func (d *proxyDao) Create(host string, port string, status int8, source string) (*model.ProxyModel, error) {
+func (d *proxyDao) Create(proxy dto.ProxyDto, status int8) (*model.ProxyModel, error) {
 	m := &model.ProxyModel{
-		Host:       host,
-		Port:       port,
+		Host:       proxy.Host,
+		Port:       proxy.Port,
 		Status:     status,
 		ActiveTime: time.Now().Unix(),
 		CreateTime: time.Now().Unix(),
 		UpdateTime: time.Now().Unix(),
 		CheckCount: 1,
-		Source:     source,
+		Source:     proxy.Source,
+		Proto:      proxy.Proto,
+		User:       proxy.User,
+		Password:   proxy.Password,
 	}
 	DB().Create(m)
 	return m, nil
@@ -72,7 +76,7 @@ func (d *proxyDao) GetNeedUpdateInfoList() []model.ProxyModel {
 	return proxies
 }
 
-func (d *proxyDao) Delete(host string, port string) error {
-	DB().Where("host=? and port=?", host, port).Delete(model.ProxyModel{})
+func (d *proxyDao) Delete(host string, port string, proto string) error {
+	DB().Where("host=? and port=? and proto=?", host, port, proto).Delete(model.ProxyModel{})
 	return nil
 }

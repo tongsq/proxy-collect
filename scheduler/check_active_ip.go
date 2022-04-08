@@ -3,8 +3,8 @@ package scheduler
 import (
 	"github.com/tongsq/go-lib/logger"
 	"proxy-collect/dao"
+	"proxy-collect/dto"
 	"proxy-collect/global"
-	"proxy-collect/model"
 	"proxy-collect/service"
 )
 
@@ -21,7 +21,7 @@ func (s CheckActiveIp) Run() {
 	//pool := component.NewTaskPool(20)
 	//defer pool.Close()
 	for _, proxy := range proxies {
-		var proxyTmp model.ProxyModel = proxy
-		global.Pool.RunTask(func() { service.ProxyService.CheckProxyAndSave(proxyTmp.Host, proxyTmp.Port, "") })
+		var p = dto.NewProxyDto(proxy)
+		global.Pool.RunTask(func() { service.ProxyService.CheckProxyAndSave(p.ProxyDto) })
 	}
 }

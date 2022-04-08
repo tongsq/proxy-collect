@@ -15,7 +15,7 @@ import (
 	"proxy-collect/config"
 	"proxy-collect/consts"
 	"proxy-collect/dao"
-	"proxy-collect/model"
+	"proxy-collect/dto"
 	"proxy-collect/service/ip"
 )
 
@@ -57,8 +57,10 @@ func (s *proxyService) CheckIpStatus(proxyUrlStr string) bool {
 	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.106 Safari/537.36")
 	proxyUrl, _ := url.Parse(proxyUrlStr)
 	client := http.Client{
-		Transport: &http.Transport{Proxy: http.ProxyURL(proxyUrl)},
-		Timeout:   time.Second * 5,
+		Transport: &http.Transport{
+			Proxy: http.ProxyURL(proxyUrl),
+		},
+		Timeout: time.Second * 5,
 	}
 	resp, err := client.Do(req)
 	if err != nil {
@@ -75,19 +77,19 @@ func (s *proxyService) CheckIpStatus(proxyUrlStr string) bool {
 	return true
 }
 
-func (s *proxyService) CheckProxyAndSave(host string, port string, source string) {
-	result := s.CheckIpStatus(fmt.Sprintf("http://%s:%s", host, port))
+func (s *proxyService) CheckProxyAndSave(p dto.ProxyDto) {
+	result := s.CheckIpStatus(s.GetProxyUrl(p))
 	if result {
-		logger.Success("ip is success", logger.Fields{"host": host, "port": port, "source": source})
+		logger.Success("ip is success", logger.Fields{"proxy": p})
 	} else {
-		logger.Info("ip is fail", logger.Fields{"host": host, "port": port, "source": source})
+		logger.Info("ip is fail", logger.Fields{"proxy": p})
 	}
 	var status int8 = consts.STATUS_YES
 	if !result {
 		status = consts.STATUS_NO
 	}
 
-	proxyModel, err := dao.ProxyDao.GetOne(host, port)
+	proxyModel, err := dao.ProxyDao.GetOne(p.Host, p.Port, p.Proto)
 	if err != nil {
 		logger.Error("get model fail:%s", logger.Fields{"err": err})
 		return
@@ -96,7 +98,7 @@ func (s *proxyService) CheckProxyAndSave(host string, port string, source string
 		if status == consts.STATUS_NO {
 			return
 		}
-		_, err = dao.ProxyDao.Create(host, port, status, source)
+		_, err = dao.ProxyDao.Create(p, status)
 		return
 	}
 	if status == consts.STATUS_YES {
@@ -121,19 +123,19 @@ func (s *proxyService) CheckProxyAndSave(host string, port string, source string
 		if proxyModel.CheckCount > -10 {
 			proxyModel.CheckCount = proxyModel.CheckCount - 1
 			if proxyModel.CheckCount <= -10 {
-				if err := dao.ProxyDao.Delete(host, port); err != nil {
-					logger.Error("delete proxy fail", logger.Fields{"host": host, "port": port})
+				if err := dao.ProxyDao.Delete(p.Host, p.Port, p.Proto); err != nil {
+					logger.Error("delete proxy fail", logger.Fields{"host": p.Host, "port": p.Port})
 				}
 				return
 			}
 		}
 	}
-	if source != "" {
-		proxyModel.Source = source
+	if p.Source != "" {
+		proxyModel.Source = p.Source
 	}
 	//if ip is ok, update ip info
 	if result && proxyModel.City == "" {
-		ipInfo := ip.GetIpInfo(host, port)
+		ipInfo := ip.GetIpInfo(p.Host, p.Port)
 		proxyModel.City = ipInfo.City
 		proxyModel.Country = ipInfo.Country
 		proxyModel.Isp = ipInfo.Isp
@@ -141,8 +143,9 @@ func (s *proxyService) CheckProxyAndSave(host string, port string, source string
 	}
 	proxyModel.Status = status
 	proxyModel.UpdateTime = time.Now().Unix()
+	proxyModel.User = p.User
+	proxyModel.Password = p.Password
 	err = dao.ProxyDao.Save(proxyModel)
-	return
 }
 
 func (s *proxyService) DoGetProxy(getProxyService ProxyGetterInterface, pool *component.Pool) {
@@ -162,9 +165,9 @@ func (s *proxyService) DoGetProxy(getProxyService ProxyGetterInterface, pool *co
 			time.Sleep(time.Second * 10)
 		}(&wg)
 		for _, proxyArr := range proxyList {
-			ip, port := proxyArr[0], proxyArr[1]
-			source := reflect.TypeOf(getProxyService).String()[14:]
-			pool.RunTask(func() { s.CheckProxyAndSave(ip, port, source) })
+			p := s.ParseProxyArr(proxyArr)
+			p.Source = reflect.TypeOf(getProxyService).String()[14:]
+			pool.RunTask(func() { s.CheckProxyAndSave(p) })
 		}
 
 		wg.Wait()
@@ -183,6 +186,34 @@ func (s *proxyService) CheckProxyFormat(host string, port string) bool {
 	return true
 }
 
-func (s *proxyService) UpdateIpDetail(m *model.ProxyModel) {
+func (s *proxyService) ParseProxyArr(proxyArr []string) dto.ProxyDto {
+	p := dto.ProxyDto{
+		Proto: consts.PROTO_HTTP,
+	}
+	for i, val := range proxyArr {
+		switch i {
+		case 0:
+			p.Host = val
+		case 1:
+			p.Port = val
+		case 2:
+			p.Proto = val
+		case 3:
+			p.User = val
+		case 4:
+			p.Password = val
+		}
+	}
+	return p
+}
 
+func (s *proxyService) GetProxyUrl(p dto.ProxyDto) string {
+	if p.Proto == "" {
+		p.Proto = consts.PROTO_HTTP
+	}
+	if p.User == "" {
+		return fmt.Sprintf("%s://%s:%s", p.Proto, p.Host, p.Port)
+	} else {
+		return fmt.Sprintf("%s://%s:%s@%s:%s", p.Proto, p.User, p.Password, p.Host, p.Port)
+	}
 }

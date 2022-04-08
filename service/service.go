@@ -26,6 +26,7 @@ var GetProxyXsdaili = proxy_getter.NewGetProxyXsdaili()
 var GetProxyYqie = proxy_getter.NewGetProxyYqie()
 var GetProxyPaChong = proxy_getter.NewGetProxyPachong()
 var KxDaili = proxy_getter.NewGetProxyKxDaili()
+var Geonode = proxy_getter.NewGetProxyGeonode()
 
 func LoadService() {
 	ip.LoadLocalIpData()
