@@ -5,7 +5,6 @@ import (
 	"compress/zlib"
 	"encoding/binary"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"os"
 
@@ -26,7 +25,7 @@ func (f *fileData) UpdateLocalData() {
 		return
 	} else {
 		if err := ioutil.WriteFile(f.FilePath, tmpData, 0644); err == nil {
-			log.Printf("已将最新的纯真 IP 库保存到本地 %s ", f.FilePath)
+			logger.FDebug("已将最新的纯真 IP 库保存到本地 %s ", f.FilePath)
 		}
 		f.loadData(tmpData)
 	}
@@ -38,18 +37,18 @@ func (f *fileData) InitIPData() {
 	// 判断文件是否存在
 	_, err := os.Stat(f.FilePath)
 	if err != nil && os.IsNotExist(err) {
-		log.Println("文件不存在，尝试从网络获取最新纯真 IP 库")
+		logger.Info("文件不存在，尝试从网络获取最新纯真 IP 库", nil)
 		tmpData, err = f.getOnline()
 		if err != nil {
 			return
 		} else {
 			if err := ioutil.WriteFile(f.FilePath, tmpData, 0644); err == nil {
-				log.Printf("已将最新的纯真 IP 库保存到本地 %s ", f.FilePath)
+				logger.FDebug("已将最新的纯真 IP 库保存到本地 %s ", f.FilePath)
 			}
 		}
 	} else {
 		// 打开文件句柄
-		log.Printf("从本地数据库文件 %s 打开\n", f.FilePath)
+		logger.FDebug("从本地数据库文件 %s 打开\n", f.FilePath)
 		f.Path, err = os.OpenFile(f.FilePath, os.O_RDONLY, 0400)
 		if err != nil {
 			return
@@ -58,7 +57,7 @@ func (f *fileData) InitIPData() {
 
 		tmpData, err = ioutil.ReadAll(f.Path)
 		if err != nil {
-			log.Println(err)
+			logger.Error("load local ip data fail", map[string]interface{}{"err": err})
 			return
 		}
 	}

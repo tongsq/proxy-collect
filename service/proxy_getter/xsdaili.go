@@ -40,7 +40,7 @@ func (s *Xsdaili) GetUrlList() []string {
 
 func (s *Xsdaili) GetContentHtml(requestUrl string) string {
 
-	h := &request.RequestHeaderDto{
+	h := &request.HeaderDto{
 		UserAgent: consts.USER_AGENT,
 		Host:      "www.xsdaili.cn",
 	}

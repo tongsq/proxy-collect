@@ -27,7 +27,7 @@ func (s *geonode) GetUrlList() []string {
 	return list
 }
 func (s *geonode) GetContentHtml(requestUrl string) string {
-	h := &request.RequestHeaderDto{
+	h := &request.HeaderDto{
 		UserAgent: consts.USER_AGENT,
 	}
 

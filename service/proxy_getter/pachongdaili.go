@@ -40,7 +40,7 @@ func (s *Pachong) GetUrlList() []string {
 
 func (s *Pachong) GetContentHtml(requestUrl string) string {
 
-	h := &request.RequestHeaderDto{
+	h := &request.HeaderDto{
 		UserAgent:               consts.USER_AGENT,
 		UpgradeInsecureRequests: "1",
 		Host:                    "pachongdaili.com",

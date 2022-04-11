@@ -30,7 +30,7 @@ func (s *getProxyKxDaili) GetUrlList() []string {
 	return list
 }
 func (s *getProxyKxDaili) GetContentHtml(requestUrl string) string {
-	h := &request.RequestHeaderDto{
+	h := &request.HeaderDto{
 		UserAgent:               consts.USER_AGENT,
 		UpgradeInsecureRequests: "1",
 	}

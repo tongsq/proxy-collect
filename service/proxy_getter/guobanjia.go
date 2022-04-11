@@ -25,7 +25,7 @@ func (s *getProxyGuoBanJia) GetUrlList() []string {
 }
 
 func (s *getProxyGuoBanJia) GetContentHtml(requestUrl string) string {
-	h := &request.RequestHeaderDto{
+	h := &request.HeaderDto{
 		UserAgent:               consts.USER_AGENT,
 		Host:                    "www.goubanjia.com",
 		UpgradeInsecureRequests: "1",

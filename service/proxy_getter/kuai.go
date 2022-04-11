@@ -31,7 +31,7 @@ func (s *getProxyKuai) GetUrlList() []string {
 
 func (s *getProxyKuai) GetContentHtml(requestUrl string) string {
 
-	h := &request.RequestHeaderDto{
+	h := &request.HeaderDto{
 		UserAgent:               consts.USER_AGENT,
 		Host:                    "www.kuaidaili.com",
 		Referer:                 "https://www.kuaidaili.com/free/inha/",

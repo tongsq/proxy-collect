@@ -29,7 +29,7 @@ func (s *getProxyXila) GetUrlList() []string {
 
 func (s *getProxyXila) GetContentHtml(requestUrl string) string {
 
-	h := &request.RequestHeaderDto{
+	h := &request.HeaderDto{
 		UserAgent:               consts.USER_AGENT,
 		Host:                    "www.xiladaili.com",
 		Referer:                 "http://www.xiladaili.com/https/",

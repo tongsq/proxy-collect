@@ -21,7 +21,7 @@ func (s *ZdayeIndex) GetUrlList() []string {
 
 func (s *ZdayeIndex) GetContentHtml(requestUrl string) string {
 
-	h := &request.RequestHeaderDto{
+	h := &request.HeaderDto{
 		UserAgent:               consts.USER_AGENT,
 		UpgradeInsecureRequests: "1",
 		Host:                    "www.zdaye.com",

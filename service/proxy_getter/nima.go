@@ -27,7 +27,7 @@ func (s *getProxyNima) GetUrlList() []string {
 	return list
 }
 func (s *getProxyNima) GetContentHtml(requestUrl string) string {
-	h := &request.RequestHeaderDto{
+	h := &request.HeaderDto{
 		UserAgent:               consts.USER_AGENT,
 		Host:                    "www.nimadaili.com",
 		Referer:                 "http://www.nimadaili.com/https/3/",

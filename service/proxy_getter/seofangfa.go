@@ -22,7 +22,7 @@ func (s *Seofangfa) GetUrlList() []string {
 
 func (s *Seofangfa) GetContentHtml(requestUrl string) string {
 
-	h := &request.RequestHeaderDto{
+	h := &request.HeaderDto{
 		UserAgent:               consts.USER_AGENT,
 		UpgradeInsecureRequests: "1",
 		Host:                    "proxy.seofangfa.com",

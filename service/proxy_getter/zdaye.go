@@ -43,7 +43,7 @@ func (s *Zdaye) GetUrlList() []string {
 
 func (s *Zdaye) GetContentHtml(requestUrl string) string {
 
-	h := &request.RequestHeaderDto{
+	h := &request.HeaderDto{
 		UserAgent:               consts.USER_AGENT,
 		UpgradeInsecureRequests: "1",
 		Host:                    "www.zdaye.com",
@@ -61,7 +61,7 @@ func (s *Zdaye) GetContentHtml(requestUrl string) string {
 		rand.Seed(time.Now().Unix())
 		i := rand.Intn(len(proxies))
 		proxy := proxies[i]
-		data, err = request.WebGetProxy(requestUrl, h, proxy.Host, proxy.Port)
+		data, err = request.WebGetProxy(requestUrl, h, nil, &request.ProxyDto{Host: proxy.Host, Port: proxy.Port})
 	} else {
 		data, err = request.WebGet(requestUrl, h, nil)
 	}

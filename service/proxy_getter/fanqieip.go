@@ -29,7 +29,7 @@ func (s *getProxyFanQie) GetUrlList() []string {
 }
 
 func (s *getProxyFanQie) GetContentHtml(requestUrl string) string {
-	h := &request.RequestHeaderDto{
+	h := &request.HeaderDto{
 		UserAgent:               consts.USER_AGENT,
 		Host:                    "www.fanqieip.com",
 		UpgradeInsecureRequests: "1",

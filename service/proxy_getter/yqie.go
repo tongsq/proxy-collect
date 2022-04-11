@@ -22,7 +22,7 @@ func (s *Yqie) GetUrlList() []string {
 
 func (s *Yqie) GetContentHtml(requestUrl string) string {
 
-	h := &request.RequestHeaderDto{
+	h := &request.HeaderDto{
 		UserAgent:               consts.USER_AGENT,
 		UpgradeInsecureRequests: "1",
 		Host:                    "ip.yqie.com",

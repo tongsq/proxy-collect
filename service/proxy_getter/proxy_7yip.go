@@ -28,7 +28,7 @@ func (s *getProxy7Yip) GetUrlList() []string {
 	return list
 }
 func (s *getProxy7Yip) GetContentHtml(requestUrl string) string {
-	h := &request.RequestHeaderDto{
+	h := &request.HeaderDto{
 		UserAgent:               consts.USER_AGENT,
 		UpgradeInsecureRequests: "1",
 		Host:                    "www.7yip.cn",

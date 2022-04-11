@@ -28,7 +28,7 @@ func (s *getProxyProxyList) GetUrlList() []string {
 	return list
 }
 func (s *getProxyProxyList) GetContentHtml(requestUrl string) string {
-	h := &request.RequestHeaderDto{
+	h := &request.HeaderDto{
 		UserAgent:               consts.USER_AGENT,
 		UpgradeInsecureRequests: "1",
 		Referer:                 "https://list.proxylistplus.com/update-2",

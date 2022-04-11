@@ -26,7 +26,7 @@ func (s *getProxyData5u) GetUrlList() []string {
 }
 
 func (s *getProxyData5u) GetContentHtml(requestUrl string) string {
-	h := &request.RequestHeaderDto{
+	h := &request.HeaderDto{
 		UserAgent:               consts.USER_AGENT,
 		Host:                    "www.data5u.com",
 		UpgradeInsecureRequests: "1",

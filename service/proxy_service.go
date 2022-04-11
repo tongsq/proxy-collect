@@ -82,7 +82,7 @@ func (s *proxyService) CheckProxyAndSave(p dto.ProxyDto) {
 	if result {
 		logger.Success("ip is success", logger.Fields{"proxy": p})
 	} else {
-		logger.Info("ip is fail", logger.Fields{"proxy": p})
+		logger.Debug("ip is fail", logger.Fields{"proxy": p})
 	}
 	var status int8 = consts.STATUS_YES
 	if !result {
@@ -145,7 +145,7 @@ func (s *proxyService) CheckProxyAndSave(p dto.ProxyDto) {
 	proxyModel.UpdateTime = time.Now().Unix()
 	proxyModel.User = p.User
 	proxyModel.Password = p.Password
-	err = dao.ProxyDao.Save(proxyModel)
+	_ = dao.ProxyDao.Save(proxyModel)
 }
 
 func (s *proxyService) DoGetProxy(getProxyService ProxyGetterInterface, pool *component.Pool) {
@@ -180,10 +180,7 @@ func (s *proxyService) CheckProxyFormat(host string, port string) bool {
 		return false
 	}
 	ok, _ = regexp.Match(`^\d+$`, []byte(port))
-	if !ok {
-		return false
-	}
-	return true
+	return ok
 }
 
 func (s *proxyService) ParseProxyArr(proxyArr []string) dto.ProxyDto {

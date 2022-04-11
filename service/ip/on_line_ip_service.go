@@ -14,7 +14,7 @@ import (
 
 func GetIpInfoByIp138(host string, port string) *dto.IpInfoDto {
 	requestUrl := fmt.Sprintf("https://www.ip138.com/iplookup.asp?ip=%s&action=2", host)
-	h := &request.RequestHeaderDto{
+	h := &request.HeaderDto{
 		UserAgent:               consts.USER_AGENT,
 		UpgradeInsecureRequests: "1",
 		Host:                    "www.ip138.com",
@@ -24,7 +24,7 @@ func GetIpInfoByIp138(host string, port string) *dto.IpInfoDto {
 	}
 
 	logger.Info("get ip info from ip138", logger.Fields{"url": requestUrl})
-	data, err := request.WebGetProxy(requestUrl, h, host, port)
+	data, err := request.WebGetProxy(requestUrl, h, nil, &request.ProxyDto{Host: host, Port: port})
 	if err != nil || data == nil {
 		logger.Error("get from ip138 use proxy error", logger.Fields{"err": err, "data": data})
 		data, err = request.WebGet(requestUrl, h, nil)

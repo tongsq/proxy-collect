@@ -24,7 +24,7 @@ func (s *getProxyCoderBusy) GetUrlList() []string {
 	return list
 }
 func (s *getProxyCoderBusy) GetContentHtml(requestUrl string) string {
-	h := &request.RequestHeaderDto{
+	h := &request.HeaderDto{
 		UserAgent:               consts.USER_AGENT,
 		UpgradeInsecureRequests: "1",
 	}

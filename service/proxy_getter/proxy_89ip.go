@@ -28,7 +28,7 @@ func (s *getProxy89Ip) GetUrlList() []string {
 	return list
 }
 func (s *getProxy89Ip) GetContentHtml(requestUrl string) string {
-	h := &request.RequestHeaderDto{
+	h := &request.HeaderDto{
 		UserAgent:               consts.USER_AGENT,
 		UpgradeInsecureRequests: "1",
 		Host:                    "www.89ip.cn",

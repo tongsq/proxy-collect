@@ -30,7 +30,7 @@ func (s *getProxy66ip) GetUrlList() []string {
 }
 
 func (s *getProxy66ip) GetContentHtml(requestUrl string) string {
-	h := &request.RequestHeaderDto{
+	h := &request.HeaderDto{
 		UserAgent:               consts.USER_AGENT,
 		Host:                    "www.66ip.cn",
 		Referer:                 "http://www.66ip.cn/2.html",
@@ -53,7 +53,7 @@ func (s *getProxy66ip) ParseHtml(body string) [][]string {
 	}
 	doc, err := goquery.NewDocumentFromReader(strings.NewReader(body))
 	if err != nil {
-		logger.FError(consts.GO_QUERY_READ_ERROR, logger.Fields{"err": err})
+		logger.Error(consts.GO_QUERY_READ_ERROR, logger.Fields{"err": err})
 		return nil
 	}
 	var proxyList [][]string

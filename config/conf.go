@@ -39,7 +39,7 @@ func LoadConfig() {
 		ReadConfigError(err)
 	}
 	conf = &c
-	logger.Info("load config success", logger.Fields{"conf": conf})
+	logger.Debug("load config success", logger.Fields{"conf": conf})
 }
 
 func ReadConfigError(err error) {
@@ -69,6 +69,10 @@ type confDto struct {
 	PoolSize        int    `yaml:"poolSize"`
 	LocalIpDataPath string `yaml:"localIpDataPath"`
 	RecheckCount    int64  `yaml:"recheckCount"`
+	Log             struct {
+		LogLevel     logger.Level `yaml:"logLevel"`
+		ErrorLogFile string       `yaml:"errorLogFile"`
+	}
 }
 
 func (c confDto) String() string {
