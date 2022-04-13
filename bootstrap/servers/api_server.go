@@ -37,6 +37,7 @@ func StartApiServer() {
 		if duration != "" {
 			durationI, err = strconv.ParseInt(duration, 10, 64)
 		}
+		proto := c.Query("proto")
 		var list []dto.ProxyInfoDto
 		nowTime := time.Now().Unix()
 		for _, proxy := range proxies {
@@ -44,6 +45,9 @@ func StartApiServer() {
 				continue
 			}
 			if durationI > 0 && ((nowTime - proxy.ActiveTime) < durationI) {
+				continue
+			}
+			if proto != "" && proto != proxy.Proto {
 				continue
 			}
 			list = append(list, dto.NewProxyDto(proxy))

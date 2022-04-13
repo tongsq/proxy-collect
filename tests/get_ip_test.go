@@ -42,23 +42,6 @@ func TestRand(t *testing.T) {
 	t.Log(i)
 }
 
-//https://pzzqz.com/
-func TestCheckIp(t *testing.T) {
-	items := []string{
-		"socks5://root:123@localhost:9988",
-		"socks4://root:123@localhost:8899",
-	}
-	for i := 0; i < 1; i++ {
-		go func() {
-			for _, item := range items {
-				r := service.ProxyService.CheckIpStatus(item)
-				t.Log(item, r)
-			}
-		}()
-	}
-	time.Sleep(time.Second * 10)
-}
-
 func TestAto(t *testing.T) {
 	var num int64 = 0
 	var num2 int64 = 0

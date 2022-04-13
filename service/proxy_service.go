@@ -1,17 +1,20 @@
 package service
 
 import (
+	"crypto/tls"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"reflect"
 	"regexp"
+	"strings"
 	"sync"
 	"time"
 
 	"github.com/tongsq/go-lib/component"
 	"github.com/tongsq/go-lib/logger"
+	"h12.io/socks"
 	"proxy-collect/config"
 	"proxy-collect/consts"
 	"proxy-collect/dao"
@@ -55,16 +58,29 @@ func (s *proxyService) CheckIpStatus(proxyUrlStr string) bool {
 	request_url := "https://www.baidu.com"
 	req, _ := http.NewRequest("GET", request_url, nil)
 	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.106 Safari/537.36")
-	proxyUrl, _ := url.Parse(proxyUrlStr)
-	client := http.Client{
-		Transport: &http.Transport{
-			Proxy: http.ProxyURL(proxyUrl),
-		},
-		Timeout: time.Second * 5,
+
+	var client http.Client
+	if strings.Contains(proxyUrlStr, "socks4") {
+		dial := socks.Dial(proxyUrlStr)
+		fmt.Println(proxyUrlStr)
+		client = http.Client{
+			Transport: &http.Transport{
+				Dial: dial,
+			},
+			Timeout: time.Second * 5,
+		}
+	} else {
+		proxyUrl, _ := url.Parse(proxyUrlStr)
+		client = http.Client{
+			Transport: &http.Transport{
+				Proxy:           http.ProxyURL(proxyUrl),
+				TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+			},
+			Timeout: time.Second * 5,
+		}
 	}
 	resp, err := client.Do(req)
 	if err != nil {
-		//fmt.Println(err)
 		return false
 	}
 	defer resp.Body.Close()
@@ -120,15 +136,14 @@ func (s *proxyService) CheckProxyAndSave(p dto.ProxyDto) {
 				status = consts.STATUS_RECHECK
 			}
 		}
-		if proxyModel.CheckCount > -10 {
-			proxyModel.CheckCount = proxyModel.CheckCount - 1
-			if proxyModel.CheckCount <= -10 {
-				if err := dao.ProxyDao.Delete(p.Host, p.Port, p.Proto); err != nil {
-					logger.Error("delete proxy fail", logger.Fields{"host": p.Host, "port": p.Port})
-				}
-				return
+		if proxyModel.CheckCount < 0 && status == consts.STATUS_NO {
+			logger.Debug("start delete fail proxy", map[string]interface{}{"proxy": proxyModel})
+			if err := dao.ProxyDao.Delete(p.Host, p.Port, p.Proto); err != nil {
+				logger.Error("delete proxy fail", logger.Fields{"host": p.Host, "port": p.Port})
 			}
+			return
 		}
+		proxyModel.CheckCount = proxyModel.CheckCount - 1
 	}
 	if p.Source != "" {
 		proxyModel.Source = p.Source

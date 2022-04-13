@@ -11,4 +11,5 @@ require (
 	golang.org/x/sys v0.0.0-20210105210732-16f7687f5001 // indirect
 	golang.org/x/text v0.3.6
 	gopkg.in/yaml.v2 v2.4.0
+	h12.io/socks v1.0.3 // indirect
 )
