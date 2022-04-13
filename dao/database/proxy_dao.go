@@ -18,7 +18,7 @@ type proxyDao struct {
 
 func (d *proxyDao) GetFailList() ([]model.ProxyModel, error) {
 	var proxies []model.ProxyModel
-	DB().Where("status=?", consts.STATUS_NO).Where("check_count>0").Find(&proxies)
+	DB().Where("status=?", consts.STATUS_NO).Find(&proxies)
 	return proxies, nil
 }
 
