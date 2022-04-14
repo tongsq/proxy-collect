@@ -12,8 +12,9 @@ import (
 )
 
 func TestGetIp(t *testing.T) {
-	s := service.Geonode
+	s := service.CommonGetterSocks4
 	wg := sync.WaitGroup{}
+	succ := 0
 	for _, requestUrl := range s.GetUrlList() {
 		t.Log(requestUrl)
 		contentBody := s.GetContentHtml(requestUrl)
@@ -30,10 +31,14 @@ func TestGetIp(t *testing.T) {
 				defer wg.Done()
 				r := service.ProxyService.CheckIpStatus(service.ProxyService.GetProxyUrl(p))
 				t.Log(p, r)
+				if r {
+					succ++
+				}
 			}()
 		}
 	}
 	wg.Wait()
+	t.Log("success count:", succ)
 }
 
 func TestRand(t *testing.T) {

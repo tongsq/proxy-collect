@@ -62,7 +62,6 @@ func (s *proxyService) CheckIpStatus(proxyUrlStr string) bool {
 	var client http.Client
 	if strings.Contains(proxyUrlStr, "socks4") {
 		dial := socks.Dial(proxyUrlStr)
-		fmt.Println(proxyUrlStr)
 		client = http.Client{
 			Transport: &http.Transport{
 				Dial: dial,

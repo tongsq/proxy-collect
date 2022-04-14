@@ -1,6 +1,7 @@
 package service
 
 import (
+	"proxy-collect/consts"
 	"proxy-collect/service/ip"
 	"proxy-collect/service/proxy_getter"
 )
@@ -27,6 +28,9 @@ var GetProxyYqie = proxy_getter.NewGetProxyYqie()
 var GetProxyPaChong = proxy_getter.NewGetProxyPachong()
 var KxDaili = proxy_getter.NewGetProxyKxDaili()
 var Geonode = proxy_getter.NewGetProxyGeonode()
+var CommonGetterSocks5 = proxy_getter.NewCommonGetter(consts.PROTO_SOCKS5)
+var CommonGetterSocks4 = proxy_getter.NewCommonGetter(consts.PROTO_SOCKS4)
+var CommonGetterHttp = proxy_getter.NewCommonGetter(consts.PROTO_HTTP)
 
 func LoadService() {
 	ip.LoadLocalIpData()

@@ -13,6 +13,7 @@ func TestCheckIp(t *testing.T) {
 		"https://localhost:9999",
 		"http://localhost:8888",
 		"socks4://127.0.0.1:8899",
+		"socks5://122.193.10.184:7300",
 	}
 	for i := 0; i < 1; i++ {
 		go func() {
