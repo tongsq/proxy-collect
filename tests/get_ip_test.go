@@ -12,7 +12,7 @@ import (
 )
 
 func TestGetIp(t *testing.T) {
-	s := service.CommonGetterSocks4
+	s := service.CommonGetterHttp
 	wg := sync.WaitGroup{}
 	succ := 0
 	for _, requestUrl := range s.GetUrlList() {
@@ -29,7 +29,7 @@ func TestGetIp(t *testing.T) {
 			wg.Add(1)
 			go func() {
 				defer wg.Done()
-				r := service.ProxyService.CheckIpStatus(service.ProxyService.GetProxyUrl(p))
+				r := service.ProxyService.CheckIpStatus(&p)
 				t.Log(p, r)
 				if r {
 					succ++
@@ -50,13 +50,15 @@ func TestRand(t *testing.T) {
 func TestAto(t *testing.T) {
 	var num int64 = 0
 	var num2 int64 = 0
-	for i := 0; i <= 10000; i++ {
-		//atomic.AddInt64(&num, 1)
+	wg := sync.WaitGroup{}
+	for i := 0; i < 10000; i++ {
+		wg.Add(1)
 		go func() {
+			defer wg.Done()
 			num2++
 			atomic.AddInt64(&num, 1)
 		}()
 	}
-	time.Sleep(10)
+	wg.Wait()
 	t.Log(num, num2)
 }

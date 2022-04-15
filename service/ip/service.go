@@ -5,7 +5,14 @@ import (
 	"proxy-collect/dto"
 )
 
-var LocalIpService *localIpService
+var localIpServiceInstance *localIpService
+
+func LocalIpService() *localIpService {
+	if localIpServiceInstance == nil {
+		LoadLocalIpData()
+	}
+	return localIpServiceInstance
+}
 
 func LoadLocalIpData() {
 	// IPData IP库的数据
@@ -13,11 +20,11 @@ func LoadLocalIpData() {
 		FilePath: config.Get().LocalIpDataPath,
 	}
 	IPData.InitIPData()
-	LocalIpService = NewLocalIpService(IPData)
+	localIpServiceInstance = NewLocalIpService(IPData)
 }
 
 func GetIpInfo(host string, port string) *dto.IpInfoDto {
-	result, err := LocalIpService.Find(host)
+	result, err := LocalIpService().Find(host)
 	if err != nil && result != nil && result.City != "" {
 		return GetIpInfoByIp138(host, port)
 	}
@@ -25,5 +32,5 @@ func GetIpInfo(host string, port string) *dto.IpInfoDto {
 }
 
 func UpdateLocalIpData() {
-	LocalIpService.Data.UpdateLocalData()
+	LocalIpService().Data.UpdateLocalData()
 }

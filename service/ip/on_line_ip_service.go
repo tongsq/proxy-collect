@@ -45,6 +45,9 @@ func GetIpInfoByIp138(host string, port string) *dto.IpInfoDto {
 	}
 	var result map[string][]map[string]string
 	err = json.Unmarshal([]byte(jsonStr), &result)
+	if err != nil {
+		logger.Error("parse ip info fail", map[string]interface{}{"jsonStr": jsonStr})
+	}
 	logger.Info("get ip info result", logger.Fields{"jsonStr": jsonStr, "result": result})
 	info := result["ip_c_list"][0]
 	ipInfoDto := &dto.IpInfoDto{

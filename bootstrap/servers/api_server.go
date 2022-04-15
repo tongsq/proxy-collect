@@ -35,7 +35,7 @@ func StartApiServer() {
 		var durationI int64
 		duration := c.Query("duration")
 		if duration != "" {
-			durationI, err = strconv.ParseInt(duration, 10, 64)
+			durationI, _ = strconv.ParseInt(duration, 10, 64)
 		}
 		proto := c.Query("proto")
 		var list []dto.ProxyInfoDto

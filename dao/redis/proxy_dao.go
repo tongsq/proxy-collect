@@ -173,7 +173,7 @@ func updateProxySet(m *model.ProxyModel) {
 
 func deleteProxySet(host string, port string, proto string) {
 	key := getProxyKey(host, port, proto)
-	Client().SRem(PROXY_SUCCESS_SET, key)
-	Client().SRem(PROXY_FAIL_SET, key)
-	Client().SRem(PROXY_RECHECK_SET, key)
+	_, _ = Client().SRem(PROXY_SUCCESS_SET, key)
+	_, _ = Client().SRem(PROXY_FAIL_SET, key)
+	_, _ = Client().SRem(PROXY_RECHECK_SET, key)
 }

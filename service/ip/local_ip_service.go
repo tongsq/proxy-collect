@@ -136,10 +136,9 @@ func (q *localIpService) readArea(offset uint32) []byte {
 func (q *localIpService) readString(offset uint32) []byte {
 	q.SetOffset(int64(offset))
 	data := make([]byte, 0, 30)
-	buf := make([]byte, 1)
 	for {
-		buf = q.ReadData(1)
-		if buf[0] == 0 {
+		buf := q.ReadData(1)
+		if len(buf) == 0 || buf[0] == 0 {
 			break
 		}
 		data = append(data, buf[0])
@@ -154,13 +153,12 @@ func (q *localIpService) searchIndex(ip uint32) uint32 {
 	start := binary.LittleEndian.Uint32(header[:4])
 	end := binary.LittleEndian.Uint32(header[4:])
 
-	buf := make([]byte, IndexLen)
 	mid := uint32(0)
 	_ip := uint32(0)
 
 	for {
 		mid = q.getMiddleOffset(start, end)
-		buf = q.ReadData(IndexLen, int64(mid))
+		buf := q.ReadData(IndexLen, int64(mid))
 		_ip = binary.LittleEndian.Uint32(buf[:4])
 
 		if end-start == IndexLen {

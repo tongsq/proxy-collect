@@ -18,10 +18,10 @@ type ProxyInfoDto struct {
 type ProxyDto struct {
 	Host     string `json:"host"`
 	Port     string `json:"port"`
-	Source   string `json:"source"`
 	Proto    string `json:"proto"`
 	User     string `json:"user"`
 	Password string `json:"password"`
+	Source   string `json:"source"`
 }
 
 func NewProxyDto(m model.ProxyModel) ProxyInfoDto {

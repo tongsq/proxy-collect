@@ -1,20 +1,15 @@
 package service
 
 import (
-	"crypto/tls"
 	"fmt"
-	"io/ioutil"
-	"net/http"
-	"net/url"
 	"reflect"
 	"regexp"
-	"strings"
 	"sync"
 	"time"
 
 	"github.com/tongsq/go-lib/component"
 	"github.com/tongsq/go-lib/logger"
-	"h12.io/socks"
+	"github.com/tongsq/go-lib/request"
 	"proxy-collect/config"
 	"proxy-collect/consts"
 	"proxy-collect/dao"
@@ -29,71 +24,27 @@ func NewProxyService() *proxyService {
 type proxyService struct {
 }
 
-func (s *proxyService) CheckIpStatusActive(host, port string) bool {
-	request_url := "https://www.baidu.com"
-	req, _ := http.NewRequest("GET", request_url, nil)
-	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.106 Safari/537.36")
-	proxyServer := fmt.Sprintf("http://%s:%s", host, port)
-	proxyUrl, _ := url.Parse(proxyServer)
-	client := http.Client{
-		Transport: &http.Transport{Proxy: http.ProxyURL(proxyUrl)},
-		Timeout:   time.Second * 5,
+func (s proxyService) TransferProxyDto(proxy *dto.ProxyDto) *request.ProxyDto {
+	return &request.ProxyDto{
+		Host:     proxy.Host,
+		Port:     proxy.Port,
+		Proto:    proxy.Proto,
+		User:     proxy.User,
+		Password: proxy.Password,
 	}
-	resp, err := client.Do(req)
-	if err != nil {
-		logger.Error("http get error", logger.Fields{"err": err})
-		return false
-	}
-	defer resp.Body.Close()
-
-	_, err = ioutil.ReadAll(resp.Body)
-	if err != nil {
-		logger.Error("http read error", logger.Fields{"err": err})
-		return false
-	}
-	return true
 }
 
-func (s *proxyService) CheckIpStatus(proxyUrlStr string) bool {
-	request_url := "https://www.baidu.com"
-	req, _ := http.NewRequest("GET", request_url, nil)
-	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.106 Safari/537.36")
-
-	var client http.Client
-	if strings.Contains(proxyUrlStr, "socks4") {
-		dial := socks.Dial(proxyUrlStr)
-		client = http.Client{
-			Transport: &http.Transport{
-				Dial: dial,
-			},
-			Timeout: time.Second * 5,
-		}
-	} else {
-		proxyUrl, _ := url.Parse(proxyUrlStr)
-		client = http.Client{
-			Transport: &http.Transport{
-				Proxy:           http.ProxyURL(proxyUrl),
-				TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-			},
-			Timeout: time.Second * 5,
-		}
+func (s *proxyService) CheckIpStatus(proxy *dto.ProxyDto) bool {
+	u := "https://www.baidu.com"
+	h := &request.HeaderDto{
+		UserAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.106 Safari/537.36",
 	}
-	resp, err := client.Do(req)
-	if err != nil {
-		return false
-	}
-	defer resp.Body.Close()
-
-	_, err = ioutil.ReadAll(resp.Body)
-	if err != nil {
-		logger.Warning("read error", logger.Fields{"err": err})
-		return false
-	}
-	return true
+	_, err := request.WebGetProxy(u, h, nil, s.TransferProxyDto(proxy))
+	return err == nil
 }
 
 func (s *proxyService) CheckProxyAndSave(p dto.ProxyDto) {
-	result := s.CheckIpStatus(s.GetProxyUrl(p))
+	result := s.CheckIpStatus(&p)
 	if result {
 		logger.Success("ip is success", logger.Fields{"proxy": p})
 	} else {
@@ -114,6 +65,9 @@ func (s *proxyService) CheckProxyAndSave(p dto.ProxyDto) {
 			return
 		}
 		_, err = dao.ProxyDao.Create(p, status)
+		if err != nil {
+			logger.Error("create proxy model fail", map[string]interface{}{"proxy": p})
+		}
 		return
 	}
 	if status == consts.STATUS_YES {
