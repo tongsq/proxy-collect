@@ -73,6 +73,11 @@ type confDto struct {
 		LogLevel     logger.Level `yaml:"logLevel"`
 		ErrorLogFile string       `yaml:"errorLogFile"`
 	}
+	Tunnel struct {
+		TunnelLevel int   `yaml:"tunnelLevel"`
+		Refresh     int64 `yaml:"refresh"`
+	}
+	Tunnels []TunnelConfig `yaml:"tunnels"`
 }
 
 func (c confDto) String() string {

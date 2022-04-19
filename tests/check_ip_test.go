@@ -14,7 +14,7 @@ func TestCheckIp(t *testing.T) {
 		{"localhost", "9999", consts.PROTO_HTTPS},
 		{"localhost", "8888", consts.PROTO_HTTP},
 		{"localhost", "8899", consts.PROTO_SOCKS4},
-		{"122.193.10.184", "7300", consts.PROTO_SOCKS5},
+		{"localhost", "9988", consts.PROTO_SOCKS5, "root", "123"},
 	}
 	wg := sync.WaitGroup{}
 
@@ -27,5 +27,21 @@ func TestCheckIp(t *testing.T) {
 		}
 		defer wg.Done()
 	}()
+	wg.Wait()
+}
+
+func TestCheckIpBatch(t *testing.T) {
+	item := []string{"0.0.0.0", "8888", consts.PROTO_HTTP, "root", "123"}
+	wg := sync.WaitGroup{}
+
+	for i := 0; i < 10; i++ {
+		wg.Add(1)
+		go func() {
+			proxy := service.ProxyService.ParseProxyArr(item)
+			r := service.ProxyService.CheckIpStatus(&proxy)
+			t.Log(item, r)
+			defer wg.Done()
+		}()
+	}
 	wg.Wait()
 }
