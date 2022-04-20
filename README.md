@@ -28,7 +28,7 @@ proxy-collect - GO Proxy Collector
 2、启动api服务
 
     go run ./cmd -S=api -C=conf.yaml
-2、启动隧道代理服务
+3、启动隧道代理服务
 
     go run ./cmd -S=tunnel -C=conf.yaml
 #### 通过接口获取可用ip
