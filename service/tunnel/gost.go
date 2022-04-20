@@ -22,7 +22,7 @@ var (
 
 func StartTunnels() {
 	gost.SetLogger(&gost.LogLogger{})
-
+	baseCfg.Debug = config.Get().Tunnel.Debug
 	baseCfg.ServeNodes = config.Get().Tunnels
 	baseCfg.ChainNodes = []dto.ProxyDto{}
 	proxyList, err := getProxyList()
@@ -103,7 +103,7 @@ func getProxyList() ([]dto.ProxyDto, error) {
 func StartRefreshNodeGroupList() {
 	for {
 		time.Sleep(time.Second * time.Duration(config.Get().Tunnel.Refresh))
-		logger.Info("start run RefreshNodeGroupList", nil)
+		logger.Debug("start run RefreshNodeGroupList", nil)
 		proxyList, err := getProxyList()
 		if err != nil {
 			logger.Error("get active ip fail", logger.Fields{"err": err})
@@ -129,17 +129,17 @@ func RefreshNodeGroupList(proxyList []dto.ProxyDto) error {
 		nid++
 	}
 	for _, ngroup := range NodeGroupList {
-		ngroup.AddNode(nodes...)
+		ngroup.SetNodes(nodes...)
 
 		ngroup.SetSelector(nil,
 			gost.WithFilter(
 				&gost.FailFilter{
-					MaxFails:    nodes[0].GetInt("max_fails"),
-					FailTimeout: nodes[0].GetDuration("fail_timeout"),
+					MaxFails:    config.Get().Tunnel.MaxFails,
+					FailTimeout: time.Duration(config.Get().Tunnel.FailTimeout) * time.Second,
 				},
 				&gost.InvalidFilter{},
 			),
-			gost.WithStrategy(gost.NewStrategy(nodes[0].Get("strategy"))),
+			gost.WithStrategy(gost.NewStrategy(config.Get().Tunnel.Strategy)),
 		)
 	}
 	return nil
