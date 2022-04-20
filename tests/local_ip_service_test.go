@@ -7,6 +7,6 @@ import (
 )
 
 func TestGetIpInfoLocal(t *testing.T) {
-	result := ip.GetIpInfo("95.113.214.48", "")
+	result := ip.GetIpInfo("183.129.167.42", "")
 	t.Log(result)
 }

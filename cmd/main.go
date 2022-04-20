@@ -31,11 +31,14 @@ func main() {
 		if server == bootstrap.ServerALl {
 			go servers.StartApiServer()
 			go servers.StartJobServer()
+			go servers.StartTunnelServer()
 			break
 		} else if server == bootstrap.ServerJob {
 			go servers.StartJobServer()
 		} else if server == bootstrap.ServerApi {
 			go servers.StartApiServer()
+		} else if server == bootstrap.ServerTunnel {
+			go servers.StartTunnelServer()
 		} else {
 			logger.Error("unknown server", nil)
 			os.Exit(1)

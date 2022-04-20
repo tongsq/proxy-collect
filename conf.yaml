@@ -1,7 +1,7 @@
 dao: redis #set storage type -> redis|database
 redis: #redis config
-  MaxIdle: 2
-  MaxActive: 5
+  MaxIdle: 0
+  MaxActive: 10
   Network: tcp
   Address: 127.0.0.1:6379
   Password:
@@ -9,7 +9,7 @@ database: #database config
   Dialect: mysql
   Args: python:123456@(127.0.0.1:3306)/py?charset=utf8&loc=Local
   MaxIdle: 5 #max idle connections count
-  MaxOpen: 50 #max connections count
+  MaxOpen: 20 #max connections count
 api:
   host: 0.0.0.0
   port: 8090
@@ -19,3 +19,20 @@ recheckCount: 10 #recheck count if ip is invalid
 log:
   logLevel: 4 #0:Panic 1: Fatal 2:error 3:warning 4:info 5:debug 6:trace
   errorLogFile: errors.log
+tunnel:
+  tunnelLevel: 1
+  refresh: 20
+  debug: false
+  strategy: round
+  maxFails: 100
+  failTimeout: 10
+tunnels:
+  -
+    proto: http
+    host: 0.0.0.0
+    port: 8888
+    users:
+      -
+        username: root
+        password: 123
+        limiter: 1,10,2

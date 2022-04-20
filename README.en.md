@@ -7,10 +7,11 @@
 Features
 ------
 
-* Support redis or MySQL as storage
+* Support Redis or MySQL as storage
 * Automatically grab free proxy IP on the Internet
 * Regularly check IP availability and recheck failed IP
 * Get the list of available proxy IP through API
+* Tunnel proxy service: it supports opening multiple ports for monitoring, multi protocol, multi-level forwarding, user name and password verification, and user flow restriction
 
 ## Usage：
 
@@ -26,7 +27,9 @@ Features
 2、Start API service
 
     go run ./cmd -S=api -C=conf.yaml
+2、Start Tunnel service
 
+    go run ./cmd -S=tunnel -C=conf.yaml
 #### Get available IP through the API
 
     curl 127.0.0.1:8090/all?city=上海&duration=100
@@ -87,5 +90,5 @@ B、Set mysql as storage media
 ```
 # TODO list
 - [x] Supports proxy collection and comparison of other protocols such as socket5
-- [ ] Support configuring log classification
-- [ ] Support tunnel agent services
+- [x] Support configuring log classification
+- [x] Support tunnel agent services
