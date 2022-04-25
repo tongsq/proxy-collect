@@ -129,7 +129,7 @@ func (s *proxyService) DoGetProxy(getProxyService ProxyGetterInterface, pool *co
 		wg.Add(1)
 		go func(wg *sync.WaitGroup) {
 			defer wg.Done()
-			logger.FInfo("wait 10s ...")
+			logger.FDebug("wait 10s ...")
 			time.Sleep(time.Second * 10)
 		}(&wg)
 		for _, proxyArr := range proxyList {

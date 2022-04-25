@@ -49,7 +49,7 @@ func (r *route) parseChain() (*gost.Chain, error) {
 
 		// parse the base nodes
 		nodes, err := parseChainNode(r.ChainNodes)
-		if err != nil {
+		if err != nil || len(nodes) <= 0 {
 			return nil, err
 		}
 
@@ -63,12 +63,12 @@ func (r *route) parseChain() (*gost.Chain, error) {
 		ngroup.SetSelector(nil,
 			gost.WithFilter(
 				&gost.FailFilter{
-					MaxFails:    nodes[0].GetInt("max_fails"),
-					FailTimeout: nodes[0].GetDuration("fail_timeout"),
+					MaxFails:    config.Get().Tunnel.MaxFails,
+					FailTimeout: time.Duration(config.Get().Tunnel.FailTimeout) * time.Second,
 				},
 				&gost.InvalidFilter{},
 			),
-			gost.WithStrategy(gost.NewStrategy(nodes[0].Get("strategy"))),
+			gost.WithStrategy(gost.NewStrategy(config.Get().Tunnel.Strategy)),
 		)
 		//refresh proxy ips
 		NodeGroupList = append(NodeGroupList, ngroup)
