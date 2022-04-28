@@ -22,6 +22,7 @@ type ProxyModel struct {
 	Proto      string `gorm:"proto"`
 	User       string `gorm:"user"`
 	Password   string `gorm:"password"`
+	Ping       int64  `gorm:"ping"`
 }
 
 func (ProxyModel) TableName() string {

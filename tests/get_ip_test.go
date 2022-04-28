@@ -8,10 +8,12 @@ import (
 	"time"
 
 	"github.com/tongsq/go-lib/logger"
+	"proxy-collect/bootstrap"
 	"proxy-collect/service"
 )
 
 func TestGetIp(t *testing.T) {
+	bootstrap.Bootstrap()
 	s := service.CommonGetterHttp
 	wg := sync.WaitGroup{}
 	succ := 0
@@ -29,8 +31,8 @@ func TestGetIp(t *testing.T) {
 			wg.Add(1)
 			go func() {
 				defer wg.Done()
-				r := service.ProxyService.CheckIpStatus(&p)
-				t.Log(p, r)
+				r, ping := service.ProxyService.CheckIpStatus(&p)
+				t.Log(p, r, ping)
 				if r {
 					succ++
 				}

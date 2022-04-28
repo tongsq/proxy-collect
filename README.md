@@ -84,6 +84,7 @@ B、数据存储到mysql
       `proto` varchar(20) NOT NULL DEFAULT 'http',
       `user` varchar(50) NOT NULL DEFAULT '',
       `password` varchar(50) NOT NULL DEFAULT '',
+      `ping` int(11) NOT NULL DEFAULT '0',
       PRIMARY KEY (`id`) USING BTREE,
       UNIQUE KEY `IDX_HOST_PORT_PROTO` (`host`,`port`, `proto`) USING BTREE,
       KEY `IDX_STATUS` (`status`) USING BTREE,
@@ -114,7 +115,7 @@ tunnels: //隧道代理监听的端口，可配多个
 - [X] 支持socket5等其它协议代理采集、较验
 - [X] 支持配置日志分级
 - [X] 支持开启隧道代理服务：用户名密码验证、限流功能
-- [ ] 记录代理响应时间
+- [X] 记录代理响应时间
 
 # 感谢
 * 如果您觉得程序还不错，不妨点个星以鼓励一下，后续会更新更多ip源，谢谢！

@@ -69,6 +69,7 @@ type confDto struct {
 	PoolSize        int    `yaml:"poolSize"`
 	LocalIpDataPath string `yaml:"localIpDataPath"`
 	RecheckCount    int64  `yaml:"recheckCount"`
+	MaxPing         int64  `yaml:"maxPing"`
 	Log             struct {
 		LogLevel     logger.Level `yaml:"logLevel"`
 		ErrorLogFile string       `yaml:"errorLogFile"`

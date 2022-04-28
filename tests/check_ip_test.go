@@ -22,8 +22,8 @@ func TestCheckIp(t *testing.T) {
 	go func() {
 		for _, item := range items {
 			proxy := service.ProxyService.ParseProxyArr(item)
-			r := service.ProxyService.CheckIpStatus(&proxy)
-			t.Log(item, r)
+			r, ping := service.ProxyService.CheckIpStatus(&proxy)
+			t.Log(item, r, ping)
 		}
 		defer wg.Done()
 	}()
@@ -38,8 +38,8 @@ func TestCheckIpBatch(t *testing.T) {
 		wg.Add(1)
 		go func() {
 			proxy := service.ProxyService.ParseProxyArr(item)
-			r := service.ProxyService.CheckIpStatus(&proxy)
-			t.Log(item, r)
+			r, ping := service.ProxyService.CheckIpStatus(&proxy)
+			t.Log(item, r, ping)
 			defer wg.Done()
 		}()
 	}

@@ -16,6 +16,7 @@ api:
 poolSize: 500
 localIpDataPath: /tmp/local_ip_data.dat
 recheckCount: 10 #recheck count if ip is invalid
+maxPing: 100000 #max timeout duration, Millisecond
 log:
   logLevel: 4 #0:Panic 1: Fatal 2:error 3:warning 4:info 5:debug 6:trace
   errorLogFile: errors.log

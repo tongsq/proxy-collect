@@ -34,17 +34,20 @@ func (s proxyService) TransferProxyDto(proxy *dto.ProxyDto) *request.ProxyDto {
 	}
 }
 
-func (s *proxyService) CheckIpStatus(proxy *dto.ProxyDto) bool {
+func (s *proxyService) CheckIpStatus(proxy *dto.ProxyDto) (bool, int64) {
 	u := "https://www.baidu.com"
 	h := &request.HeaderDto{
 		UserAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.106 Safari/537.36",
 	}
+	t := time.Now()
 	_, err := request.WebGetProxy(u, h, nil, s.TransferProxyDto(proxy))
-	return err == nil
+	duration := time.Now().Sub(t)
+	return err == nil, int64(duration / time.Millisecond)
 }
 
 func (s *proxyService) CheckProxyAndSave(p dto.ProxyDto) {
-	result := s.CheckIpStatus(&p)
+	result, ping := s.CheckIpStatus(&p)
+	p.Ping = ping
 	if result {
 		logger.Success("ip is success", logger.Fields{"proxy": p})
 	} else {
@@ -113,6 +116,7 @@ func (s *proxyService) CheckProxyAndSave(p dto.ProxyDto) {
 	proxyModel.UpdateTime = time.Now().Unix()
 	proxyModel.User = p.User
 	proxyModel.Password = p.Password
+	proxyModel.Ping = p.Ping
 	_ = dao.ProxyDao.Save(proxyModel)
 }
 

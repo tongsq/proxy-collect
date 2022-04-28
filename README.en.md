@@ -82,6 +82,7 @@ B、Set mysql as storage media
       `proto` varchar(20) NOT NULL DEFAULT 'http',
       `user` varchar(50) NOT NULL DEFAULT '',
       `password` varchar(50) NOT NULL DEFAULT '',
+      `ping` int(11) NOT NULL DEFAULT '0',
       PRIMARY KEY (`id`) USING BTREE,
       UNIQUE KEY `IDX_HOST_PORT_PROTO` (`host`,`port`, `proto`) USING BTREE,
       KEY `IDX_STATUS` (`status`) USING BTREE,

@@ -54,6 +54,7 @@ func (d *proxyDao) Create(proxy dto.ProxyDto, status int8) (*model.ProxyModel, e
 		Proto:      proxy.Proto,
 		User:       proxy.User,
 		Password:   proxy.Password,
+		Ping:       proxy.Ping,
 	}
 	DB().Create(m)
 	return m, nil

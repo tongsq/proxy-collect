@@ -22,6 +22,7 @@ type ProxyDto struct {
 	User     string `json:"user"`
 	Password string `json:"password"`
 	Source   string `json:"source"`
+	Ping     int64  `json:"ping"`
 }
 
 func NewProxyDto(m model.ProxyModel) ProxyInfoDto {
@@ -33,6 +34,7 @@ func NewProxyDto(m model.ProxyModel) ProxyInfoDto {
 			User:     m.User,
 			Password: m.Password,
 			Source:   m.Source,
+			Ping:     m.Ping,
 		},
 		Status:     m.Status,
 		CreateTime: m.CreateTime,

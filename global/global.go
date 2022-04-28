@@ -1,8 +1,11 @@
 package global
 
 import (
+	"time"
+
 	"github.com/tongsq/go-lib/component"
 	"github.com/tongsq/go-lib/logger"
+	"github.com/tongsq/go-lib/request"
 	"proxy-collect/config"
 )
 
@@ -14,4 +17,6 @@ func LoadGlobal() {
 	if config.Get().Log.ErrorLogFile != "" {
 		logger.SetErrorFile(config.Get().Log.ErrorLogFile)
 	}
+	//set max proxy timeout
+	request.SetTimeout(time.Millisecond * time.Duration(config.Get().MaxPing))
 }
