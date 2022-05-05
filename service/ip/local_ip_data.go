@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"compress/zlib"
 	"encoding/binary"
+	"errors"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -18,16 +19,22 @@ type fileData struct {
 	IPNum    int64
 }
 
-func (f *fileData) UpdateLocalData() {
+func (f *fileData) UpdateLocalData() ([]byte, error) {
+	defer func() {
+		if err := recover(); err != nil {
+			logger.Error("update local ip database fail", map[string]interface{}{"err": err})
+		}
+	}()
 	tmpData, err := f.getOnline()
 	if err != nil {
 		logger.Error("更新本地纯真ip库失败", map[string]interface{}{"err": err})
-		return
+		return nil, err
 	} else {
 		if err := ioutil.WriteFile(f.FilePath, tmpData, 0644); err == nil {
 			logger.FDebug("已将最新的纯真 IP 库保存到本地 %s ", f.FilePath)
 		}
 		f.loadData(tmpData)
+		return tmpData, nil
 	}
 }
 
@@ -38,13 +45,10 @@ func (f *fileData) InitIPData() {
 	_, err := os.Stat(f.FilePath)
 	if err != nil && os.IsNotExist(err) {
 		logger.Info("文件不存在，尝试从网络获取最新纯真 IP 库", nil)
-		tmpData, err = f.getOnline()
+		tmpData, err = f.UpdateLocalData()
 		if err != nil {
+			logger.Error("download local ip data fail", map[string]interface{}{"err": err})
 			return
-		} else {
-			if err := ioutil.WriteFile(f.FilePath, tmpData, 0644); err == nil {
-				logger.FDebug("已将最新的纯真 IP 库保存到本地 %s ", f.FilePath)
-			}
 		}
 	} else {
 		// 打开文件句柄
@@ -66,6 +70,9 @@ func (f *fileData) InitIPData() {
 }
 
 func (f *fileData) loadData(tmpData []byte) {
+	if tmpData == nil || len(tmpData) <= 0 {
+		return
+	}
 	f.Data = tmpData
 
 	buf := f.Data[0:8]
@@ -81,11 +88,13 @@ func (f *fileData) getOnline() ([]byte, error) {
 		return nil, err
 	}
 	defer resp.Body.Close()
-
+	if resp.StatusCode != http.StatusOK {
+		return nil, errors.New("download ip data from cz88 fail")
+	}
 	if body, err := ioutil.ReadAll(resp.Body); err != nil {
 		return nil, err
 	} else {
-		if key, err := f.getKey(); err != nil {
+		if key, err := f.getKey(body); err != nil {
 			return nil, err
 		} else {
 			for i := 0; i < 0x200; i++ {
@@ -106,17 +115,7 @@ func (f *fileData) getOnline() ([]byte, error) {
 	}
 }
 
-func (f *fileData) getKey() (uint32, error) {
-	resp, err := http.Get("http://update.cz88.net/ip/copywrite.rar")
-	if err != nil {
-		return 0, err
-	}
-	defer resp.Body.Close()
-
-	if body, err := ioutil.ReadAll(resp.Body); err != nil {
-		return 0, err
-	} else {
-		// @see https://stackoverflow.com/questions/34078427/how-to-read-packed-binary-data-in-go
-		return binary.LittleEndian.Uint32(body[5*4:]), nil
-	}
+func (f *fileData) getKey(body []byte) (uint32, error) {
+	// @see https://stackoverflow.com/questions/34078427/how-to-read-packed-binary-data-in-go
+	return binary.LittleEndian.Uint32(body[5*4:]), nil
 }
