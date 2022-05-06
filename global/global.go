@@ -7,9 +7,15 @@ import (
 	"github.com/tongsq/go-lib/logger"
 	"github.com/tongsq/go-lib/request"
 	"proxy-collect/config"
+	"proxy-collect/consts"
 )
 
 var Pool *component.Pool
+var MaxPing time.Duration = request.DefaultTimeout
+
+var CommonHeader = &request.HeaderDto{
+	UserAgent: consts.USER_AGENT,
+}
 
 func LoadGlobal() {
 	Pool = component.NewTaskPool(config.Get().PoolSize)
@@ -18,5 +24,9 @@ func LoadGlobal() {
 		logger.SetErrorFile(config.Get().Log.ErrorLogFile)
 	}
 	//set max proxy timeout
-	request.SetTimeout(time.Millisecond * time.Duration(config.Get().MaxPing))
+	MaxPing = time.Millisecond * time.Duration(config.Get().MaxPing)
+}
+
+func SimpleGet(requestUrl string) (*request.HttpResultDto, error) {
+	return request.Get(requestUrl, request.NewOptions().WithHeader(CommonHeader))
 }

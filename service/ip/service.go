@@ -25,7 +25,7 @@ func LoadLocalIpData() {
 
 func GetIpInfo(host string, port string) *dto.IpInfoDto {
 	result, err := LocalIpService().Find(host)
-	if err != nil && result != nil && result.City != "" {
+	if err != nil {
 		return GetIpInfoByIp138(host, port)
 	}
 	return result

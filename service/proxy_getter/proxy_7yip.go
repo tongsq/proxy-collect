@@ -35,7 +35,7 @@ func (s *getProxy7Yip) GetContentHtml(requestUrl string) string {
 		Referer:                 "https://www.7yip.cn/",
 	}
 	logger.Info("get proxy from 7yip", logger.Fields{"url": requestUrl})
-	data, err := request.WebGet(requestUrl, h, nil)
+	data, err := request.Get(requestUrl, request.NewOptions().WithHeader(h))
 	if err != nil || data == nil {
 		logger.Error("get proxy from 7yip fail", logger.Fields{"err": err, "data": data})
 	}

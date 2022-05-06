@@ -36,7 +36,7 @@ func (s *getProxyXila) GetContentHtml(requestUrl string) string {
 		UpgradeInsecureRequests: "1",
 	}
 	logger.Info("get proxy from xiladaili", logger.Fields{"url": requestUrl})
-	data, err := request.WebGet(requestUrl, h, nil)
+	data, err := request.Get(requestUrl, request.NewOptions().WithHeader(h))
 	if err != nil || data == nil {
 		logger.Error("get proxy from xiladaili fail", logger.Fields{"err": err, "data": data})
 		return ""

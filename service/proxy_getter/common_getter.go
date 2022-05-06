@@ -4,8 +4,8 @@ import (
 	"regexp"
 
 	"github.com/tongsq/go-lib/logger"
-	"github.com/tongsq/go-lib/request"
 	"proxy-collect/consts"
+	"proxy-collect/global"
 )
 
 var urlList = map[string][]string{
@@ -35,11 +35,8 @@ func (s *commonGetter) GetUrlList() []string {
 	return nil
 }
 func (s *commonGetter) GetContentHtml(requestUrl string) string {
-	h := &request.HeaderDto{
-		UserAgent: consts.USER_AGENT,
-	}
 	logger.Info("get proxy from common getter", logger.Fields{"url": requestUrl})
-	data, err := request.WebGet(requestUrl, h, nil)
+	data, err := global.SimpleGet(requestUrl)
 	if err != nil || data == nil {
 		logger.Error("get proxy from common getter fail", logger.Fields{"err": err, "data": data, "url": requestUrl})
 		return ""

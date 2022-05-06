@@ -61,9 +61,9 @@ func (s *Zdaye) GetContentHtml(requestUrl string) string {
 		rand.Seed(time.Now().Unix())
 		i := rand.Intn(len(proxies))
 		proxy := proxies[i]
-		data, err = request.WebGetProxy(requestUrl, h, nil, &request.ProxyDto{Host: proxy.Host, Port: proxy.Port})
+		data, err = request.Get(requestUrl, request.NewOptions().WithHeader(h).WithProxy(&request.ProxyDto{Host: proxy.Host, Port: proxy.Port}))
 	} else {
-		data, err = request.WebGet(requestUrl, h, nil)
+		data, err = request.Get(requestUrl, request.NewOptions().WithHeader(h))
 	}
 	if err != nil || data == nil {
 		logger.Error("get proxy from zdaye.com fail", logger.Fields{"err": err, "data": data})

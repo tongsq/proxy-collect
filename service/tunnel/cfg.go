@@ -17,10 +17,6 @@ import (
 	"proxy-collect/config"
 )
 
-var (
-	routers []router
-)
-
 type baseConfig struct {
 	route
 	Routes []route

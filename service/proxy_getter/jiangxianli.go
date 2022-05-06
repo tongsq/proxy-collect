@@ -35,7 +35,7 @@ func (s *getProxyIpJiangXianLi) GetContentHtml(requestUrl string) string {
 		Referer:                 "https://ip.jiangxianli.com/",
 	}
 	logger.Info("get proxy from jangxianli", logger.Fields{"url": requestUrl})
-	data, err := request.WebGet(requestUrl, h, nil)
+	data, err := request.Get(requestUrl, request.NewOptions().WithHeader(h))
 	if err != nil || data == nil {
 		logger.Error("get proxy from jangxianli fail", logger.Fields{"err": err, "data": data})
 		return ""

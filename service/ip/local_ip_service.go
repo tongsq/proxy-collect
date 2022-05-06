@@ -59,8 +59,9 @@ func (q *localIpService) SetOffset(offset int64) {
 // Find ip地址查询对应归属地信息
 func (q *localIpService) Find(ip string) (res *dto.IpInfoDto, err error) {
 	defer func() {
-		if err := recover(); err != nil {
+		if re := recover(); re != nil {
 			logger.Error("get ip info from local data fail", map[string]interface{}{"err": err})
+			err = errors.New("get ip info from local data fail")
 		}
 	}()
 	res = &dto.IpInfoDto{}

@@ -24,10 +24,10 @@ func GetIpInfoByIp138(host string, port string) *dto.IpInfoDto {
 	}
 
 	logger.Info("get ip info from ip138", logger.Fields{"url": requestUrl})
-	data, err := request.WebGetProxy(requestUrl, h, nil, &request.ProxyDto{Host: host, Port: port})
+	data, err := request.Get(requestUrl, request.NewOptions().WithHeader(h).WithProxy(&request.ProxyDto{Host: host, Port: port}))
 	if err != nil || data == nil {
 		logger.Error("get from ip138 use proxy error", logger.Fields{"err": err, "data": data})
-		data, err = request.WebGet(requestUrl, h, nil)
+		data, err = request.Get(requestUrl, request.NewOptions().WithHeader(h))
 		if err != nil || data == nil {
 			logger.Error("get from ip138 no proxy error", logger.Fields{"err": err, "data": data})
 			return nil

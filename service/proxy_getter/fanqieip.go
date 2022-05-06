@@ -35,9 +35,8 @@ func (s *getProxyFanQie) GetContentHtml(requestUrl string) string {
 		UpgradeInsecureRequests: "1",
 		Referer:                 "https://www.fanqieip.com/free",
 	}
-
 	logger.Info("get proxy from fanqieip", logger.Fields{"url": requestUrl})
-	data, err := request.WebGet(requestUrl, h, nil)
+	data, err := request.Get(requestUrl, request.NewOptions().WithHeader(h))
 	if err != nil || data == nil {
 		logger.Error("get proxy from fanqieip fail", logger.Fields{"err": err, "data": data})
 		return ""

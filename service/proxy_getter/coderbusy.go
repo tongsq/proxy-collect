@@ -3,8 +3,8 @@ package proxy_getter
 import (
 	"github.com/PuerkitoBio/goquery"
 	"github.com/tongsq/go-lib/logger"
-	"github.com/tongsq/go-lib/request"
 	"proxy-collect/consts"
+	"proxy-collect/global"
 	"proxy-collect/service/common"
 
 	"strings"
@@ -24,12 +24,8 @@ func (s *getProxyCoderBusy) GetUrlList() []string {
 	return list
 }
 func (s *getProxyCoderBusy) GetContentHtml(requestUrl string) string {
-	h := &request.HeaderDto{
-		UserAgent:               consts.USER_AGENT,
-		UpgradeInsecureRequests: "1",
-	}
 	logger.Info("get proxy from coderbusy", logger.Fields{"url": requestUrl})
-	data, err := request.WebGet(requestUrl, h, nil)
+	data, err := global.SimpleGet(requestUrl)
 	if err != nil || data == nil {
 		logger.Error("get proxy from coderbusy fail", logger.Fields{"err": err, "data": data})
 		logger.Error("get proxy from coderbusy fail", logger.Fields{"err": err, "data": data})

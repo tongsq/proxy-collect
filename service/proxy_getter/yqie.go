@@ -35,7 +35,7 @@ func (s *Yqie) GetContentHtml(requestUrl string) string {
 
 	logger.Info("get proxy from ip.yqie.com", logger.Fields{"url": requestUrl})
 
-	data, err := request.WebGet(requestUrl, h, nil)
+	data, err := request.Get(requestUrl, request.NewOptions().WithHeader(h))
 
 	if err != nil || data == nil {
 		logger.Error("get proxy from ip.yqie.com fail", logger.Fields{"err": err, "data": data})

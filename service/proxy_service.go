@@ -14,6 +14,7 @@ import (
 	"proxy-collect/consts"
 	"proxy-collect/dao"
 	"proxy-collect/dto"
+	"proxy-collect/global"
 	"proxy-collect/service/ip"
 )
 
@@ -40,7 +41,7 @@ func (s *proxyService) CheckIpStatus(proxy *dto.ProxyDto) (bool, int64) {
 		UserAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.106 Safari/537.36",
 	}
 	t := time.Now()
-	_, err := request.WebGetProxy(u, h, nil, s.TransferProxyDto(proxy))
+	_, err := request.Get(u, request.NewOptions().WithHeader(h).WithProxy(s.TransferProxyDto(proxy)).WithTimeout(global.MaxPing))
 	duration := time.Now().Sub(t)
 	return err == nil, int64(duration / time.Millisecond)
 }
