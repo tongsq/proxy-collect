@@ -63,8 +63,9 @@ type confDto struct {
 		MaxOpen int    `yaml:"MaxOpen"`
 	}
 	Api struct {
-		Host string `yaml:"host"`
-		Port string `yaml:"port"`
+		Host  string `yaml:"host"`
+		Port  string `yaml:"port"`
+		Token string `yaml:"token"`
 	}
 	PoolSize        int    `yaml:"poolSize"`
 	LocalIpDataPath string `yaml:"localIpDataPath"`

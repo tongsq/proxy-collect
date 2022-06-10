@@ -63,7 +63,7 @@ B、数据存储到mysql
     dao: database
     database:
       Dialect: mysql
-      Args: user:password@(127.0.0.1:3306)/dbname?charset=utf8&loc=Local
+      Args: user:password@(127.0.0.1:3306)/dbname?charset=utf8&loc=Local&token=abc
 ```
 * 创建表
 ```
