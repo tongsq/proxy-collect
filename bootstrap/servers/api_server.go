@@ -39,6 +39,8 @@ func StartApiServer() {
 			durationI, _ = strconv.ParseInt(duration, 10, 64)
 		}
 		proto := c.Query("proto")
+		count := c.Query("count")
+		countNum, _ := strconv.Atoi(count)
 		var list []dto.ProxyInfoDto
 		nowTime := time.Now().Unix()
 		for _, proxy := range proxies {
@@ -52,6 +54,9 @@ func StartApiServer() {
 				continue
 			}
 			list = append(list, dto.NewProxyDto(proxy))
+			if countNum > 0 && len(list) >= countNum {
+				break
+			}
 		}
 		c.JSON(200, gin.H{
 			"data":  list,

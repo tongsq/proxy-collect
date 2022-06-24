@@ -60,7 +60,7 @@ func (q *localIpService) SetOffset(offset int64) {
 func (q *localIpService) Find(ip string) (res *dto.IpInfoDto, err error) {
 	defer func() {
 		if re := recover(); re != nil {
-			logger.Error("get ip info from local data fail", map[string]interface{}{"err": err})
+			logger.Error("get ip info from local data fail", map[string]interface{}{"err": re})
 			err = errors.New("get ip info from local data fail")
 		}
 	}()
