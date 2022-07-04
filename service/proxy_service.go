@@ -107,11 +107,12 @@ func (s *proxyService) CheckProxyAndSave(p dto.ProxyDto) {
 	}
 	//if ip is ok, update ip info
 	if result && proxyModel.City == "" {
-		ipInfo := ip.GetIpInfo(p.Host, p.Port)
-		proxyModel.City = ipInfo.City
-		proxyModel.Country = ipInfo.Country
-		proxyModel.Isp = ipInfo.Isp
-		proxyModel.Region = ipInfo.Region
+		if ipInfo := ip.GetIpInfo(p.Host, p.Port); ipInfo != nil {
+			proxyModel.City = ipInfo.City
+			proxyModel.Country = ipInfo.Country
+			proxyModel.Isp = ipInfo.Isp
+			proxyModel.Region = ipInfo.Region
+		}
 	}
 	proxyModel.Status = status
 	proxyModel.UpdateTime = time.Now().Unix()
