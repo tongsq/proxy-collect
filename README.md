@@ -3,6 +3,7 @@ proxy-collect - GO Proxy Collector
 ### GO语言实现的ip代理池，隧道代理
 
 #### [English README](README.en.md)
+![图片](./doc/diagram.jpg)
 
 功能
 ------
