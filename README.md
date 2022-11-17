@@ -14,6 +14,7 @@ proxy-collect - GO Proxy Collector
 * 自动抓取互联网上的免费代理ip
 * 定时检测ip可用性，失效ip复检、记录ip存活时间
 * 获取ip归属地等信息
+* 配置代理超时时间
 
 ## 使用方法：
 
