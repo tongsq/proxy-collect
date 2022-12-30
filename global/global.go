@@ -25,6 +25,16 @@ func LoadGlobal() {
 	}
 	//set max proxy timeout
 	MaxPing = time.Millisecond * time.Duration(config.Get().MaxPing)
+
+	config.RegisterConfigRefreshHandler(func(old, new *config.ConfDto) {
+		if old.Log.LogLevel != new.Log.LogLevel {
+			logger.SetLogLevel(new.Log.LogLevel)
+		}
+		if old.Log.ErrorLogFile != new.Log.ErrorLogFile && new.Log.ErrorLogFile != "" {
+			logger.SetErrorFile(new.Log.ErrorLogFile)
+		}
+		MaxPing = time.Millisecond * time.Duration(new.MaxPing)
+	})
 }
 
 func SimpleGet(requestUrl string) (*request.HttpResultDto, error) {

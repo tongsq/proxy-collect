@@ -8,7 +8,7 @@ import (
 )
 
 func Bootstrap() {
-	config.LoadConfig()
+	config.StartLoadConfig()
 	global.LoadGlobal()
 	dao.LoadDao()
 	service.LoadService()

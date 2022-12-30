@@ -2,22 +2,23 @@ package config
 
 import (
 	"fmt"
-	"io/ioutil"
-
 	"github.com/tongsq/go-lib/logger"
 	"gopkg.in/yaml.v2"
+	"io/ioutil"
+	"time"
 )
 
-var conf *confDto
+var conf *ConfDto
 var YamlPath = "conf.yaml"
+var configRefreshHandlers []func(old, new *ConfDto)
 
-func Get() *confDto {
+func Get() *ConfDto {
 	if conf == nil {
 		yamls, err := ioutil.ReadFile(YamlPath)
 		if err != nil {
 			ReadConfigError(err)
 		}
-		c := confDto{}
+		c := ConfDto{}
 		err = yaml.Unmarshal(yamls, &c)
 		if err != nil {
 			ReadConfigError(err)
@@ -28,15 +29,35 @@ func Get() *confDto {
 	return conf
 }
 
+func StartLoadConfig() {
+	LoadConfig()
+	go func() {
+		t := time.NewTicker(time.Second * 10)
+		for {
+			<-t.C
+			LoadConfig()
+		}
+	}()
+}
+
+func RegisterConfigRefreshHandler(f func(old, new *ConfDto)) {
+	configRefreshHandlers = append(configRefreshHandlers, f)
+}
+
 func LoadConfig() {
 	yamls, err := ioutil.ReadFile(YamlPath)
 	if err != nil {
 		ReadConfigError(err)
 	}
-	c := confDto{}
+	c := ConfDto{}
 	err = yaml.Unmarshal(yamls, &c)
 	if err != nil {
 		ReadConfigError(err)
+	}
+	if conf != nil {
+		for _, h := range configRefreshHandlers {
+			h(conf, &c)
+		}
 	}
 	conf = &c
 	logger.Debug("load config success", logger.Fields{"conf": conf})
@@ -47,7 +68,7 @@ func ReadConfigError(err error) {
 	panic("read config file error")
 }
 
-type confDto struct {
+type ConfDto struct {
 	Dao   string `yaml:"dao"`
 	Redis struct {
 		MaxIdle   int    `yaml:"MaxIdle"`
@@ -71,6 +92,7 @@ type confDto struct {
 	LocalIpDataPath string `yaml:"localIpDataPath"`
 	RecheckCount    int64  `yaml:"recheckCount"`
 	MaxPing         int64  `yaml:"maxPing"`
+	UpdateIpInfo    bool   `yaml:"updateIpInfo"`
 	Log             struct {
 		LogLevel     logger.Level `yaml:"logLevel"`
 		ErrorLogFile string       `yaml:"errorLogFile"`
@@ -86,6 +108,6 @@ type confDto struct {
 	Tunnels []TunnelConfig `yaml:"tunnels"`
 }
 
-func (c confDto) String() string {
+func (c ConfDto) String() string {
 	return fmt.Sprintf("%#v", c)
 }
