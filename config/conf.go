@@ -106,6 +106,7 @@ type ConfDto struct {
 		FailTimeout int    `yaml:"failTimeout"`
 	}
 	Tunnels []TunnelConfig `yaml:"tunnels"`
+	Getters []Getter       `yaml:"getters"`
 }
 
 func (c ConfDto) String() string {

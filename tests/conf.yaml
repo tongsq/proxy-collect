@@ -18,7 +18,7 @@ localIpDataPath: /tmp/local_ip_data.dat
 recheckCount: 10 #recheck count if ip is invalid
 maxPing: 100000 #max timeout duration, Millisecond
 log:
-  logLevel: 4 #0:Panic 1: Fatal 2:error 3:warning 4:info 5:debug 6:trace
+  logLevel: 6 #0:Panic 1: Fatal 2:error 3:warning 4:info 5:debug 6:trace
   errorLogFile: errors.log
 tunnels:
   -
@@ -30,3 +30,13 @@ tunnels:
         username: root
         password: 123
         limiter: 1,10,2
+getters:
+  -
+    method: GET
+    regexp: (\d+\.\d+\.\d+\.\d+):(\d+)
+    proto: http #代理类型
+    proxy: false #是否通过代理获取
+    agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36
+    urls:
+      -
+        https://www.zdaye.com/dayProxy/1.html

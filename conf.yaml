@@ -39,3 +39,13 @@ tunnels:
         username: root
         password: 123
         limiter: 1,10,2
+getters:
+  -
+    method: GET
+    regexp: (\d+\.\d+\.\d+\.\d+):(\d+)
+    proto: http #获取到的代理类型
+    proxy: false #是否通过代理获取
+    agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36
+    urls:
+      -
+        https://www.zdaye.com/dayProxy/1.html
