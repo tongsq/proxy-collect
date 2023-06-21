@@ -33,10 +33,18 @@ func StartApiServer() {
 			return
 		}
 		city := c.Query("city")
-		var durationI int64
+		var durationMin, durationMax int64
 		duration := c.Query("duration")
 		if duration != "" {
-			durationI, _ = strconv.ParseInt(duration, 10, 64)
+			if strings.Contains(duration, ",") {
+				strs := strings.Split(duration, ",")
+				if len(strs) >= 2 {
+					durationMin, _ = strconv.ParseInt(strs[0], 10, 64)
+					durationMax, _ = strconv.ParseInt(strs[1], 10, 64)
+				}
+			} else {
+				durationMin, _ = strconv.ParseInt(duration, 10, 64)
+			}
 		}
 		proto := c.Query("proto")
 		count := c.Query("count")
@@ -47,7 +55,10 @@ func StartApiServer() {
 			if city != "" && !strings.Contains(proxy.City, city) {
 				continue
 			}
-			if durationI > 0 && ((nowTime - proxy.ActiveTime) < durationI) {
+			if durationMin > 0 && ((nowTime - proxy.ActiveTime) < durationMin) {
+				continue
+			}
+			if durationMax > 0 && ((nowTime - proxy.ActiveTime) > durationMax) {
 				continue
 			}
 			if proto != "" && proto != proxy.Proto {
