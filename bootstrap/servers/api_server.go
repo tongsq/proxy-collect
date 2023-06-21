@@ -36,8 +36,8 @@ func StartApiServer() {
 		var durationMin, durationMax int64
 		duration := c.Query("duration")
 		if duration != "" {
-			if strings.Contains(duration, ",") {
-				strs := strings.Split(duration, ",")
+			if strings.Contains(duration, "-") {
+				strs := strings.Split(duration, "-")
 				if len(strs) >= 2 {
 					durationMin, _ = strconv.ParseInt(strs[0], 10, 64)
 					durationMax, _ = strconv.ParseInt(strs[1], 10, 64)
