@@ -1,11 +1,14 @@
 package proxy_getter
 
 import (
+	"bufio"
 	"github.com/tongsq/go-lib/request"
 	"math/rand"
+	"os"
 	"proxy-collect/config"
 	"proxy-collect/dao"
 	"regexp"
+	"strings"
 	"time"
 
 	"github.com/tongsq/go-lib/logger"
@@ -20,7 +23,25 @@ type getter struct {
 }
 
 func (s *getter) GetUrlList() []string {
-	return s.config.Urls
+	var urls []string
+	for _, url := range s.config.Urls {
+		if strings.HasPrefix(url, "http") {
+			urls = append(urls, url)
+		} else {
+			file, err := os.Open(url)
+			if err != nil {
+				logger.Warning("打开文件失败", map[string]interface{}{"err": err, "url": url})
+				continue
+			}
+			scanner := bufio.NewScanner(file)
+			for scanner.Scan() {
+				line := scanner.Text()
+				urls = append(urls, strings.TrimSpace(line))
+			}
+			_ = file.Close()
+		}
+	}
+	return urls
 }
 func (s *getter) GetContentHtml(requestUrl string) string {
 	logger.Info("get proxy from config getter", logger.Fields{"url": requestUrl})
