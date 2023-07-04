@@ -3,6 +3,7 @@ package proxy_getter
 import (
 	"bufio"
 	"github.com/tongsq/go-lib/request"
+	"github.com/tongsq/go-lib/util"
 	"math/rand"
 	"os"
 	"proxy-collect/config"
@@ -77,6 +78,11 @@ func (s *getter) ParseHtml(body string) [][]string {
 	re := regexp.MustCompile(s.config.Regexp)
 	matched := re.FindAllStringSubmatch(body, -1)
 	for _, match := range matched {
+		//不要端口大于10000的
+		port, _ := util.Str2Int(match[2])
+		if port >= 10000 {
+			continue
+		}
 		proxyArr := []string{match[1], match[2], s.config.Proto}
 		proxyList = append(proxyList, proxyArr)
 	}
