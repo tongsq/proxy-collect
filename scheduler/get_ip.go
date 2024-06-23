@@ -14,6 +14,10 @@ type GetIp struct {
 
 func (s GetIp) Run() {
 	logger.FSuccess("collect ip start run")
+	if !config.SystemStart {
+		logger.Info("system not start", map[string]interface{}{})
+		return
+	}
 	//pool := component.NewTaskPool(100)
 	//defer pool.Close()
 	serviceList := []service.ProxyGetterInterface{

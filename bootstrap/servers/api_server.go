@@ -22,6 +22,13 @@ func StartApiServer() {
 		})
 	})
 	router.GET("/all", func(c *gin.Context) {
+		if !config.SystemStart {
+			c.JSON(403, gin.H{
+				"code": 403,
+				"msg":  "System not start",
+			})
+			return
+		}
 		proxies, err := dao.ProxyDao.GetActiveList()
 		if err != nil {
 			logger.Error("get active proxy fail", logger.Fields{"err": err})
@@ -73,6 +80,18 @@ func StartApiServer() {
 			"data":  list,
 			"code":  0,
 			"count": len(list),
+		})
+	})
+	router.GET("/start", func(c *gin.Context) {
+		config.SystemStart = true
+		c.JSON(200, gin.H{
+			"message": "success",
+		})
+	})
+	router.GET("/stop", func(c *gin.Context) {
+		config.SystemStart = false
+		c.JSON(200, gin.H{
+			"message": "success",
 		})
 	})
 	err := r.Run(fmt.Sprintf("%s:%s", config.Get().Api.Host, config.Get().Api.Port))

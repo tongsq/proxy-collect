@@ -11,6 +11,7 @@ import (
 var conf *ConfDto
 var YamlPath = "conf.yaml"
 var configRefreshHandlers []func(old, new *ConfDto)
+var SystemStart = true
 
 func Get() *ConfDto {
 	if conf == nil {
